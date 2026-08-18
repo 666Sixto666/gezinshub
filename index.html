@@ -223,6 +223,7 @@
     <button class="tab-btn" data-tab="todo"><span class="ic">✅</span>To Do</button>
     <button class="tab-btn" data-tab="con"><span class="ic">📄</span>Contracten</button>
     <button class="tab-btn" data-tab="lijst"><span class="ic">🛒</span>Lijst</button>
+    <button class="tab-btn" data-tab="menu"><span class="ic">🍽️</span>Menu</button>
   </nav>
   <main>
     <section id="panel-cal" class="panel active">
@@ -347,6 +348,8 @@
       <div class="card">
         <h3>Overzicht<span class="sub">Rood = tijd om te vergelijken. Oranje = binnen 30 dagen. 'Vergelijk nu' opent de officiële, onafhankelijke vergelijker (CREG voor energie, BIPT/bestetarief.be voor telecom, Wikifin voor verzekeringen en hypotheek) — geen commerciële site.</span></h3>
         <div id="contractsList"></div>
+        <button class="btn outline" id="copyContractsBtn" type="button" style="margin-top:10px;">📋 Kopieer contracten-overzicht</button>
+        <div id="copyContractsStatus" style="font-size:11.5px;color:var(--muted);margin-top:6px;"></div>
       </div>
       <div class="card">
         <h3>Nieuw contract / abonnement<span class="sub">Vaste kosten, verzekeringen, abonnementen — houd bij wanneer je ze laatst vergeleek.</span></h3>
@@ -388,6 +391,13 @@
         </div>
         <div id="shopList"></div>
         <button class="btn outline" id="clearCheckedBtn" type="button" style="margin-top:10px;display:none;">Wis afgevinkte items</button>
+      </div>
+    </section>
+    <section id="panel-menu" class="panel">
+      <div class="cal-head"><button id="prevMenuWeek">‹</button><div class="label" id="menuWeekLabel"></div><button id="nextMenuWeek">›</button></div>
+      <div class="card">
+        <h3>Weekmenu<span class="sub">Tik op een dag voor het gerecht. Tik op de naam om bij te houden wie kookt.</span></h3>
+        <div id="weekmenuList"></div>
       </div>
     </section>
   </main>
@@ -432,6 +442,7 @@ const fixAppliedRef = ref(db, hhPath + '/fixApplied_aug2026');
 const fixAppliedRef2 = ref(db, hhPath + '/fixApplied_aug2026_v2');
 const fixAppliedRef3 = ref(db, hhPath + '/fixApplied_aug2026_v3');
 const shoppingListRef = ref(db, hhPath + '/shoppingList');
+const weekmenuRef = ref(db, hhPath + '/weekmenu');
 
 const CATEGORIES = ['Wonen','Energie & water','Telecom & media','Boodschappen','Eten & drinken buitenshuis','Auto & vervoer','Kinderen','Verzekering','Gezondheid','Online shopping','Streaming','Sparen','Overig'];
 const CONTRACT_CATEGORIES = ['Energie','Telecom & internet','Verzekering','Hypotheek & lening','EV laden','Onderhoud huis','Onderhoud auto','Online shopping','Streaming','Kinderen','Abonnement','Overig'];
@@ -466,12 +477,15 @@ let viewYear = new Date().getFullYear();
 let budViewMonth = new Date().getMonth();
 let budViewYear = new Date().getFullYear();
 let selectedDate = fmtDate(new Date());
+let weekmenuData = {};
+let menuWeekStart = mondayOf(fmtDate(new Date()));
 let selectedPerson = 'Wij';
 let activeTodoCat = 'Alle';
 let reviewItems = null;
 let openSchedFor = null;
 
 function fmtDate(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function addDays(dateStr, n){ const d = new Date(dateStr+'T00:00:00'); d.setDate(d.getDate()+n); return fmtDate(d); }
 function fmtMoney(n){ return '€' + (Math.round(n*100)/100).toLocaleString('nl-BE',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function personColor(p){ const f = PERSONS.find(x=>x.key===p); return f ? f.color : 'var(--p-wij)'; }
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
@@ -521,6 +535,7 @@ function attachListeners(){
   onValue(fixAppliedRef2, snap=>{ if(snap.val()){ const card=document.getElementById('fixToggle2'); if(card) card.closest('.card').style.display='none'; } });
   onValue(fixAppliedRef3, snap=>{ if(snap.val()){ const card=document.getElementById('fixToggle3'); if(card) card.closest('.card').style.display='none'; } });
   onValue(shoppingListRef, snap=>{ shoppingItems = snapToArray(snap.val()); renderShoppingList(); markLive(); });
+  onValue(weekmenuRef, snap=>{ weekmenuData = snap.val() || {}; renderWeekmenu(); markLive(); });
   renderTodoOwnerGate();
 }
 
@@ -823,6 +838,31 @@ document.getElementById('copySummaryBtn').addEventListener('click', async ()=>{
   try{
     await navigator.clipboard.writeText(txt);
     statusEl.textContent = 'Gekopieerd — plak dit in de chat voor een analyse.';
+  }catch(err){
+    statusEl.textContent = 'Kopiëren niet gelukt, hou de tekst hieronder ingedrukt om te selecteren:\n\n' + txt;
+  }
+});
+document.getElementById('copyContractsBtn').addEventListener('click', async ()=>{
+  const statusEl = document.getElementById('copyContractsStatus');
+  if(!contracts.length){ statusEl.textContent = 'Nog geen contracten om te kopiëren.'; return; }
+  const byCat = {};
+  contracts.forEach(c=>{
+    const cat = c.categorie || 'Overig';
+    (byCat[cat] = byCat[cat] || []).push(c);
+  });
+  let txt = `Contracten-overzicht (${new Date().toLocaleDateString('nl-BE')})\n\n`;
+  Object.keys(byCat).sort().forEach(cat=>{
+    txt += `${cat}:\n`;
+    byCat[cat].forEach(c=>{
+      const prijs = c.prijs ? fmtMoney(c.prijs) + '/mnd' + (c.variabel ? ' (variabel)' : '') : (c.infoOnly ? 'info only' : 'geen bedrag ingesteld');
+      const checked = c.laatstGecheckt ? 'laatst gecheckt ' + fmtDateNL(new Date(c.laatstGecheckt+'T00:00:00')) : 'nog niet gecheckt';
+      txt += `- ${c.naam}: ${prijs} — ${checked}${c.notitie ? ' — ' + c.notitie : ''}\n`;
+    });
+    txt += '\n';
+  });
+  try{
+    await navigator.clipboard.writeText(txt);
+    statusEl.textContent = 'Gekopieerd — plak dit in de chat om samen te voegen met je Financiën-overzicht.';
   }catch(err){
     statusEl.textContent = 'Kopiëren niet gelukt, hou de tekst hieronder ingedrukt om te selecteren:\n\n' + txt;
   }
@@ -1198,6 +1238,46 @@ function fmtDateNL(dateStr){
   const d = dateStr instanceof Date ? dateStr : new Date(dateStr+'T00:00:00');
   return d.toLocaleDateString('nl-BE',{day:'numeric',month:'short',year:'numeric'});
 }
+// ---------- weekmenu ----------
+function renderWeekmenu(){
+  const labelEl = document.getElementById('menuWeekLabel');
+  if(!labelEl) return;
+  const weekEnd = addDays(menuWeekStart, 6);
+  labelEl.textContent = 'Week van ' + fmtDateNL(menuWeekStart) + ' t.e.m. ' + fmtDateNL(weekEnd);
+  const list = document.getElementById('weekmenuList');
+  list.innerHTML = '';
+  const weekData = weekmenuData[menuWeekStart] || {};
+  DOWS.forEach((dow, i)=>{
+    const dateStr = addDays(menuWeekStart, i);
+    const entry = weekData[dow] || {};
+    const row = document.createElement('div');
+    row.className = 'contract-item';
+    row.innerHTML = `<div class="c-top">
+        <div class="c-left">
+          <div class="c-name">${DOW_FULL[i].charAt(0).toUpperCase()+DOW_FULL[i].slice(1)} <span style="font-weight:400;color:var(--muted);font-size:12px;">${fmtDateNL(dateStr)}</span></div>
+          <div class="c-cat" data-role="gerecht">${entry.gerecht ? escapeHtml(entry.gerecht) : 'Nog niet ingevuld — tik om in te vullen'}</div>
+        </div>
+        <div class="c-right">
+          <button type="button" class="btn ghost" data-role="kokBtn" style="font-size:12px;padding:6px 10px;">${entry.kok ? escapeHtml(entry.kok) : '👤 wie kookt?'}</button>
+        </div>
+      </div>`;
+    row.querySelector('[data-role="gerecht"]').addEventListener('click', ()=>{
+      const invoer = prompt('Gerecht voor ' + DOW_FULL[i] + ' ' + fmtDateNL(dateStr) + ':', entry.gerecht || '');
+      if(invoer === null) return;
+      update(ref(db, hhPath+'/weekmenu/'+menuWeekStart+'/'+dow), { gerecht: invoer.trim() });
+    });
+    row.querySelector('[data-role="kokBtn"]').addEventListener('click', ()=>{
+      const opties = PERSONS.map(p=>p.key);
+      const huidige = entry.kok || '';
+      const idx = opties.indexOf(huidige);
+      const volgende = opties[(idx+1) % opties.length];
+      update(ref(db, hhPath+'/weekmenu/'+menuWeekStart+'/'+dow), { kok: volgende });
+    });
+    list.appendChild(row);
+  });
+}
+document.getElementById('prevMenuWeek').addEventListener('click', ()=>{ menuWeekStart = addDays(menuWeekStart, -7); renderWeekmenu(); });
+document.getElementById('nextMenuWeek').addEventListener('click', ()=>{ menuWeekStart = addDays(menuWeekStart, 7); renderWeekmenu(); });
 document.querySelectorAll('.tip-row-head, .tip-toggle').forEach(h=>{
   h.addEventListener('click', ()=>{
     const target = document.getElementById(h.dataset.target);
@@ -1432,4 +1512,3 @@ function renderShoppingList(){
 </script>
 </body>
 </html>
-
