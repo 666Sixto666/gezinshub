@@ -492,7 +492,26 @@ function personColor(p){ const f = PERSONS.find(x=>x.key===p); return f ? f.colo
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
 function mondayOf(dateStr){ const d=new Date(dateStr+'T00:00:00'); const day=d.getDay(); const diff=day===0?-6:1-day; d.setDate(d.getDate()+diff); return fmtDate(d); }
 function snapToArray(val){ return val ? Object.keys(val).map(k=>({id:k, ...val[k]})) : []; }
-function markLive(){ document.getElementById('connDot').classList.add('live'); document.getElementById('syncLabel').textContent = 'Live · ' + new Date().toLocaleTimeString('nl-BE',{hour:'2-digit',minute:'2-digit'}); }
+function markLive(){
+  document.getElementById('connDot').classList.add('live');
+  document.getElementById('syncLabel').textContent = 'Live · ' + new Date().toLocaleTimeString('nl-BE',{hour:'2-digit',minute:'2-digit'});
+  if(connTimeoutId){ clearTimeout(connTimeoutId); connTimeoutId = null; }
+  document.getElementById('connError').innerHTML = '';
+}
+let connTimeoutId = null;
+function startConnTimeout(){
+  if(connTimeoutId) clearTimeout(connTimeoutId);
+  connTimeoutId = setTimeout(()=>{
+    document.getElementById('connError').innerHTML = `<div class="conn-error">
+      Verbinding lukt niet na 8 seconden. Mogelijke oorzaken op dit toestel:<br>
+      • Instellingen → Safari → 'Voorkom sitedooroverschrijdende tracking' — probeer tijdelijk uit<br>
+      • Privédoorsturen (iCloud+) — probeer tijdelijk uit voor Safari<br>
+      • Een advertentie-/content-blocker app — probeer tijdelijk uit<br>
+      • Sluit de app volledig en open opnieuw<br>
+      Werkt het dan nog niet, meld dit met deze tekst zodat het verder uitgezocht kan worden.
+    </div>`;
+  }, 8000);
+}
 
 // ---------- auth ----------
 // Alleen ingelogde gezinsleden (e-mail/wachtwoord) mogen erbij — zie Firebase Console > Authentication.
@@ -500,9 +519,11 @@ onAuthStateChanged(auth, user=>{
   const overlay = document.getElementById('loginOverlay');
   if(user){
     if(overlay) overlay.style.display = 'none';
+    startConnTimeout();
     attachListeners();
   } else {
     if(overlay) overlay.style.display = 'flex';
+    if(connTimeoutId){ clearTimeout(connTimeoutId); connTimeoutId = null; }
   }
 });
 
