@@ -274,6 +274,11 @@
           <button class="btn ghost" id="oldCatFixBtn" type="button" style="font-size:12px;padding:8px 12px;">Herverdeel naar Verzekering / Gezondheid</button>
         </div>
         <div id="quickAddRow" style="display:none;margin-bottom:10px;"><div class="quick-add-label">⚡ Snel toevoegen</div><div class="quick-add-chips" id="quickAddChips"></div></div>
+        <div style="margin-bottom:10px;">
+          <input type="file" id="receiptInput" accept="image/*" style="display:none;">
+          <button class="btn ghost" id="receiptBtn" type="button">📷 Bonnetje scannen</button>
+          <div id="receiptStatus" style="font-size:12px;color:var(--muted);margin-top:6px;display:none;"></div>
+        </div>
         <form class="inline" id="entryForm">
           <div class="type-toggle"><button type="button" class="active expense" data-type="expense">Uitgave</button><button type="button" class="income" data-type="income">Inkomst</button></div>
           <div class="row2"><input type="number" step="0.01" id="entryAmount" placeholder="Bedrag €" required><input type="date" id="entryDate" required></div>
@@ -309,6 +314,12 @@
       </div>
     </section>
     <section id="panel-todo" class="panel">
+      <div class="card">
+        <h3>🤝 Samen (max 3 tegelijk)<span class="sub">Bewust beperkt — rond er één af voor je een nieuwe toevoegt.</span></h3>
+        <div id="sharedTodoList"></div>
+        <div class="add-row" id="sharedTodoAddRow"><input type="text" id="sharedTodoInput" placeholder="Nieuwe gedeelde taak..."><button id="sharedTodoAddBtn" class="btn">+</button></div>
+        <div id="sharedTodoFullMsg" style="display:none;font-size:12px;color:var(--muted);margin-top:6px;">Vol (max 3) — rond er eerst één af.</div>
+      </div>
       <div class="card" id="ownerCard" style="display:none;"><h3>Voor wie is dit toestel?</h3><div class="owner-pick" id="ownerPick"></div></div>
       <div id="todoMain" style="display:none;">
         <div class="card">
@@ -443,6 +454,7 @@ const fixAppliedRef = ref(db, hhPath + '/fixApplied_aug2026');
 const fixAppliedRef2 = ref(db, hhPath + '/fixApplied_aug2026_v2');
 const fixAppliedRef3 = ref(db, hhPath + '/fixApplied_aug2026_v3');
 const shoppingListRef = ref(db, hhPath + '/shoppingList');
+const sharedTodoRef = ref(db, hhPath + '/sharedTodo');
 const weekmenuRef = ref(db, hhPath + '/weekmenu');
 
 const CATEGORIES = ['Wonen','Energie & water','Telecom & media','Boodschappen','Eten & drinken buitenshuis','Auto & vervoer','Kinderen','Verzekering','Gezondheid','Online shopping','Streaming','Sparen','Overig'];
@@ -468,6 +480,7 @@ let calEvents = [];
 let budgetData = {entries:[], goals:{}};
 let contracts = [];
 let shoppingItems = [];
+let sharedTodoItems = [];
 let openDateEditFor = null;
 let todoItems = [];
 let todoCategories = [];
@@ -557,6 +570,7 @@ function attachListeners(){
   onValue(fixAppliedRef2, snap=>{ if(snap.val()){ const card=document.getElementById('fixToggle2'); if(card) card.closest('.card').style.display='none'; } });
   onValue(fixAppliedRef3, snap=>{ if(snap.val()){ const card=document.getElementById('fixToggle3'); if(card) card.closest('.card').style.display='none'; } });
   onValue(shoppingListRef, snap=>{ shoppingItems = snapToArray(snap.val()); renderShoppingList(); markLive(); });
+  onValue(sharedTodoRef, snap=>{ sharedTodoItems = snapToArray(snap.val()); renderSharedTodo(); markLive(); });
   onValue(weekmenuRef, snap=>{ weekmenuData = snap.val() || {}; renderWeekmenu(); markLive(); });
   renderTodoOwnerGate();
 }
@@ -752,6 +766,42 @@ function refreshCategorySelect(){
 }
 refreshCategorySelect();
 document.getElementById('entryDate').value = fmtDate(new Date());
+document.getElementById('receiptBtn').addEventListener('click', ()=>{
+  document.getElementById('receiptInput').click();
+});
+document.getElementById('receiptInput').addEventListener('change', async (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  const status = document.getElementById('receiptStatus');
+  status.style.display='block'; status.textContent='Bonnetje wordt gelezen...';
+  try{
+    const dataUrl = await new Promise((res, rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=()=>rej(new Error('read failed')); r.readAsDataURL(file); });
+    const mediaType = dataUrl.substring(5, dataUrl.indexOf(';'));
+    const base64 = dataUrl.split(',')[1];
+    const todayIso = fmtDate(new Date());
+    const prompt = `Dit is een foto van een kassabon/bonnetje voor een Belgisch gezin (Nederlandstalig). Vandaag is ${todayIso}.
+Lees het TOTAALbedrag af (het eindbedrag dat betaald werd, niet een deelbedrag), de winkel-/bedrijfsnaam, en de datum op het bonnetje indien zichtbaar.
+Kies ook de best passende categorie uit exact deze lijst: ${CATEGORIES.join(', ')}.
+Geef terug als PURE JSON, GEEN markdown, GEEN uitleg:
+{"bedrag": number, "winkel": "korte naam", "datum": "YYYY-MM-DD indien zichtbaar anders leeg", "categorie": "exacte match uit de lijst hierboven"}`;
+    const text = await geminiAnalyzeImage(base64, mediaType, prompt);
+    const clean = text.replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(clean);
+    if(currentType !== 'expense'){
+      document.querySelectorAll('.type-toggle button').forEach(b=>b.classList.remove('active'));
+      document.querySelector('.type-toggle button[data-type="expense"]').classList.add('active');
+      currentType = 'expense'; refreshCategorySelect();
+    }
+    if(parsed.bedrag) document.getElementById('entryAmount').value = parsed.bedrag;
+    if(parsed.datum && /^\d{4}-\d{2}-\d{2}$/.test(parsed.datum)) document.getElementById('entryDate').value = parsed.datum;
+    if(parsed.winkel) document.getElementById('entryNote').value = parsed.winkel;
+    if(parsed.categorie && CATEGORIES.includes(parsed.categorie)) document.getElementById('entryCategory').value = parsed.categorie;
+    status.textContent = 'Herkend — controleer de gegevens hieronder en druk op Registreren.';
+  }catch(err){
+    console.error(err);
+    status.textContent = 'Fout bij lezen: ' + (err && err.message ? err.message : String(err));
+  }
+  e.target.value = '';
+});
 document.getElementById('entryForm').addEventListener('submit', (e)=>{
   e.preventDefault();
   const amount = parseFloat(document.getElementById('entryAmount').value);
@@ -759,6 +809,7 @@ document.getElementById('entryForm').addEventListener('submit', (e)=>{
   push(budgetEntriesRef, { type:currentType, amount, category:document.getElementById('entryCategory').value, date:document.getElementById('entryDate').value, note:document.getElementById('entryNote').value.trim() });
   e.target.reset();
   document.getElementById('entryDate').value = fmtDate(new Date());
+  document.getElementById('receiptStatus').style.display='none';
   refreshCategorySelect();
 });
 function currentMonthEntries(){
@@ -1517,6 +1568,38 @@ document.getElementById('shopInput').addEventListener('keydown', (e)=>{ if(e.key
 document.getElementById('clearCheckedBtn').addEventListener('click', ()=>{
   shoppingItems.filter(i=>i.done).forEach(i=>{ remove(ref(db, hhPath+'/shoppingList/'+i.id)); });
 });
+// ---------- gedeelde to-do (Samen, max 3) ----------
+const SHARED_TODO_MAX = 3;
+function addSharedTodo(){
+  const inp = document.getElementById('sharedTodoInput');
+  const val = inp.value.trim();
+  if(!val) return;
+  if(sharedTodoItems.length >= SHARED_TODO_MAX){ return; }
+  push(sharedTodoRef, { tekst: val });
+  inp.value='';
+}
+document.getElementById('sharedTodoAddBtn').addEventListener('click', addSharedTodo);
+document.getElementById('sharedTodoInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') addSharedTodo(); });
+function renderSharedTodo(){
+  const list = document.getElementById('sharedTodoList');
+  const addRow = document.getElementById('sharedTodoAddRow');
+  const fullMsg = document.getElementById('sharedTodoFullMsg');
+  const full = sharedTodoItems.length >= SHARED_TODO_MAX;
+  addRow.style.display = full ? 'none' : 'flex';
+  fullMsg.style.display = full ? 'block' : 'none';
+  if(sharedTodoItems.length===0){ list.innerHTML = '<div class="empty-state">Nog geen gedeelde taken.</div>'; return; }
+  list.innerHTML='';
+  sharedTodoItems.forEach(i=>{
+    const row = document.createElement('div'); row.className='shop-item';
+    const cb = document.createElement('input'); cb.type='checkbox';
+    cb.addEventListener('change', ()=>{ if(cb.checked) remove(ref(db, hhPath+'/sharedTodo/'+i.id)); });
+    const txt = document.createElement('div'); txt.className='txt'; txt.textContent = i.tekst;
+    const del = document.createElement('button'); del.className='del-btn'; del.textContent='✕';
+    del.addEventListener('click', ()=>{ remove(ref(db, hhPath+'/sharedTodo/'+i.id)); });
+    row.appendChild(cb); row.appendChild(txt); row.appendChild(del);
+    list.appendChild(row);
+  });
+}
 function renderShoppingList(){
   const list = document.getElementById('shopList');
   const clearBtn = document.getElementById('clearCheckedBtn');
