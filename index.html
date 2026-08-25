@@ -336,8 +336,8 @@
         <div class="stat"><div class="label">Binnenkort</div><div class="value" id="conDueSoon">0</div></div>
       </div>
       <div class="card">
-        <h3>💡 Tips per categorie<span class="sub">Tik een onderwerp open</span></h3>
-        <div class="tip-row-list">
+        <h3 style="cursor:pointer;" id="tipsMasterToggle">▸ 💡 Tips per categorie</h3>
+        <div class="tip-row-list" id="tipsMasterBody" style="display:none;">
           <div class="tip-row-head" data-target="tipEV">▸ Laadpassen</div>
           <div id="tipEV" class="tip-row-body" style="display:none;">1. Tarief per kWh (apart AC/normaal vs. DC/snelladen — snelladen is duurder)<br>2. Abonnement loont pas bij vaak publiek laden; anders is gratis pas vaak goedkoper<br>3. Let op blokkeer-/parkeertarief na volladen bij snelladers<br>4. Nationale vs. Europese dekking — enkel relevant bij veel grensverkeer<br>5. Thuis laden blijft het goedkoopst — check eerst je Engie-thuistarief<br>6. Vraag eerst bij je huidige energieleverancier naar een klantenkorting op hun eigen laadpas</div>
           <div class="tip-row-head" data-target="tipEnergie">▸ Energiecontracten</div>
@@ -364,12 +364,12 @@
         <div id="copyContractsStatus" style="font-size:11.5px;color:var(--muted);margin-top:6px;"></div>
       </div>
       <div class="card">
-        <h3>Nieuw contract / abonnement<span class="sub">Vaste kosten, verzekeringen, abonnementen — houd bij wanneer je ze laatst vergeleek.</span></h3>
-        <form class="inline" id="contractForm">
+        <h3 style="cursor:pointer;" id="newContractToggle">▸ Nieuw contract / abonnement toevoegen</h3>
+        <form class="inline" id="contractForm" style="display:none;">
           <input type="text" id="conName" placeholder="Naam (bv. Engie elektriciteit)" required>
           <div class="row2">
             <select id="conCategory"></select>
-            <input type="number" step="0.01" id="conPrice" placeholder="Prijs €/maand (optioneel)">
+            <input type="number" step="0.01" id="conPrice" placeholder="Prijs €/mnd">
           </div>
           <div class="row2">
             <div style="flex:1;"><label style="font-size:11px;color:var(--muted);">Dag v/d maand (optioneel)</label><input type="number" min="1" max="31" id="conDayOfMonth" placeholder="bv. 10"></div>
@@ -1067,6 +1067,8 @@ function renderBudget(){
   const expense = monthEntries.filter(e=>e.type==='expense').reduce((s,e)=>s+e.amount,0);
   const categorySummary = [];
   const goalsList = document.getElementById('goalsList'); goalsList.innerHTML='';
+  const inactiveList = document.createElement('div'); inactiveList.id='goalsListInactive'; inactiveList.style.display='none';
+  let inactiveCount = 0;
   const tips = [];
   const expectedFromContracts = {};
   contracts.forEach(c=>{
@@ -1107,8 +1109,27 @@ function renderBudget(){
     row.innerHTML = `<div class="g-head"><span class="g-cat">${cat}</span><span class="g-amt">${amtText}${goal>0?' <span style=\"opacity:.6\">(van '+fmtMoney(goal)+')</span>':''}</span></div>
       <div class="bar-track"><div class="bar-fill ${cls}" style="width:${goal>0?pct:0}%"></div></div>
       <div class="goal-input"><span>Maandbudget:</span><input type="number" step="0.01" value="${goal||''}" placeholder="–" data-cat="${cat}"></div>`;
-    goalsList.appendChild(row);
+    if(goal===0 && spent===0){ inactiveList.appendChild(row); inactiveCount++; }
+    else { goalsList.appendChild(row); }
   });
+  goalsList.appendChild(inactiveList);
+  let toggleBtn = document.getElementById('goalsToggleBtn');
+  if(!toggleBtn){
+    toggleBtn = document.createElement('button'); toggleBtn.id='goalsToggleBtn'; toggleBtn.type='button'; toggleBtn.className='btn outline';
+    toggleBtn.style.marginTop='6px';
+    toggleBtn.addEventListener('click', ()=>{
+      const open = inactiveList.style.display !== 'none';
+      inactiveList.style.display = open ? 'none' : 'block';
+      toggleBtn.textContent = open ? `Toon alle categorieën (+${inactiveCount})` : 'Verberg ongebruikte categorieën';
+    });
+  }
+  if(inactiveCount>0){
+    toggleBtn.textContent = `Toon alle categorieën (+${inactiveCount})`;
+    toggleBtn.style.display='inline-block';
+    goalsList.appendChild(toggleBtn);
+  } else {
+    toggleBtn.style.display='none';
+  }
   goalsList.querySelectorAll('input[data-cat]').forEach(inp=>{
     inp.addEventListener('change', ()=>{ const v=parseFloat(inp.value); set(ref(db, hhPath+'/budgetGoals/'+inp.dataset.cat), v>0?v:null); });
   });
@@ -1354,6 +1375,18 @@ function renderWeekmenu(){
 }
 document.getElementById('prevMenuWeek').addEventListener('click', ()=>{ menuWeekStart = addDays(menuWeekStart, -7); renderWeekmenu(); });
 document.getElementById('nextMenuWeek').addEventListener('click', ()=>{ menuWeekStart = addDays(menuWeekStart, 7); renderWeekmenu(); });
+document.getElementById('newContractToggle').addEventListener('click', ()=>{
+  const form = document.getElementById('contractForm');
+  const open = form.style.display !== 'none';
+  form.style.display = open ? 'none' : 'block';
+  document.getElementById('newContractToggle').textContent = (open?'▸':'▾') + ' Nieuw contract / abonnement toevoegen';
+});
+document.getElementById('tipsMasterToggle').addEventListener('click', ()=>{
+  const body = document.getElementById('tipsMasterBody');
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  document.getElementById('tipsMasterToggle').textContent = (open?'▸':'▾') + ' 💡 Tips per categorie';
+});
 document.querySelectorAll('.tip-row-head, .tip-toggle').forEach(h=>{
   h.addEventListener('click', ()=>{
     const target = document.getElementById(h.dataset.target);
