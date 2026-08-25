@@ -228,6 +228,10 @@
   <main>
     <section id="panel-cal" class="panel active">
       <div class="card">
+        <h3>📌 Vandaag</h3>
+        <div id="todayOverview" style="font-size:13px;color:var(--ink);line-height:1.6;"></div>
+      </div>
+      <div class="card">
         <div class="cal-head"><button id="prevMonth">‹</button><div class="label" id="monthLabel"></div><button id="nextMonth">›</button></div>
         <div class="grid" id="calGrid"></div>
         <div class="legend" id="legend"></div>
@@ -565,12 +569,12 @@ function attachListeners(){
   onValue(eventsRef, snap=>{ calEvents = snapToArray(snap.val()); renderLegend(); renderCalendar(); renderDayEvents(); markLive(); });
   onValue(budgetEntriesRef, snap=>{ budgetData.entries = snapToArray(snap.val()); renderBudget(); markLive(); });
   onValue(budgetGoalsRef, snap=>{ budgetData.goals = snap.val() || {}; renderBudget(); markLive(); });
-  onValue(contractsRef, snap=>{ contracts = snapToArray(snap.val()); renderContracts(); renderBudget(); markLive(); });
+  onValue(contractsRef, snap=>{ contracts = snapToArray(snap.val()); renderContracts(); renderBudget(); renderTodayOverview(); markLive(); });
   onValue(fixAppliedRef, snap=>{ if(snap.val()){ const card=document.getElementById('fixToggle'); if(card) card.closest('.card').style.display='none'; } });
   onValue(fixAppliedRef2, snap=>{ if(snap.val()){ const card=document.getElementById('fixToggle2'); if(card) card.closest('.card').style.display='none'; } });
   onValue(fixAppliedRef3, snap=>{ if(snap.val()){ const card=document.getElementById('fixToggle3'); if(card) card.closest('.card').style.display='none'; } });
   onValue(shoppingListRef, snap=>{ shoppingItems = snapToArray(snap.val()); renderShoppingList(); markLive(); });
-  onValue(sharedTodoRef, snap=>{ sharedTodoItems = snapToArray(snap.val()); renderSharedTodo(); markLive(); });
+  onValue(sharedTodoRef, snap=>{ sharedTodoItems = snapToArray(snap.val()); renderSharedTodo(); renderTodayOverview(); markLive(); });
   onValue(weekmenuRef, snap=>{ weekmenuData = snap.val() || {}; renderWeekmenu(); markLive(); });
   renderTodoOwnerGate();
 }
@@ -600,6 +604,30 @@ function renderEvPersonSelect(){
 }
 renderEvPersonSelect();
 
+function renderTodayOverview(){
+  const el = document.getElementById('todayOverview');
+  if(!el) return;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const upcoming = contracts.filter(c=>c.dagVanMaand && c.prijs).map(c=>{
+    let next = new Date(today.getFullYear(), today.getMonth(), c.dagVanMaand);
+    const diffDays = Math.round((next - today) / 86400000);
+    return {c, diffDays};
+  }).filter(x=>x.diffDays>=0 && x.diffDays<=3);
+  const todoCount = sharedTodoItems.length;
+  const parts = [];
+  if(upcoming.length===0){
+    parts.push('✅ Geen vaste kosten verwacht de komende 3 dagen.');
+  } else {
+    const names = upcoming.sort((a,b)=>a.diffDays-b.diffDays).map(x=> x.diffDays===0 ? `${x.c.naam} (vandaag)` : `${x.c.naam} (over ${x.diffDays}d)`);
+    parts.push(`💶 Verwacht: ${names.join(', ')}.`);
+  }
+  if(todoCount===0){
+    parts.push('🤝 Geen gedeelde taken open.');
+  } else {
+    parts.push(`🤝 ${todoCount} gedeelde taak${todoCount>1?'en':''} open (max 3).`);
+  }
+  el.innerHTML = parts.map(p=>`<div>${p}</div>`).join('');
+}
 function renderCalendar(){
   document.getElementById('monthLabel').textContent = MONTHS[viewMonth] + ' ' + viewYear;
   const grid = document.getElementById('calGrid'); grid.innerHTML='';
