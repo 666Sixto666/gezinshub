@@ -609,18 +609,27 @@ function renderTodayOverview(){
   const el = document.getElementById('todayOverview');
   if(!el) return;
   const today = new Date(); today.setHours(0,0,0,0);
-  const upcoming = contracts.filter(c=>c.dagVanMaand && c.prijs).map(c=>{
+  const upcomingCosts = contracts.filter(c=>c.dagVanMaand && c.prijs).map(c=>{
     let next = new Date(today.getFullYear(), today.getMonth(), c.dagVanMaand);
     const diffDays = Math.round((next - today) / 86400000);
-    return {c, diffDays};
+    return {naam:c.naam, diffDays, isIncome:false};
   }).filter(x=>x.diffDays>=0 && x.diffDays<=3);
+  const incomeDate = lastDayMinus2(today.getFullYear(), today.getMonth());
+  const incomeDiff = Math.round((incomeDate - today) / 86400000);
+  const upcomingIncomes = incomeDiff>=0 && incomeDiff<=3
+    ? FIXED_INCOMES.map(fi=>({naam:fi.naam, diffDays:incomeDiff, isIncome:true}))
+    : [];
+  const upcoming = [...upcomingCosts, ...upcomingIncomes];
   const todoCount = sharedTodoItems.length;
   const parts = [];
   if(upcoming.length===0){
-    parts.push('✅ Geen vaste kosten verwacht de komende 3 dagen.');
+    parts.push('✅ Geen vaste kosten of inkomsten verwacht de komende 3 dagen.');
   } else {
-    const names = upcoming.sort((a,b)=>a.diffDays-b.diffDays).map(x=> x.diffDays===0 ? `${x.c.naam} (vandaag)` : `${x.c.naam} (over ${x.diffDays}d)`);
-    parts.push(`💶 Verwacht: ${names.join(', ')}.`);
+    const names = upcoming.sort((a,b)=>a.diffDays-b.diffDays).map(x=> {
+      const when = x.diffDays===0 ? 'vandaag' : `over ${x.diffDays}d`;
+      return `${x.isIncome?'💶 ':''}${x.naam} (${when})`;
+    });
+    parts.push(`📋 Verwacht: ${names.join(', ')}.`);
   }
   if(todoCount===0){
     parts.push('🤝 Geen gedeelde taken open.');
