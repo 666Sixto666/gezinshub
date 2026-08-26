@@ -265,6 +265,7 @@
     </section>
     <section id="panel-bud" class="panel">
       <div class="cal-head"><button id="prevBudMonth">‹</button><div class="label" id="budMonthLabel"></div><button id="nextBudMonth">›</button></div>
+      <div id="septPin" style="display:none;background:var(--primary-light);color:var(--primary);border-radius:10px;padding:9px 12px;font-size:12.5px;font-weight:600;margin-bottom:12px;text-align:center;">🎯 Nieuwe budgetten actief sinds 1 september</div>
       <div class="card">
         <h3>Nieuwe registratie<span class="sub">Tip: elke 1-2 weken bijwerken, KBC Touch ernaast — mikken op de grote lijnen (~85%), niet op perfectie.</span></h3>
         <div id="oldCatFix" style="display:none;margin-bottom:10px;padding:10px 12px;background:var(--accent-light);border-radius:10px;">
@@ -568,7 +569,7 @@ if(logoutLinkEl){
 
 function attachListeners(){
   onValue(eventsRef, snap=>{ calEvents = snapToArray(snap.val()); renderLegend(); renderCalendar(); renderDayEvents(); markLive(); });
-  onValue(budgetEntriesRef, snap=>{ budgetData.entries = snapToArray(snap.val()); renderBudget(); markLive(); });
+  onValue(budgetEntriesRef, snap=>{ budgetData.entries = snapToArray(snap.val()); renderBudget(); renderTodayOverview(); markLive(); });
   onValue(budgetGoalsRef, snap=>{ budgetData.goals = snap.val() || {}; renderBudget(); markLive(); });
   onValue(contractsRef, snap=>{ contracts = snapToArray(snap.val()); renderContracts(); renderBudget(); renderTodayOverview(); markLive(); });
   onValue(fixAppliedRef, snap=>{ if(snap.val()){ const card=document.getElementById('fixToggle'); if(card) card.closest('.card').style.display='none'; } });
@@ -635,6 +636,13 @@ function renderTodayOverview(){
     parts.push('🤝 Geen gedeelde taken open.');
   } else {
     parts.push(`🤝 ${todoCount} gedeelde taak${todoCount>1?'en':''} open (max 3).`);
+  }
+  if(budgetData && budgetData.entries && budgetData.entries.length>0){
+    const lastDate = budgetData.entries.map(e=>e.date).sort().pop();
+    const daysSince = Math.round((today - new Date(lastDate+'T00:00:00')) / 86400000);
+    if(daysSince >= 10){
+      parts.push(`📝 Alweer ${daysSince} dagen geen registratie gelogd — misschien tijd voor een update?`);
+    }
   }
   el.innerHTML = parts.map(p=>`<div>${p}</div>`).join('');
 }
@@ -860,6 +868,12 @@ function renderBudMonthLabel(){
 document.getElementById('prevBudMonth').addEventListener('click', ()=>{ budViewMonth--; if(budViewMonth<0){budViewMonth=11; budViewYear--;} renderBudMonthLabel(); renderBudget(); });
 document.getElementById('nextBudMonth').addEventListener('click', ()=>{ budViewMonth++; if(budViewMonth>11){budViewMonth=0; budViewYear++;} renderBudMonthLabel(); renderBudget(); });
 renderBudMonthLabel();
+(function(){
+  const now = new Date();
+  if(now.getFullYear()===2026 && now.getMonth()===8){ // september = maand-index 8
+    document.getElementById('septPin').style.display = 'block';
+  }
+})();
 document.getElementById('fixToggle2').addEventListener('click', ()=>{
   const p = document.getElementById('fixPanel2');
   const open = p.style.display !== 'none';
