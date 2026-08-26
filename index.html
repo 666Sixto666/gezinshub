@@ -1586,6 +1586,16 @@ function renderContracts(){
       update(ref(db, hhPath+'/contracts/'+c.id), {notitie: invoer.trim()});
     });
     more.appendChild(noteBtn);
+    const priceBtn = document.createElement('button'); priceBtn.type='button'; priceBtn.textContent='✎ Prijs';
+    priceBtn.addEventListener('click', ()=>{
+      const invoer = prompt('Prijs aanpassen (€/maand — voor jaarlijkse kosten: jaarbedrag ÷ 12 invullen):', c.prijs || '');
+      if(invoer === null) return;
+      if(invoer.trim() === ''){ update(ref(db, hhPath+'/contracts/'+c.id), {prijs: null}); return; }
+      const bedrag = parseFloat(invoer.replace(',','.'));
+      if(isNaN(bedrag) || bedrag<0){ alert('Ongeldig bedrag.'); return; }
+      update(ref(db, hhPath+'/contracts/'+c.id), {prijs: bedrag});
+    });
+    more.appendChild(priceBtn);
     const infoBtn = document.createElement('button'); infoBtn.type='button'; infoBtn.textContent = c.infoOnly ? 'ℹ️ Niet herbekijken' : 'ℹ️ Wel herbekijken';
     infoBtn.addEventListener('click', ()=>{ update(ref(db, hhPath+'/contracts/'+c.id), {infoOnly: !c.infoOnly}); });
     more.appendChild(infoBtn);
