@@ -176,6 +176,7 @@
   .fc-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:10px;margin-bottom:6px;border-left:4px solid var(--border);}
   .fc-item.passed{border-left-color:var(--primary);}
   .fc-item.today{border-left-color:var(--accent);}
+  .fc-item.income-item{border-left-color:var(--primary);}
   .fc-item.upcoming{border-left-color:var(--border);}
   .fc-item .fc-info{flex:1;min-width:0;}
   .fc-item .fc-name{font-weight:700;font-size:13.5px;}
@@ -223,7 +224,7 @@
     <button class="tab-btn" data-tab="todo"><span class="ic">✅</span>To Do</button>
     <button class="tab-btn" data-tab="con"><span class="ic">📄</span>Contracten</button>
     <button class="tab-btn" data-tab="lijst"><span class="ic">🛒</span>Lijst</button>
-    <button class="tab-btn" data-tab="menu"><span class="ic">🍽️</span>Menu</button>
+    <button class="tab-btn" data-tab="menu" style="display:none;"><span class="ic">🍽️</span>Menu</button>
   </nav>
   <main>
     <section id="panel-cal" class="panel active">
@@ -264,13 +265,6 @@
     </section>
     <section id="panel-bud" class="panel">
       <div class="cal-head"><button id="prevBudMonth">‹</button><div class="label" id="budMonthLabel"></div><button id="nextBudMonth">›</button></div>
-      <div class="card" id="tipsCard" style="display:none;"><h3>Aandachtspunten</h3><div id="tipsList"></div></div>
-      <div class="card">
-        <h3>Budget per categorie (geselecteerde maand)</h3>
-        <div id="goalsList"></div>
-        <button class="btn outline" id="copySummaryBtn" type="button" style="margin-top:6px;">📋 Kopieer overzicht (voor analyse)</button>
-        <div id="copySummaryStatus" style="font-size:11.5px;color:var(--muted);margin-top:6px;"></div>
-      </div>
       <div class="card">
         <h3>Nieuwe registratie<span class="sub">Tip: elke 1-2 weken bijwerken, KBC Touch ernaast — mikken op de grote lijnen (~85%), niet op perfectie.</span></h3>
         <div id="oldCatFix" style="display:none;margin-bottom:10px;padding:10px 12px;background:var(--accent-light);border-radius:10px;">
@@ -290,6 +284,13 @@
           <input type="text" id="entryNote" placeholder="Omschrijving (optioneel)">
           <button type="submit" class="btn">Registreren</button>
         </form>
+      </div>
+      <div class="card" id="tipsCard" style="display:none;"><h3>Aandachtspunten</h3><div id="tipsList"></div></div>
+      <div class="card">
+        <h3>Budget per categorie (geselecteerde maand)</h3>
+        <div id="goalsList"></div>
+        <button class="btn outline" id="copySummaryBtn" type="button" style="margin-top:6px;">📋 Kopieer overzicht (voor analyse)</button>
+        <div id="copySummaryStatus" style="font-size:11.5px;color:var(--muted);margin-top:6px;"></div>
       </div>
       <div class="card" id="fixedCostsCard" style="display:none;">
         <h3>Vaste kosten deze maand<span class="sub" id="fixedCostsSub"></span></h3>
@@ -990,44 +991,68 @@ function renderYearlyCosts(){
     list.appendChild(row);
   });
 }
+const FIXED_INCOMES = [
+  { naam:'Bijdrage Tom', bedrag:1365 },
+  { naam:'Bijdrage Kimberly', bedrag:1365 }
+];
+function lastDayMinus2(year, month){
+  const lastDay = new Date(year, month+1, 0).getDate(); // dag 0 van volgende maand = laatste dag huidige maand
+  return new Date(year, month, Math.max(1, lastDay - 2));
+}
 function renderFixedCosts(monthEntries){
   const card = document.getElementById('fixedCostsCard');
   const list = document.getElementById('fixedCostsList');
   const fixed = contracts.filter(c=>c.dagVanMaand && c.prijs);
-  if(fixed.length===0){ card.style.display='none'; return; }
+  const incomeDate = lastDayMinus2(budViewYear, budViewMonth);
+  const incomeItems = FIXED_INCOMES.map(fi=>({
+    isIncome:true, naam:fi.naam, prijs:fi.bedrag, fcDate:incomeDate,
+    alreadyLogged: monthEntries.some(e=>e.type==='income' && e.note===fi.naam)
+  }));
+  if(fixed.length===0 && incomeItems.length===0){ card.style.display='none'; return; }
   card.style.display='block';
   const today = new Date(); today.setHours(0,0,0,0);
-  const items = fixed.map(c=>{
+  const expenseItems = fixed.map(c=>{
     const fcDate = new Date(budViewYear, budViewMonth, c.dagVanMaand);
     let status = 'upcoming';
     if(fcDate < today) status = 'passed';
     else if(fcDate.getTime()===today.getTime()) status = 'today';
     const budgetCat = CONTRACT_TO_BUDGET_CATEGORY[c.categorie] || 'Overig';
     const alreadyLogged = monthEntries.some(e=>e.type==='expense' && e.note===c.naam);
-    return {c, fcDate, status, budgetCat, alreadyLogged};
-  }).sort((a,b)=>a.fcDate-b.fcDate);
-  const nogTeVerwachten = items.filter(i=>i.status!=='passed' && !i.alreadyLogged).length;
+    return {isIncome:false, naam:c.naam, prijs:c.prijs, variabel:c.variabel, fcDate, status, budgetCat, alreadyLogged};
+  });
+  const allItems = [...expenseItems, ...incomeItems.map(i=>{
+    let status = 'upcoming';
+    if(i.fcDate < today) status = 'passed';
+    else if(i.fcDate.getTime()===today.getTime()) status = 'today';
+    return {...i, status};
+  })].sort((a,b)=>a.fcDate-b.fcDate);
+  const nogTeVerwachten = allItems.filter(i=>i.status!=='passed' && !i.alreadyLogged).length;
   document.getElementById('fixedCostsSub').textContent = `Vandaag is het de ${today.getDate()}e — ${nogTeVerwachten} nog te verwachten deze maand.`;
   list.innerHTML='';
-  items.forEach(({c, fcDate, status, budgetCat, alreadyLogged})=>{
-    const row = document.createElement('div'); row.className = 'fc-item ' + status;
+  allItems.forEach(({naam, prijs, variabel, fcDate, status, budgetCat, alreadyLogged, isIncome})=>{
+    const row = document.createElement('div'); row.className = 'fc-item ' + status + (isIncome?' income-item':'');
     const info = document.createElement('div'); info.className='fc-info';
     const whenText = status==='passed'
-      ? (alreadyLogged ? 'Gelogd op ' : 'Zou afgeschreven zijn op ') + fmtDateNL(fcDate)
+      ? (alreadyLogged ? 'Gelogd op ' : (isIncome?'Zou binnengekomen zijn op ':'Zou afgeschreven zijn op ')) + fmtDateNL(fcDate)
       : status==='today' ? 'Vandaag'
       : 'Verwacht op ' + fmtDateNL(fcDate);
-    info.innerHTML = `<div class="fc-name">${escapeHtml(c.naam)}</div><div class="fc-when">${whenText}</div>`;
-    const amount = document.createElement('div'); amount.className='fc-amount'; amount.textContent = (c.variabel?'~':'') + fmtMoney(c.prijs);
+    info.innerHTML = `<div class="fc-name">${isIncome?'💶 ':''}${escapeHtml(naam)}</div><div class="fc-when">${whenText}</div>`;
+    const amount = document.createElement('div'); amount.className='fc-amount'; amount.textContent = (isIncome?'+':'') + (variabel?'~':'') + fmtMoney(prijs);
+    if(isIncome) amount.style.color = 'var(--primary)';
     const btn = document.createElement('button');
     if(alreadyLogged){ btn.textContent='✓ Gelogd'; btn.className='logged'; btn.disabled=true; }
     else {
-      btn.textContent = c.variabel ? '❓ Bedrag ingeven' : '✓ Log';
+      btn.textContent = variabel ? '❓ Bedrag ingeven' : '✓ Log';
       btn.addEventListener('click', ()=>{
-        const invoer = prompt(`Bedrag voor "${c.naam}"?${c.variabel?' (check je afschrift, dit varieert)':''}`, c.prijs);
+        const invoer = prompt(`Bedrag voor "${naam}"?${variabel?' (check je afschrift, dit varieert)':''}`, prijs);
         if(invoer === null) return;
         const bedrag = parseFloat(invoer.replace(',','.'));
         if(isNaN(bedrag) || bedrag<=0){ alert('Ongeldig bedrag.'); return; }
-        push(budgetEntriesRef, { type:'expense', amount:bedrag, category:budgetCat, date:fmtDate(fcDate), note:c.naam });
+        if(isIncome){
+          push(budgetEntriesRef, { type:'income', amount:bedrag, category:'Overig inkomen', date:fmtDate(fcDate), note:naam });
+        } else {
+          push(budgetEntriesRef, { type:'expense', amount:bedrag, category:budgetCat, date:fmtDate(fcDate), note:naam });
+        }
       });
     }
     row.appendChild(info); row.appendChild(amount); row.appendChild(btn);
