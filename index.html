@@ -481,12 +481,12 @@ const shoppingListRef = ref(db, hhPath + '/shoppingList');
 const sharedTodoRef = ref(db, hhPath + '/sharedTodo');
 const weekmenuRef = ref(db, hhPath + '/weekmenu');
 
-const CATEGORIES = ['Wonen','Energie & water','Telecom & media','Boodschappen','Eten & drinken buitenshuis','Auto & vervoer','Kinderen','Verzekering','Gezondheid','Online shopping','Streaming','Sparen','Overig'];
-const CONTRACT_CATEGORIES = ['Energie','Telecom & internet','Verzekering','Hypotheek & lening','EV laden','Onderhoud huis','Onderhoud auto','Online shopping','Streaming','Kinderen','Abonnement','Overig'];
+const CATEGORIES = ['Wonen','Energie & water','Telecom & media','Boodschappen','Eten & drinken buitenshuis','Auto & vervoer','Kinderen','Verzekering','Gezondheid','Online shopping','Streaming','Bankkosten','Sparen','Overig'];
+const CONTRACT_CATEGORIES = ['Energie','Telecom & internet','Verzekering','Hypotheek & lening','EV laden','Onderhoud huis','Onderhoud auto','Online shopping','Streaming','Kinderen','Bankkosten','Abonnement','Overig'];
 const CONTRACT_TO_BUDGET_CATEGORY = {
   'Energie':'Energie & water','Telecom & internet':'Telecom & media','Verzekering':'Verzekering',
   'Hypotheek & lening':'Wonen','EV laden':'Auto & vervoer','Onderhoud huis':'Wonen','Onderhoud auto':'Auto & vervoer',
-  'Online shopping':'Online shopping','Streaming':'Streaming','Kinderen':'Kinderen','Abonnement':'Overig','Overig':'Overig'
+  'Online shopping':'Online shopping','Streaming':'Streaming','Kinderen':'Kinderen','Bankkosten':'Bankkosten','Abonnement':'Overig','Overig':'Overig'
 };
 const CONTRACT_COMPARE_LINKS = {
   'Energie': 'https://www.creg.be/nl/cregscan',
@@ -1100,7 +1100,7 @@ function renderFixedCosts(monthEntries){
     list.appendChild(row);
   });
 }
-const FIXED_CATS = ['Wonen','Telecom & media','Energie & water','Kinderen','Streaming','Verzekering'];
+const FIXED_CATS = ['Wonen','Telecom & media','Energie & water','Kinderen','Streaming','Verzekering','Bankkosten'];
 const CATEGORY_ICONS = {
   'Wonen':'🏠','Energie & water':'⚡','Telecom & media':'📶','Boodschappen':'🛒',
   'Eten & drinken buitenshuis':'🍟','Auto & vervoer':'🚗','Kinderen':'🧒',
@@ -1535,7 +1535,7 @@ const FIX_UPDATES = {
 const FIX_DELETE_NAMES = ['Luminus SA (oud contract, afgesloten)', 'Threeforce (afbetalingsplan oude Luminus-factuur)', 'Versleverancier via Mollie'];
 const FIX_ADD = [
   { naam:'Disney+', categorie:'Streaming', prijs:5.99, laatstGecheckt:'2026-08-05', intervalMaanden:12, dagVanMaand:5, notitie:'Sinds juli 2026, via kaart Kimberly' },
-  { naam:'KBC-Plusrekening bijdrage', categorie:'Verzekering', prijs:4.25, laatstGecheckt:'2026-07-31', intervalMaanden:12, dagVanMaand:30, notitie:'Beheerskost zichtrekening, gestegen van €3,75 (2025) naar €4,25 (sinds jan. 2026). Wordt geïnd op de laatste bankwerkdag van de maand (varieert 27e-31e)' },
+  { naam:'KBC-Plusrekening bijdrage', categorie:'Bankkosten', prijs:4.25, laatstGecheckt:'2026-07-31', intervalMaanden:12, dagVanMaand:30, notitie:'Beheerskost zichtrekening, gestegen van €3,75 (2025) naar €4,25 (sinds jan. 2026). Wordt geïnd op de laatste bankwerkdag van de maand (varieert 27e-31e)' },
   { naam:'Threeforce (Luminus factuurinning)', categorie:'Energie', prijs:46.85, laatstGecheckt:'2026-07-24', intervalMaanden:6, notitie:'Correctie: géén afgesloten contract — actieve betaalverwerker van Luminus, int jullie energiefactuur in 2 termijnen/maand. Bedrag varieert sterk (€6-94), €46,85 is het gemiddelde. Nog steeds actief (laatst gezien 24 juli 2026)' }
 ];
 document.getElementById('applyFixesBtn').addEventListener('click', async ()=>{
