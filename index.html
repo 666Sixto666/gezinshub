@@ -109,23 +109,24 @@
   .goal-row .g-head{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px;}
   .goal-row .g-cat{font-weight:600;}
   .goal-row .g-amt{color:var(--muted);}
-  .bar-track{height:12px;border-radius:7px;background:var(--bg);overflow:hidden;position:relative;}
+  .bar-track{height:12px;border-radius:7px;background:var(--bg);overflow:visible;position:relative;}
   .bar-fill{height:100%;border-radius:7px;background:var(--primary);transition:width .3s;}
+  .bar-stop{position:absolute;top:-3px;bottom:-3px;width:3px;background:var(--ink);border-radius:2px;left:66.666%;z-index:2;}
   .bar-fill.warn{background:var(--accent);}
   .bar-fill.over{background:var(--danger);}
   .bar-fill.ok-exact{background:var(--primary);}
   .g-pct{font-size:10.5px;color:var(--muted);font-weight:600;margin-top:3px;display:block;}
   .g-pct.over{color:var(--danger);}
   .g-pct.warn{color:#7A5A1E;}
-  .budget-total-card{background:var(--surface);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:12px;}
-  .budget-total-card .bt-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
-  .budget-total-card .bt-label{font-size:13px;font-weight:700;color:var(--ink);}
-  .budget-total-card .bt-amt{font-size:13px;font-weight:700;}
-  .budget-total-card .bt-track{height:14px;border-radius:8px;background:var(--bg);overflow:hidden;margin-bottom:6px;}
-  .budget-total-card .bt-fill{height:100%;border-radius:8px;background:var(--primary);transition:width .3s;}
+  .budget-total-card{background:var(--surface);border-radius:var(--radius);padding:18px;box-shadow:0 4px 14px rgba(0,0,0,0.10);border:2px solid var(--primary);margin-bottom:14px;}
+  .budget-total-card .bt-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+  .budget-total-card .bt-label{font-size:15px;font-weight:800;color:var(--ink);}
+  .budget-total-card .bt-amt{font-size:16px;font-weight:800;}
+  .budget-total-card .bt-track{height:16px;border-radius:9px;background:var(--bg);overflow:hidden;margin-bottom:7px;}
+  .budget-total-card .bt-fill{height:100%;border-radius:9px;background:var(--primary);transition:width .3s;}
   .budget-total-card .bt-fill.over{background:var(--danger);}
   .budget-total-card .bt-fill.warn{background:var(--accent);}
-  .budget-total-card .bt-sub{font-size:11.5px;color:var(--muted);}
+  .budget-total-card .bt-sub{font-size:12.5px;color:var(--muted);font-weight:600;}
   .goal-input{display:flex;align-items:center;gap:6px;margin-top:4px;}
   .goal-input input{width:80px;padding:5px 8px;font-size:12px;}
   .goal-input span{font-size:11px;color:var(--muted);}
@@ -279,7 +280,7 @@
       <div class="cal-head"><button id="prevBudMonth">‹</button><div class="label" id="budMonthLabel"></div><button id="nextBudMonth">›</button></div>
       <div id="septPin" style="display:none;background:var(--primary-light);color:var(--primary);border-radius:10px;padding:9px 12px;font-size:12.5px;font-weight:600;margin-bottom:12px;text-align:center;">🎯 Nieuwe budgetten actief sinds 1 september</div>
       <div class="card">
-        <h3>Nieuwe registratie<span class="sub">Tip: elke 1-2 weken bijwerken, KBC Touch ernaast — mikken op de grote lijnen (~85%), niet op perfectie.</span></h3>
+        <h3>Nieuwe registratie</h3>
         <div id="oldCatFix" style="display:none;margin-bottom:10px;padding:10px 12px;background:var(--accent-light);border-radius:10px;">
           <div style="font-size:12.5px;margin-bottom:8px;"><span id="oldCatFixCount">0</span> oude registratie(s) staan nog onder de vervallen categorie "Gezondheid & verzekering".</div>
           <button class="btn ghost" id="oldCatFixBtn" type="button" style="font-size:12px;padding:8px 12px;">Herverdeel naar Verzekering / Gezondheid</button>
@@ -338,10 +339,10 @@
     </section>
     <section id="panel-todo" class="panel">
       <div class="card">
-        <h3>🤝 Samen (max 3 tegelijk)<span class="sub">Bewust beperkt — rond er één af voor je een nieuwe toevoegt.</span></h3>
+        <h3>🤝 Samen (max 4 tegelijk)<span class="sub">Bewust beperkt — rond er één af voor je een nieuwe toevoegt.</span></h3>
         <div id="sharedTodoList"></div>
         <div class="add-row" id="sharedTodoAddRow"><input type="text" id="sharedTodoInput" placeholder="Nieuwe gedeelde taak..."><button id="sharedTodoAddBtn" class="btn">+</button></div>
-        <div id="sharedTodoFullMsg" style="display:none;font-size:12px;color:var(--muted);margin-top:6px;">Vol (max 3) — rond er eerst één af.</div>
+        <div id="sharedTodoFullMsg" style="display:none;font-size:12px;color:var(--muted);margin-top:6px;">Vol (max 4) — rond er eerst één af.</div>
       </div>
       <div class="card" id="ownerCard" style="display:none;"><h3>Voor wie is dit toestel?</h3><div class="owner-pick" id="ownerPick"></div></div>
       <div id="todoMain" style="display:none;">
@@ -652,12 +653,12 @@ function renderTodayOverview(){
   if(todoCount===0){
     parts.push('🤝 Geen gedeelde taken open.');
   } else {
-    parts.push(`🤝 ${todoCount} gedeelde taak${todoCount>1?'en':''} open (max 3).`);
+    parts.push(`🤝 ${todoCount} gedeelde taak${todoCount>1?'en':''} open (max 4).`);
   }
   if(budgetData && budgetData.entries && budgetData.entries.length>0){
     const lastDate = budgetData.entries.map(e=>e.date).sort().pop();
     const daysSince = Math.round((today - new Date(lastDate+'T00:00:00')) / 86400000);
-    if(daysSince >= 10){
+    if(daysSince >= 5){
       parts.push(`📝 Alweer ${daysSince} dagen geen registratie gelogd — misschien tijd voor een update?`);
     }
   }
@@ -1175,7 +1176,7 @@ function renderBudget(){
     const goal = budgetData.goals[cat] || 0;
     categorySummary.push({cat, spent, goal});
     const row = document.createElement('div'); row.className='goal-row';
-    let pct = goal>0 ? Math.min(100,(spent/goal)*100) : 0;
+    const scaledPct = goal>0 ? Math.min(150,(spent/goal)*100) / 150 * 100 : 0;
     let cls='';
     let amtText = fmtMoney(spent);
     const isFixed = FIXED_CATS.includes(cat);
@@ -1200,9 +1201,9 @@ function renderBudget(){
       tips.push({cat,spent,expected,level:'dubbel'});
     }
     const realPct = goal>0 ? Math.round((spent/goal)*100) : 0;
-    const pctLabel = goal>0 ? (realPct>=100 ? `🔴 ${realPct}% — budget op` : `${realPct}% gebruikt`) : '';
-    row.innerHTML = `<div class="g-head"><span class="g-cat">${cat}</span><span class="g-amt">${amtText}${goal>0?' <span style=\"opacity:.6\">(van '+fmtMoney(goal)+')</span>':''}</span></div>
-      <div class="bar-track"><div class="bar-fill ${cls}" style="width:${goal>0?pct:0}%"></div></div>
+    const pctLabel = goal>0 ? (realPct>100 ? `🔴 ${fmtMoney(spent-goal)} over de stop (${realPct}%)` : realPct===100 ? `🔴 Budget precies op (100%)` : `${realPct}% gebruikt`) : '';
+    row.innerHTML = `<div class="g-head"><span class="g-cat">${cat}${cat==='Overig'?' <span style=\"font-weight:400;opacity:.6;font-size:11px;\">(eenmalige uitgaven, bv. cadeaus)</span>':''}</span><span class="g-amt">${amtText}${goal>0?' <span style=\"opacity:.6\">(van '+fmtMoney(goal)+')</span>':''}</span></div>
+      <div class="bar-track">${goal>0?'<div class="bar-stop"></div>':''}<div class="bar-fill ${cls}" style="width:${scaledPct}%"></div></div>
       ${goal>0?`<span class="g-pct ${cls==='over'?'over':cls==='warn'?'warn':''}">${pctLabel}</span>`:''}
       <div class="goal-input"><span>Maandbudget:</span><input type="number" step="0.01" value="${goal||''}" placeholder="–" data-cat="${cat}"></div>`;
     if(goal===0 && spent===0){ inactiveList.appendChild(row); inactiveCount++; }
@@ -1534,7 +1535,7 @@ const FIX_UPDATES = {
 const FIX_DELETE_NAMES = ['Luminus SA (oud contract, afgesloten)', 'Threeforce (afbetalingsplan oude Luminus-factuur)', 'Versleverancier via Mollie'];
 const FIX_ADD = [
   { naam:'Disney+', categorie:'Streaming', prijs:5.99, laatstGecheckt:'2026-08-05', intervalMaanden:12, dagVanMaand:5, notitie:'Sinds juli 2026, via kaart Kimberly' },
-  { naam:'KBC-Plusrekening bijdrage', categorie:'Overig', prijs:4.25, laatstGecheckt:'2026-07-31', intervalMaanden:12, dagVanMaand:30, notitie:'Beheerskost zichtrekening, gestegen van €3,75 (2025) naar €4,25 (sinds jan. 2026). Wordt geïnd op de laatste bankwerkdag van de maand (varieert 27e-31e)' },
+  { naam:'KBC-Plusrekening bijdrage', categorie:'Verzekering', prijs:4.25, laatstGecheckt:'2026-07-31', intervalMaanden:12, dagVanMaand:30, notitie:'Beheerskost zichtrekening, gestegen van €3,75 (2025) naar €4,25 (sinds jan. 2026). Wordt geïnd op de laatste bankwerkdag van de maand (varieert 27e-31e)' },
   { naam:'Threeforce (Luminus factuurinning)', categorie:'Energie', prijs:46.85, laatstGecheckt:'2026-07-24', intervalMaanden:6, notitie:'Correctie: géén afgesloten contract — actieve betaalverwerker van Luminus, int jullie energiefactuur in 2 termijnen/maand. Bedrag varieert sterk (€6-94), €46,85 is het gemiddelde. Nog steeds actief (laatst gezien 24 juli 2026)' }
 ];
 document.getElementById('applyFixesBtn').addEventListener('click', async ()=>{
@@ -1657,6 +1658,15 @@ function renderContracts(){
       update(ref(db, hhPath+'/contracts/'+c.id), {prijs: bedrag});
     });
     more.appendChild(priceBtn);
+    const catBtn = document.createElement('button'); catBtn.type='button'; catBtn.textContent='🏷️ Categorie';
+    catBtn.addEventListener('click', ()=>{
+      const invoer = prompt(`Categorie aanpassen. Geldige opties:\n${CONTRACT_CATEGORIES.join(', ')}`, c.categorie || '');
+      if(invoer === null) return;
+      const match = CONTRACT_CATEGORIES.find(cc=>cc.toLowerCase()===invoer.trim().toLowerCase());
+      if(!match){ alert('Onbekende categorie. Kies exact uit: ' + CONTRACT_CATEGORIES.join(', ')); return; }
+      update(ref(db, hhPath+'/contracts/'+c.id), {categorie: match});
+    });
+    more.appendChild(catBtn);
     const infoBtn = document.createElement('button'); infoBtn.type='button'; infoBtn.textContent = c.infoOnly ? 'ℹ️ Niet herbekijken' : 'ℹ️ Wel herbekijken';
     infoBtn.addEventListener('click', ()=>{ update(ref(db, hhPath+'/contracts/'+c.id), {infoOnly: !c.infoOnly}); });
     more.appendChild(infoBtn);
@@ -1725,8 +1735,8 @@ document.getElementById('shopInput').addEventListener('keydown', (e)=>{ if(e.key
 document.getElementById('clearCheckedBtn').addEventListener('click', ()=>{
   shoppingItems.filter(i=>i.done).forEach(i=>{ remove(ref(db, hhPath+'/shoppingList/'+i.id)); });
 });
-// ---------- gedeelde to-do (Samen, max 3) ----------
-const SHARED_TODO_MAX = 3;
+// ---------- gedeelde to-do (Samen, max 4) ----------
+const SHARED_TODO_MAX = 4;
 function addSharedTodo(){
   const inp = document.getElementById('sharedTodoInput');
   const val = inp.value.trim();
