@@ -290,6 +290,7 @@
           <input type="file" id="receiptInput" accept="image/*" style="display:none;">
           <button class="btn ghost" id="receiptBtn" type="button">📷 Bonnetje scannen</button>
           <div id="receiptStatus" style="font-size:12px;color:var(--muted);margin-top:6px;display:none;"></div>
+          <div id="receiptReviewWrap"></div>
         </div>
         <form class="inline" id="entryForm">
           <div class="type-toggle"><button type="button" class="active expense" data-type="expense">Uitgave</button><button type="button" class="income" data-type="income">Inkomst</button></div>
@@ -833,6 +834,7 @@ document.getElementById('entryDate').value = fmtDate(new Date());
 document.getElementById('receiptBtn').addEventListener('click', ()=>{
   document.getElementById('receiptInput').click();
 });
+let receiptReviewItems = null;
 document.getElementById('receiptInput').addEventListener('change', async (e)=>{
   const file = e.target.files[0]; if(!file) return;
   const status = document.getElementById('receiptStatus');
@@ -842,30 +844,62 @@ document.getElementById('receiptInput').addEventListener('change', async (e)=>{
     const mediaType = dataUrl.substring(5, dataUrl.indexOf(';'));
     const base64 = dataUrl.split(',')[1];
     const todayIso = fmtDate(new Date());
-    const prompt = `Dit is een foto van een kassabon/bonnetje voor een Belgisch gezin (Nederlandstalig). Vandaag is ${todayIso}.
-Lees het TOTAALbedrag af (het eindbedrag dat betaald werd, niet een deelbedrag), de winkel-/bedrijfsnaam, en de datum op het bonnetje indien zichtbaar.
-Kies ook de best passende categorie uit exact deze lijst: ${CATEGORIES.join(', ')}.
-Geef terug als PURE JSON, GEEN markdown, GEEN uitleg:
-{"bedrag": number, "winkel": "korte naam", "datum": "YYYY-MM-DD indien zichtbaar anders leeg", "categorie": "exacte match uit de lijst hierboven"}`;
+    const prompt = `Dit is een foto van één of meerdere kassabonnen/bonnetjes voor een Belgisch gezin (Nederlandstalig). Vandaag is ${todayIso}.
+Er kan één bonnetje op staan, of meerdere bonnetjes naast elkaar. Behandel elk bonnetje als één aparte registratie met het TOTAALbedrag van dát bonnetje (niet de individuele artikelen erop) — tenzij duidelijk verschillende soorten aankopen op één bonnetje samen staan die in een andere categorie horen, splits dan wel per categorie.
+Lees per bonnetje/registratie: het bedrag, de winkel-/bedrijfsnaam, en de datum indien zichtbaar.
+Kies telkens de best passende categorie uit exact deze lijst: ${CATEGORIES.join(', ')}.
+Geef terug als PURE JSON array, GEEN markdown, GEEN uitleg — ook als er maar 1 bonnetje is, dan array met 1 item:
+[{"bedrag": number, "winkel": "korte naam", "datum": "YYYY-MM-DD indien zichtbaar anders leeg", "categorie": "exacte match uit de lijst hierboven"}]`;
     const text = await geminiAnalyzeImage(base64, mediaType, prompt);
     const clean = text.replace(/```json|```/g,'').trim();
     const parsed = JSON.parse(clean);
-    if(currentType !== 'expense'){
-      document.querySelectorAll('.type-toggle button').forEach(b=>b.classList.remove('active'));
-      document.querySelector('.type-toggle button[data-type="expense"]').classList.add('active');
-      currentType = 'expense'; refreshCategorySelect();
-    }
-    if(parsed.bedrag) document.getElementById('entryAmount').value = parsed.bedrag;
-    if(parsed.datum && /^\d{4}-\d{2}-\d{2}$/.test(parsed.datum)) document.getElementById('entryDate').value = parsed.datum;
-    if(parsed.winkel) document.getElementById('entryNote').value = parsed.winkel;
-    if(parsed.categorie && CATEGORIES.includes(parsed.categorie)) document.getElementById('entryCategory').value = parsed.categorie;
-    status.textContent = 'Herkend — controleer de gegevens hieronder en druk op Registreren.';
+    const arr = Array.isArray(parsed) ? parsed : [parsed];
+    receiptReviewItems = arr.map(it=>({
+      rid: Math.random().toString(36).slice(2,8),
+      bedrag: it.bedrag || 0,
+      winkel: it.winkel || '',
+      datum: (it.datum && /^\d{4}-\d{2}-\d{2}$/.test(it.datum)) ? it.datum : todayIso,
+      categorie: (it.categorie && CATEGORIES.includes(it.categorie)) ? it.categorie : CATEGORIES[0]
+    }));
+    status.style.display='none';
+    renderReceiptReview();
   }catch(err){
     console.error(err);
     status.textContent = 'Fout bij lezen: ' + (err && err.message ? err.message : String(err));
   }
   e.target.value = '';
 });
+function renderReceiptReview(){
+  const wrap = document.getElementById('receiptReviewWrap');
+  if(!receiptReviewItems || receiptReviewItems.length===0){ wrap.innerHTML=''; return; }
+  const sheet = document.createElement('div'); sheet.className='review-sheet';
+  sheet.innerHTML = `<h3>Controleer herkende bonnetjes (${receiptReviewItems.length})</h3><div id="receiptReviewRows"></div>
+    <div class="review-actions"><button class="btn outline" id="receiptReviewCancel" type="button">Annuleren</button><button class="btn" id="receiptReviewConfirm" type="button">Alles registreren</button></div>`;
+  wrap.innerHTML=''; wrap.appendChild(sheet);
+  const rowsEl = sheet.querySelector('#receiptReviewRows');
+  receiptReviewItems.forEach((it, idx)=>{
+    const row = document.createElement('div'); row.className='review-row';
+    const catOpts = CATEGORIES.map(c=>`<option value="${c}" ${c===it.categorie?'selected':''}>${c}</option>`).join('');
+    row.innerHTML = `<input type="text" value="${escapeHtml(it.winkel)}" placeholder="Winkel/omschrijving" data-f="winkel">
+      <div class="rrow"><input type="number" step="0.01" value="${it.bedrag}" data-f="bedrag"><input type="date" value="${it.datum}" data-f="datum"></div>
+      <div class="rrow"><select data-f="categorie">${catOpts}</select><button type="button" class="del-btn" data-remove="1">✕</button></div>`;
+    row.querySelectorAll('[data-f]').forEach(inp=>{ inp.addEventListener('input', ()=>{ receiptReviewItems[idx][inp.dataset.f] = inp.value; }); });
+    row.querySelector('[data-remove]').addEventListener('click', ()=>{ receiptReviewItems.splice(idx,1); renderReceiptReview(); });
+    rowsEl.appendChild(row);
+  });
+  sheet.querySelector('#receiptReviewCancel').addEventListener('click', ()=>{ receiptReviewItems=null; renderReceiptReview(); });
+  sheet.querySelector('#receiptReviewConfirm').addEventListener('click', ()=>{
+    receiptReviewItems.forEach(it=>{
+      const bedrag = parseFloat(it.bedrag);
+      if(!bedrag || bedrag<=0) return;
+      push(budgetEntriesRef, { type:'expense', amount:bedrag, category:it.categorie, date:it.datum, note:it.winkel });
+    });
+    receiptReviewItems = null; renderReceiptReview();
+    document.getElementById('receiptStatus').style.display='block';
+    document.getElementById('receiptStatus').textContent = 'Geregistreerd ✓';
+    setTimeout(()=>{ document.getElementById('receiptStatus').style.display='none'; }, 3000);
+  });
+}
 document.getElementById('entryForm').addEventListener('submit', (e)=>{
   e.preventDefault();
   const amount = parseFloat(document.getElementById('entryAmount').value);
