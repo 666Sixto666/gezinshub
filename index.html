@@ -109,11 +109,23 @@
   .goal-row .g-head{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px;}
   .goal-row .g-cat{font-weight:600;}
   .goal-row .g-amt{color:var(--muted);}
-  .bar-track{height:8px;border-radius:6px;background:var(--bg);overflow:hidden;}
-  .bar-fill{height:100%;border-radius:6px;background:var(--primary);transition:width .3s;}
+  .bar-track{height:12px;border-radius:7px;background:var(--bg);overflow:hidden;position:relative;}
+  .bar-fill{height:100%;border-radius:7px;background:var(--primary);transition:width .3s;}
   .bar-fill.warn{background:var(--accent);}
   .bar-fill.over{background:var(--danger);}
   .bar-fill.ok-exact{background:var(--primary);}
+  .g-pct{font-size:10.5px;color:var(--muted);font-weight:600;margin-top:3px;display:block;}
+  .g-pct.over{color:var(--danger);}
+  .g-pct.warn{color:#7A5A1E;}
+  .budget-total-card{background:var(--surface);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:12px;}
+  .budget-total-card .bt-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+  .budget-total-card .bt-label{font-size:13px;font-weight:700;color:var(--ink);}
+  .budget-total-card .bt-amt{font-size:13px;font-weight:700;}
+  .budget-total-card .bt-track{height:14px;border-radius:8px;background:var(--bg);overflow:hidden;margin-bottom:6px;}
+  .budget-total-card .bt-fill{height:100%;border-radius:8px;background:var(--primary);transition:width .3s;}
+  .budget-total-card .bt-fill.over{background:var(--danger);}
+  .budget-total-card .bt-fill.warn{background:var(--accent);}
+  .budget-total-card .bt-sub{font-size:11.5px;color:var(--muted);}
   .goal-input{display:flex;align-items:center;gap:6px;margin-top:4px;}
   .goal-input input{width:80px;padding:5px 8px;font-size:12px;}
   .goal-input span{font-size:11px;color:var(--muted);}
@@ -167,7 +179,7 @@
   .quick-add-chips{display:flex;flex-wrap:wrap;gap:6px;}
   .quick-add-chips button{padding:7px 12px;border-radius:20px;border:1px solid var(--border);background:var(--bg);color:var(--ink);font-size:12.5px;font-weight:600;cursor:pointer;}
   .quick-add-chips button:active{background:var(--primary-light);}
-  .c-actions button{flex:1 1 auto;min-width:90px;padding:7px;font-size:12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;font-weight:600;}
+  .c-actions button{flex:1 1 auto;min-width:90px;padding:11px 10px;font-size:12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;font-weight:600;}
   .c-actions button.primary{background:var(--primary);color:#fff;border-color:var(--primary);}
   .shop-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:10px;margin-bottom:6px;border-left:4px solid transparent;}
   .shop-item input[type=checkbox]{width:20px;height:20px;accent-color:var(--primary);flex-shrink:0;}
@@ -182,7 +194,7 @@
   .fc-item .fc-name{font-weight:700;font-size:13.5px;}
   .fc-item .fc-when{font-size:11.5px;color:var(--muted);margin-top:2px;}
   .fc-item .fc-amount{font-weight:700;font-size:13px;white-space:nowrap;}
-  .fc-item button{flex-shrink:0;padding:6px 10px;font-size:11.5px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;font-weight:600;}
+  .fc-item button{flex-shrink:0;padding:10px 12px;font-size:11.5px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;font-weight:600;}
   .fc-item button.logged{background:var(--primary-light);color:var(--primary);border-color:transparent;}
   .yc-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:10px;margin-bottom:6px;border-left:4px solid var(--border);}
   .yc-item.soon{border-left-color:var(--accent);}
@@ -287,6 +299,11 @@
         </form>
       </div>
       <div class="card" id="tipsCard" style="display:none;"><h3>Aandachtspunten</h3><div id="tipsList"></div></div>
+      <div class="budget-total-card" id="budgetTotalCard" style="display:none;">
+        <div class="bt-head"><span class="bt-label">Totaal budget deze maand</span><span class="bt-amt" id="btAmt"></span></div>
+        <div class="bt-track"><div class="bt-fill" id="btFill" style="width:0%"></div></div>
+        <div class="bt-sub" id="btSub"></div>
+      </div>
       <div class="card">
         <h3>Budget per categorie (geselecteerde maand)</h3>
         <div id="goalsList"></div>
@@ -1182,13 +1199,34 @@ function renderBudget(){
     } else if(likelyDubbel){
       tips.push({cat,spent,expected,level:'dubbel'});
     }
+    const realPct = goal>0 ? Math.round((spent/goal)*100) : 0;
+    const pctLabel = goal>0 ? (realPct>=100 ? `🔴 ${realPct}% — budget op` : `${realPct}% gebruikt`) : '';
     row.innerHTML = `<div class="g-head"><span class="g-cat">${cat}</span><span class="g-amt">${amtText}${goal>0?' <span style=\"opacity:.6\">(van '+fmtMoney(goal)+')</span>':''}</span></div>
       <div class="bar-track"><div class="bar-fill ${cls}" style="width:${goal>0?pct:0}%"></div></div>
+      ${goal>0?`<span class="g-pct ${cls==='over'?'over':cls==='warn'?'warn':''}">${pctLabel}</span>`:''}
       <div class="goal-input"><span>Maandbudget:</span><input type="number" step="0.01" value="${goal||''}" placeholder="–" data-cat="${cat}"></div>`;
     if(goal===0 && spent===0){ inactiveList.appendChild(row); inactiveCount++; }
     else { goalsList.appendChild(row); }
   });
   goalsList.appendChild(inactiveList);
+  const totalGoal = categorySummary.reduce((s,c)=>s+c.goal,0);
+  const totalSpent = categorySummary.reduce((s,c)=>s+c.spent,0);
+  const btCard = document.getElementById('budgetTotalCard');
+  if(totalGoal>0){
+    btCard.style.display='block';
+    const totalPct = Math.min(100,(totalSpent/totalGoal)*100);
+    const realTotalPct = Math.round((totalSpent/totalGoal)*100);
+    document.getElementById('btAmt').textContent = `${fmtMoney(totalSpent)} / ${fmtMoney(totalGoal)}`;
+    const fill = document.getElementById('btFill');
+    fill.style.width = totalPct + '%';
+    fill.className = 'bt-fill' + (realTotalPct>100?' over':realTotalPct>=85?' warn':'');
+    const remaining = totalGoal - totalSpent;
+    document.getElementById('btSub').textContent = remaining>=0
+      ? `${realTotalPct}% gebruikt — nog ${fmtMoney(remaining)} over over alle categorieën samen`
+      : `${realTotalPct}% gebruikt — ${fmtMoney(-remaining)} boven het totaalbudget`;
+  } else {
+    btCard.style.display='none';
+  }
   let toggleBtn = document.getElementById('goalsToggleBtn');
   if(!toggleBtn){
     toggleBtn = document.createElement('button'); toggleBtn.id='goalsToggleBtn'; toggleBtn.type='button'; toggleBtn.className='btn outline';
