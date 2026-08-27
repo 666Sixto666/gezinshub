@@ -1180,12 +1180,16 @@ function renderBudget(){
     let cls='';
     let amtText = fmtMoney(spent);
     const isFixed = FIXED_CATS.includes(cat);
+    const isSavings = cat==='Sparen';
     const overThreshold = isFixed ? 1.15 : 1.05;
     const expected = expectedFromContracts[cat] || 0;
     const likelyDubbel = isFixed && expected>0 && spent > expected*1.5;
     if(goal>0){
       const remaining = goal - spent;
-      if(Math.abs(remaining) < 1){
+      if(isSavings && spent > goal){
+        cls = 'ok-exact';
+        amtText = `🌟 ${fmtMoney(spent-goal)} extra gespaard!`;
+      } else if(Math.abs(remaining) < 1){
         cls = 'ok-exact';
         amtText = '🎯 Budget precies op';
         if(!isFixed) tips.push({cat,spent,goal,level:'exact'});
@@ -1201,8 +1205,14 @@ function renderBudget(){
       tips.push({cat,spent,expected,level:'dubbel'});
     }
     const realPct = goal>0 ? Math.round((spent/goal)*100) : 0;
-    const pctLabel = goal>0 ? (realPct>100 ? `🔴 ${fmtMoney(spent-goal)} over de stop (${realPct}%)` : realPct===100 ? `🔴 Budget precies op (100%)` : `${realPct}% gebruikt`) : '';
-    row.innerHTML = `<div class="g-head"><span class="g-cat">${cat}${cat==='Overig'?' <span style=\"font-weight:400;opacity:.6;font-size:11px;\">(eenmalige uitgaven, bv. cadeaus)</span>':''}</span><span class="g-amt">${amtText}${goal>0?' <span style=\"opacity:.6\">(van '+fmtMoney(goal)+')</span>':''}</span></div>
+    let pctLabel = '';
+    if(goal>0){
+      if(cls==='over') pctLabel = `🔴 ${fmtMoney(spent-goal)} over de stop (${realPct}%)`;
+      else if(cls==='ok-exact' && isSavings && spent>goal) pctLabel = `🌟 ${realPct}% van doel — extra gespaard`;
+      else if(cls==='ok-exact') pctLabel = `🎯 Budget precies op (${realPct}%)`;
+      else pctLabel = `${realPct}% gebruikt`;
+    }
+    row.innerHTML = `<div class="g-head"><span class="g-cat">${cat}${cat==='Overig'?' <span style=\"font-weight:400;opacity:.6;font-size:11px;\">(cadeaus & kleine abonnementen)</span>':''}</span><span class="g-amt">${amtText}${goal>0?' <span style=\"opacity:.6\">(van '+fmtMoney(goal)+')</span>':''}</span></div>
       <div class="bar-track">${goal>0?'<div class="bar-stop"></div>':''}<div class="bar-fill ${cls}" style="width:${scaledPct}%"></div></div>
       ${goal>0?`<span class="g-pct ${cls==='over'?'over':cls==='warn'?'warn':''}">${pctLabel}</span>`:''}
       <div class="goal-input"><span>Maandbudget:</span><input type="number" step="0.01" value="${goal||''}" placeholder="–" data-cat="${cat}"></div>`;
@@ -1565,8 +1575,9 @@ document.getElementById('applyFixesBtn').addEventListener('click', async ()=>{
 function renderContracts(){
   const expectedTotalEl = document.getElementById('conExpectedTotal');
   if(expectedTotalEl){
-    const total = contracts.filter(c=>!c.variabel && c.prijs).reduce((s,c)=>s+c.prijs,0);
-    expectedTotalEl.textContent = total>0 ? `Verwachte vaste kosten deze maand: ${fmtMoney(total)} (${contracts.filter(c=>!c.variabel && c.prijs).length} contracten met vast bedrag)` : '';
+    const monthlyOnly = contracts.filter(c=>!c.variabel && c.prijs && !c.jaarlijks);
+    const total = monthlyOnly.reduce((s,c)=>s+c.prijs,0);
+    expectedTotalEl.textContent = total>0 ? `Verwachte vaste kosten deze maand: ${fmtMoney(total)} (${monthlyOnly.length} contracten met vast maandelijks bedrag, jaarlijkse kosten niet meegeteld)` : '';
   }
   const list = document.getElementById('contractsList');
   if(contracts.length===0){
