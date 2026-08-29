@@ -655,6 +655,30 @@ function renderTodayOverview(){
     : `<div class="today-line">${todoCount} taak${todoCount>1?'en':''} open <span style="color:var(--muted);">(max 4)</span></div>`;
   html += `</div>`;
 
+  // ---- Sectie 4: jaarlijkse kost op komst (enkel binnen 1-2 maanden) ----
+  const yearlyUpcoming = contracts.filter(c=>c.jaarlijks && c.vervalDag && c.vervalMaand).map(c=>{
+    let next = new Date(today.getFullYear(), c.vervalMaand-1, c.vervalDag);
+    if(next < today) next = new Date(today.getFullYear()+1, c.vervalMaand-1, c.vervalDag);
+    const diffDays = Math.round((next - today) / 86400000);
+    return {naam:c.naam, diffDays, jaarBedrag: c.prijs ? c.prijs*12 : null};
+  }).filter(x=>x.diffDays<=60).sort((a,b)=>a.diffDays-b.diffDays);
+  if(yearlyUpcoming.length>0){
+    html += `<div class="today-section"><div class="today-section-head">⏰ Jaarlijkse kost op komst</div>`;
+    yearlyUpcoming.forEach(x=>{
+      const when = x.diffDays<=0 ? 'vandaag' : `over ${x.diffDays}d`;
+      html += `<div class="today-line">${escapeHtml(x.naam)}${x.jaarBedrag?` — <strong>${fmtMoney(x.jaarBedrag)}</strong>`:''} <span style="color:var(--muted);">(${when})</span></div>`;
+    });
+    html += `</div>`;
+  }
+
+  // ---- Sectie 5: contracten die nu te checken staan ----
+  const overdueContracts = contracts.filter(c=>!c.infoOnly).map(c=>({c, status:contractStatus(c)})).filter(x=>x.status.level==='over');
+  if(overdueContracts.length>0){
+    html += `<div class="today-section"><div class="today-section-head">🔍 Contracten te checken</div>`;
+    html += `<div class="today-line">${overdueContracts.length} contract${overdueContracts.length>1?'en':''} wachten op een vergelijking <span style="color:var(--muted);">(zie Contracten-tab)</span></div>`;
+    html += `</div>`;
+  }
+
   // ---- Zachte activiteitsherinnering ----
   if(budgetData && budgetData.entries && budgetData.entries.length>0){
     const lastDate = budgetData.entries.map(e=>e.date).sort().pop();
