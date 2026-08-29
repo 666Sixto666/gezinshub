@@ -165,6 +165,7 @@
   .contract-item .c-cat{font-size:11px;color:var(--muted);margin-top:2px;}
   .contract-item .c-lastdate{font-size:12px;color:var(--ink);font-weight:600;margin-top:4px;}
   .contract-item .c-price{font-weight:700;font-size:13px;color:var(--ink);white-space:nowrap;}
+  .contract-item .c-price-yearly{color:#7A5A1E;background:var(--accent-light);padding:2px 7px;border-radius:6px;font-size:12px;}
   .status-pill{display:inline-flex;align-items:center;justify-content:center;text-align:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;line-height:1.3;}
   .status-pill.ok{background:var(--primary-light);color:var(--primary);}
   .status-pill.soon{background:var(--accent-light);color:#7A5A1E;}
@@ -203,8 +204,7 @@
   .yc-item .yc-name{font-weight:700;font-size:13.5px;}
   .yc-item .yc-when{font-size:11.5px;color:var(--muted);margin-top:2px;}
   .yc-item .yc-amounts{text-align:right;flex-shrink:0;}
-  .yc-item .yc-monthly{font-weight:700;font-size:13px;}
-  .yc-item .yc-total{font-size:11px;color:var(--muted);}
+  .yc-item .yc-total-big{font-weight:800;font-size:16px;color:#7A5A1E;}
   .tip-row-list{display:flex;flex-direction:column;}
   .tip-row-head{padding:10px 2px;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;border-bottom:1px solid var(--border);}
   .tip-row-list .tip-row-head:last-of-type{border-bottom:none;}
@@ -317,7 +317,7 @@
         <div id="fixedCostsList"></div>
       </div>
       <div class="card" id="yearlyCostsCard" style="display:none;">
-        <h3>Jaarlijkse kosten in het vooruitzicht<span class="sub">Zet dit maandbedrag opzij, dan sta je niet voor een verrassing als de jaarlijkse factuur komt.</span></h3>
+        <h3>⏰ Jaarlijkse kost op komst<span class="sub">Verschijnt enkel wanneer een jaarlijkse betaling binnen 1-2 maanden verwacht wordt.</span></h3>
         <div id="yearlyCostsList"></div>
       </div>
       <div class="card"><h3 style="cursor:pointer;" class="tip-toggle" id="entriesToggle" data-target="entriesWrap">▸ Registraties bekijken (0)</h3><div id="entriesWrap" style="display:none;"><div id="entriesList"></div></div></div>
@@ -1047,22 +1047,24 @@ document.getElementById('copyContractsBtn').addEventListener('click', async ()=>
 function renderYearlyCosts(){
   const card = document.getElementById('yearlyCostsCard');
   const list = document.getElementById('yearlyCostsList');
+  const WARNING_WINDOW_DAYS = 60; // 1 à 2 maanden op voorhand
   const yearly = contracts.filter(c=>c.jaarlijks && c.vervalDag && c.vervalMaand);
-  if(yearly.length===0){ card.style.display='none'; return; }
-  card.style.display='block';
   const today = new Date(); today.setHours(0,0,0,0);
   const items = yearly.map(c=>{
     let next = new Date(today.getFullYear(), c.vervalMaand-1, c.vervalDag);
     if(next < today) next = new Date(today.getFullYear()+1, c.vervalMaand-1, c.vervalDag);
     const diffDays = Math.round((next - today) / 86400000);
     return {c, next, diffDays};
-  }).sort((a,b)=>a.diffDays-b.diffDays);
+  }).filter(x=>x.diffDays<=WARNING_WINDOW_DAYS).sort((a,b)=>a.diffDays-b.diffDays);
+  if(items.length===0){ card.style.display='none'; return; }
+  card.style.display='block';
   list.innerHTML='';
   items.forEach(({c, next, diffDays})=>{
-    const row = document.createElement('div'); row.className = 'yc-item' + (diffDays<=60?' soon':'');
+    const row = document.createElement('div'); row.className = 'yc-item soon';
     const jaarBedrag = c.prijs ? c.prijs*12 : null;
-    row.innerHTML = `<div class="yc-info"><div class="yc-name">${escapeHtml(c.naam)}</div><div class="yc-when">Over ${diffDays} dagen (${fmtDateNL(next)})</div></div>
-      <div class="yc-amounts">${c.prijs?`<div class="yc-monthly">${fmtMoney(c.prijs)}/mnd opzij</div><div class="yc-total">${fmtMoney(jaarBedrag)}/jaar</div>`:''}</div>`;
+    const whenText = diffDays<=0 ? 'Vandaag verwacht' : `Over ${diffDays} dagen`;
+    row.innerHTML = `<div class="yc-info"><div class="yc-name">${escapeHtml(c.naam)}</div><div class="yc-when">${whenText} (${fmtDateNL(next)})</div></div>
+      <div class="yc-amounts">${jaarBedrag?`<div class="yc-total-big">${fmtMoney(jaarBedrag)}</div>`:''}</div>`;
     list.appendChild(row);
   });
 }
@@ -1645,7 +1647,7 @@ function renderContracts(){
         : 'Volgende check: ' + fmtDateNL(c._status.next);
     row.innerHTML = `<div class="c-top">
         <div class="c-left"><div class="c-name">${escapeHtml(c.naam)}</div><div class="c-cat">${escapeHtml(c.categorie)}${c.notitie?' · '+escapeHtml(c.notitie):''}</div>${c.laatsteAfschrijving?`<div class="c-lastdate">Laatst betaald: ${fmtDateNL(c.laatsteAfschrijving)}</div>`:''}</div>
-        <div class="c-right">${c.prijs ? `<div class="c-price">${fmtMoney(c.prijs)}/mnd</div>` : ''}<div class="status-pill ${c._status.level}">${pillText}</div></div>
+        <div class="c-right">${c.prijs ? (c.jaarlijks ? `<div class="c-price c-price-yearly">🗓️ ${fmtMoney(c.prijs*12)}/jaar</div>` : `<div class="c-price">${fmtMoney(c.prijs)}/mnd</div>`) : ''}<div class="status-pill ${c._status.level}">${pillText}</div></div>
       </div>`;
     const actions = document.createElement('div'); actions.className='c-actions';
     if(!c.infoOnly){
@@ -1695,12 +1697,22 @@ function renderContracts(){
     more.appendChild(noteBtn);
     const priceBtn = document.createElement('button'); priceBtn.type='button'; priceBtn.textContent='✎ Prijs';
     priceBtn.addEventListener('click', ()=>{
-      const invoer = prompt('Prijs aanpassen (€/maand — voor jaarlijkse kosten: jaarbedrag ÷ 12 invullen):', c.prijs || '');
-      if(invoer === null) return;
-      if(invoer.trim() === ''){ update(ref(db, hhPath+'/contracts/'+c.id), {prijs: null}); return; }
-      const bedrag = parseFloat(invoer.replace(',','.'));
-      if(isNaN(bedrag) || bedrag<0){ alert('Ongeldig bedrag.'); return; }
-      update(ref(db, hhPath+'/contracts/'+c.id), {prijs: bedrag});
+      if(c.jaarlijks){
+        const huidigJaar = c.prijs ? (c.prijs*12).toFixed(2) : '';
+        const invoer = prompt('Jaarbedrag aanpassen (€/jaar — volledig bedrag, geen deling nodig):', huidigJaar);
+        if(invoer === null) return;
+        if(invoer.trim() === ''){ update(ref(db, hhPath+'/contracts/'+c.id), {prijs: null}); return; }
+        const jaarBedrag = parseFloat(invoer.replace(',','.'));
+        if(isNaN(jaarBedrag) || jaarBedrag<0){ alert('Ongeldig bedrag.'); return; }
+        update(ref(db, hhPath+'/contracts/'+c.id), {prijs: jaarBedrag/12});
+      } else {
+        const invoer = prompt('Prijs aanpassen (€/maand):', c.prijs || '');
+        if(invoer === null) return;
+        if(invoer.trim() === ''){ update(ref(db, hhPath+'/contracts/'+c.id), {prijs: null}); return; }
+        const bedrag = parseFloat(invoer.replace(',','.'));
+        if(isNaN(bedrag) || bedrag<0){ alert('Ongeldig bedrag.'); return; }
+        update(ref(db, hhPath+'/contracts/'+c.id), {prijs: bedrag});
+      }
     });
     more.appendChild(priceBtn);
     const catBtn = document.createElement('button'); catBtn.type='button'; catBtn.textContent='🏷️ Categorie';
