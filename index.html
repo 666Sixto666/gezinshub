@@ -66,6 +66,14 @@
   .day-events{margin-top:16px;}
   .day-events h4{font-size:13px;color:var(--muted);margin:0 0 8px;font-weight:600;}
   .event-item, .entry-item, .todo-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg);border-radius:10px;margin-bottom:6px;border-left:4px solid transparent;}
+  .today-section{margin-bottom:12px;}
+  .today-section:last-child{margin-bottom:0;}
+  .today-section-head{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;}
+  .today-event-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg);border-radius:8px;margin-bottom:4px;border-left:3px solid var(--p-wij);}
+  .today-event-item .te-time{font-size:11px;color:var(--muted);font-weight:600;min-width:38px;}
+  .today-event-item .te-title{font-size:13px;font-weight:600;flex:1;}
+  .today-line{font-size:13px;color:var(--ink);padding:2px 0;}
+  .today-empty{font-size:12.5px;color:var(--muted);}
   .event-item .meta, .entry-item .meta{display:flex;flex-direction:column;gap:2px;}
   .event-item .t, .entry-item .t{font-weight:600;font-size:14px;}
   .event-item .s, .entry-item .s{font-size:11px;color:var(--muted);}
@@ -243,7 +251,7 @@
     <section id="panel-cal" class="panel active">
       <div class="card">
         <h3>📌 Vandaag</h3>
-        <div id="todayOverview" style="font-size:13px;color:var(--ink);line-height:1.6;"></div>
+        <div id="todayOverview"></div>
       </div>
       <div class="card">
         <div class="cal-head"><button id="prevMonth">‹</button><div class="label" id="monthLabel"></div><button id="nextMonth">›</button></div>
@@ -560,7 +568,7 @@ if(logoutLinkEl){
 }
 
 function attachListeners(){
-  onValue(eventsRef, snap=>{ calEvents = snapToArray(snap.val()); renderLegend(); renderCalendar(); renderDayEvents(); markLive(); });
+  onValue(eventsRef, snap=>{ calEvents = snapToArray(snap.val()); renderLegend(); renderCalendar(); renderDayEvents(); renderTodayOverview(); markLive(); });
   onValue(budgetEntriesRef, snap=>{ budgetData.entries = snapToArray(snap.val()); renderBudget(); renderTodayOverview(); markLive(); });
   onValue(budgetGoalsRef, snap=>{ budgetData.goals = snap.val() || {}; renderBudget(); markLive(); });
   onValue(contractsRef, snap=>{ contracts = snapToArray(snap.val()); renderContracts(); renderBudget(); renderTodayOverview(); markLive(); });
@@ -599,6 +607,22 @@ function renderTodayOverview(){
   const el = document.getElementById('todayOverview');
   if(!el) return;
   const today = new Date(); today.setHours(0,0,0,0);
+  const todayIso = fmtDate(today);
+  let html = '';
+
+  // ---- Sectie 1: afspraken vandaag ----
+  const todaysEvents = (typeof calEvents!=='undefined' ? calEvents : []).filter(e=>e.date===todayIso).sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+  html += `<div class="today-section"><div class="today-section-head">📅 Afspraken vandaag</div>`;
+  if(todaysEvents.length===0){
+    html += `<div class="today-empty">Geen afspraken vandaag.</div>`;
+  } else {
+    todaysEvents.forEach(ev=>{
+      html += `<div class="today-event-item" style="border-left-color:${personColor(ev.person||'Wij')}"><span class="te-time">${ev.time||''}</span><span class="te-title">${escapeHtml(ev.title)}</span><span style="font-size:11px;color:var(--muted);">${ev.person||'Wij'}</span></div>`;
+    });
+  }
+  html += `</div>`;
+
+  // ---- Sectie 2: budget (kosten/bijdragen komende 3 dagen) ----
   const upcomingCosts = contracts.filter(c=>c.dagVanMaand && c.prijs).map(c=>{
     let next = new Date(today.getFullYear(), today.getMonth(), c.dagVanMaand);
     const diffDays = Math.round((next - today) / 86400000);
@@ -609,31 +633,38 @@ function renderTodayOverview(){
   const upcomingIncomes = incomeDiff>=0 && incomeDiff<=3
     ? FIXED_INCOMES.map(fi=>({naam:fi.naam, diffDays:incomeDiff, isIncome:true}))
     : [];
-  const upcoming = [...upcomingCosts, ...upcomingIncomes];
-  const todoCount = sharedTodoItems.length;
-  const parts = [];
+  const upcoming = [...upcomingCosts, ...upcomingIncomes].sort((a,b)=>a.diffDays-b.diffDays);
+  html += `<div class="today-section"><div class="today-section-head">💶 Budget (komende 3 dagen)</div>`;
   if(upcoming.length===0){
-    parts.push('✅ Geen vaste kosten of inkomsten verwacht de komende 3 dagen.');
+    html += `<div class="today-empty">Niets verwacht.</div>`;
   } else {
-    const names = upcoming.sort((a,b)=>a.diffDays-b.diffDays).map(x=> {
+    upcoming.forEach(x=>{
       const when = x.diffDays===0 ? 'vandaag' : `over ${x.diffDays}d`;
-      return `${x.isIncome?'💶 ':''}${x.naam} (${when})`;
+      const sign = x.isIncome ? '+' : '-';
+      const color = x.isIncome ? 'var(--primary)' : 'var(--ink)';
+      html += `<div class="today-line"><span style="color:${color};font-weight:600;">${sign}</span> ${escapeHtml(x.naam)} <span style="color:var(--muted);">(${when})</span></div>`;
     });
-    parts.push(`📋 Verwacht: ${names.join(', ')}.`);
   }
-  if(todoCount===0){
-    parts.push('🤝 Geen gedeelde taken open.');
-  } else {
-    parts.push(`🤝 ${todoCount} gedeelde taak${todoCount>1?'en':''} open (max 4).`);
-  }
+  html += `</div>`;
+
+  // ---- Sectie 3: gedeelde taken ----
+  const todoCount = sharedTodoItems.length;
+  html += `<div class="today-section"><div class="today-section-head">🤝 Gedeelde taken</div>`;
+  html += todoCount===0
+    ? `<div class="today-empty">Geen gedeelde taken open.</div>`
+    : `<div class="today-line">${todoCount} taak${todoCount>1?'en':''} open <span style="color:var(--muted);">(max 4)</span></div>`;
+  html += `</div>`;
+
+  // ---- Zachte activiteitsherinnering ----
   if(budgetData && budgetData.entries && budgetData.entries.length>0){
     const lastDate = budgetData.entries.map(e=>e.date).sort().pop();
     const daysSince = Math.round((today - new Date(lastDate+'T00:00:00')) / 86400000);
     if(daysSince >= 5){
-      parts.push(`📝 Alweer ${daysSince} dagen geen registratie gelogd — misschien tijd voor een update?`);
+      html += `<div class="today-line" style="margin-top:4px;">📝 Alweer ${daysSince} dagen geen registratie gelogd — misschien tijd voor een update?</div>`;
     }
   }
-  el.innerHTML = parts.map(p=>`<div>${p}</div>`).join('');
+
+  el.innerHTML = html;
 }
 function renderCalendar(){
   document.getElementById('monthLabel').textContent = MONTHS[viewMonth] + ' ' + viewYear;
