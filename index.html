@@ -208,6 +208,11 @@
   .fc-item button.logged{background:var(--primary-light);color:var(--primary);border-color:transparent;}
   .yc-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:10px;margin-bottom:6px;border-left:4px solid var(--border);}
   .yc-item.soon{border-left-color:var(--accent);}
+  .yc-item.urgent{border-left-color:var(--accent);background:var(--accent-light);}
+  .yc-item.urgent .yc-name{font-weight:800;}
+  .yc-item.critical{border-left-color:var(--danger);background:var(--danger-light);}
+  .yc-item.critical .yc-name{font-weight:800;}
+  .yc-item.critical .yc-total-big{color:var(--danger);}
   .yc-item .yc-info{flex:1;min-width:0;}
   .yc-item .yc-name{font-weight:700;font-size:13.5px;}
   .yc-item .yc-when{font-size:11.5px;color:var(--muted);margin-top:2px;}
@@ -666,7 +671,8 @@ function renderTodayOverview(){
     html += `<div class="today-section"><div class="today-section-head">⏰ Jaarlijkse kost op komst</div>`;
     yearlyUpcoming.forEach(x=>{
       const when = x.diffDays<=0 ? 'vandaag' : `over ${x.diffDays}d`;
-      html += `<div class="today-line">${escapeHtml(x.naam)}${x.jaarBedrag?` — <strong>${fmtMoney(x.jaarBedrag)}</strong>`:''} <span style="color:var(--muted);">(${when})</span></div>`;
+      const prefix = x.diffDays<=14 ? '🔴 ' : x.diffDays<=30 ? '🟠 ' : '';
+      html += `<div class="today-line">${prefix}${escapeHtml(x.naam)}${x.jaarBedrag?` — <strong>${fmtMoney(x.jaarBedrag)}</strong>`:''} <span style="color:var(--muted);">(${when})</span></div>`;
     });
     html += `</div>`;
   }
@@ -679,11 +685,15 @@ function renderTodayOverview(){
     html += `</div>`;
   }
 
-  // ---- Zachte activiteitsherinnering ----
+  // ---- Activiteitsherinnering, oplopend van toon ----
   if(budgetData && budgetData.entries && budgetData.entries.length>0){
     const lastDate = budgetData.entries.map(e=>e.date).sort().pop();
     const daysSince = Math.round((today - new Date(lastDate+'T00:00:00')) / 86400000);
-    if(daysSince >= 5){
+    if(daysSince >= 14){
+      html += `<div class="today-line" style="margin-top:4px;">🔴 Alweer ${daysSince} dagen geen registratie — even inhalen?</div>`;
+    } else if(daysSince >= 10){
+      html += `<div class="today-line" style="margin-top:4px;">🟠 Alweer ${daysSince} dagen geen registratie gelogd.</div>`;
+    } else if(daysSince >= 5){
       html += `<div class="today-line" style="margin-top:4px;">📝 Alweer ${daysSince} dagen geen registratie gelogd — misschien tijd voor een update?</div>`;
     }
   }
@@ -1007,10 +1017,14 @@ function renderYearlyCosts(){
   card.style.display='block';
   list.innerHTML='';
   items.forEach(({c, next, diffDays})=>{
-    const row = document.createElement('div'); row.className = 'yc-item soon';
+    let tier = 'soon';
+    let prefix = '';
+    if(diffDays<=14){ tier='critical'; prefix='🔴 '; }
+    else if(diffDays<=30){ tier='urgent'; prefix='🟠 '; }
+    const row = document.createElement('div'); row.className = 'yc-item ' + tier;
     const jaarBedrag = c.prijs ? c.prijs*12 : null;
     const whenText = diffDays<=0 ? 'Vandaag verwacht' : `Over ${diffDays} dagen`;
-    row.innerHTML = `<div class="yc-info"><div class="yc-name">${escapeHtml(c.naam)}</div><div class="yc-when">${whenText} (${fmtDateNL(next)})</div></div>
+    row.innerHTML = `<div class="yc-info"><div class="yc-name">${prefix}${escapeHtml(c.naam)}</div><div class="yc-when">${whenText} (${fmtDateNL(next)})</div></div>
       <div class="yc-amounts">${jaarBedrag?`<div class="yc-total-big">${fmtMoney(jaarBedrag)}</div>`:''}</div>`;
     list.appendChild(row);
   });
