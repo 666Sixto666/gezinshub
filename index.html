@@ -1006,7 +1006,7 @@ function renderFixedCosts(monthEntries){
       : status==='today' ? 'Vandaag'
       : 'Verwacht op ' + fmtDateNL(fcDate);
     info.innerHTML = `<div class="fc-name">${isIncome?'💶 ':''}${escapeHtml(naam)}</div><div class="fc-when">${whenText}</div>`;
-    const amount = document.createElement('div'); amount.className='fc-amount'; amount.textContent = (isIncome?'+':'') + (variabel?'~':'') + fmtMoney(prijs);
+    const amount = document.createElement('div'); amount.className='fc-amount'; amount.textContent = (isIncome?'+':'-') + (variabel?'~':'') + fmtMoney(prijs);
     if(isIncome) amount.style.color = 'var(--primary)';
     const btn = document.createElement('button');
     if(alreadyLogged){ btn.textContent='✓ Gelogd'; btn.className='logged'; btn.disabled=true; }
