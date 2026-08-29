@@ -321,22 +321,6 @@
         <div id="yearlyCostsList"></div>
       </div>
       <div class="card"><h3 style="cursor:pointer;" class="tip-toggle" id="entriesToggle" data-target="entriesWrap">▸ Registraties bekijken (0)</h3><div id="entriesWrap" style="display:none;"><div id="entriesList"></div></div></div>
-      <div class="card">
-        <h3 style="cursor:pointer;" id="fixToggle2">▸ Eenmalig: Threeforce + dubbele registraties opruimen</h3>
-        <div id="fixPanel2" style="display:none;">
-          <p style="font-size:12px;color:var(--muted);margin:0 0 10px;">Zet Threeforce op dag 28 met variabel bedrag, verwijdert exacte dubbele registraties deze maand, en verwijdert de foutieve €2,95 onder Energie & water. Eenmalig te gebruiken.</p>
-          <button class="btn ghost" id="applyFixesBtn2" type="button">Pas toe</button>
-          <div id="applyFixesStatus2" style="font-size:12px;color:var(--muted);margin-top:8px;"></div>
-        </div>
-      </div>
-      <div class="card">
-        <h3 style="cursor:pointer;" id="fixToggle3">▸ Eenmalig: Autokeuring, kinderopvang & jaarlijkse vervaldagen</h3>
-        <div id="fixPanel3" style="display:none;">
-          <p style="font-size:12px;color:var(--muted);margin:0 0 10px;">Zet Autokeuring en Mini Garden op "niet herbekijken" (net als het woonkrediet), en zet Woningpolis/Tractive/Bol.com op jaarlijks met hun vervaldag, zodat ze verschijnen in "Jaarlijkse kosten in het vooruitzicht". Eenmalig te gebruiken.</p>
-          <button class="btn ghost" id="applyFixesBtn3" type="button">Pas toe</button>
-          <div id="applyFixesStatus3" style="font-size:12px;color:var(--muted);margin-top:8px;"></div>
-        </div>
-      </div>
     </section>
     <section id="panel-todo" class="panel">
       <div class="card">
@@ -410,14 +394,6 @@
           <button type="submit" class="btn">Toevoegen</button>
         </form>
       </div>
-      <div class="card">
-        <h3 style="cursor:pointer;" id="fixToggle">▸ Eenmalig: correcties toepassen (aug 2026)</h3>
-        <div id="fixPanel" style="display:none;">
-          <p style="font-size:12px;color:var(--muted);margin:0 0 10px;">Corrigeert Netflix/Tractive/Proximus/Autokeuring-bedragen, voegt Disney+ toe, verwijdert afgesloten contracten, en zet correcte "laatst gecheckt"-datums (lost de "volgende check: 11 aug 2027 voor alles"-fout op). Eenmalig te gebruiken.</p>
-          <button class="btn ghost" id="applyFixesBtn" type="button">Pas correcties toe</button>
-          <div id="applyFixesStatus" style="font-size:12px;color:var(--muted);margin-top:8px;"></div>
-        </div>
-      </div>
     </section>
     <section id="panel-lijst" class="panel">
       <div class="card">
@@ -475,9 +451,6 @@ const eventsRef = ref(db, hhPath + '/calendarEvents');
 const budgetEntriesRef = ref(db, hhPath + '/budgetEntries');
 const budgetGoalsRef = ref(db, hhPath + '/budgetGoals');
 const contractsRef = ref(db, hhPath + '/contracts');
-const fixAppliedRef = ref(db, hhPath + '/fixApplied_aug2026');
-const fixAppliedRef2 = ref(db, hhPath + '/fixApplied_aug2026_v2');
-const fixAppliedRef3 = ref(db, hhPath + '/fixApplied_aug2026_v3');
 const shoppingListRef = ref(db, hhPath + '/shoppingList');
 const sharedTodoRef = ref(db, hhPath + '/sharedTodo');
 const weekmenuRef = ref(db, hhPath + '/weekmenu');
@@ -591,9 +564,6 @@ function attachListeners(){
   onValue(budgetEntriesRef, snap=>{ budgetData.entries = snapToArray(snap.val()); renderBudget(); renderTodayOverview(); markLive(); });
   onValue(budgetGoalsRef, snap=>{ budgetData.goals = snap.val() || {}; renderBudget(); markLive(); });
   onValue(contractsRef, snap=>{ contracts = snapToArray(snap.val()); renderContracts(); renderBudget(); renderTodayOverview(); markLive(); });
-  onValue(fixAppliedRef, snap=>{ if(snap.val()){ const card=document.getElementById('fixToggle'); if(card) card.closest('.card').style.display='none'; } });
-  onValue(fixAppliedRef2, snap=>{ if(snap.val()){ const card=document.getElementById('fixToggle2'); if(card) card.closest('.card').style.display='none'; } });
-  onValue(fixAppliedRef3, snap=>{ if(snap.val()){ const card=document.getElementById('fixToggle3'); if(card) card.closest('.card').style.display='none'; } });
   onValue(shoppingListRef, snap=>{ shoppingItems = snapToArray(snap.val()); renderShoppingList(); markLive(); });
   onValue(sharedTodoRef, snap=>{ sharedTodoItems = snapToArray(snap.val()); renderSharedTodo(); renderTodayOverview(); markLive(); });
   onValue(weekmenuRef, snap=>{ weekmenuData = snap.val() || {}; renderWeekmenu(); markLive(); });
@@ -926,84 +896,6 @@ renderBudMonthLabel();
     document.getElementById('septPin').style.display = 'block';
   }
 })();
-document.getElementById('fixToggle2').addEventListener('click', ()=>{
-  const p = document.getElementById('fixPanel2');
-  const open = p.style.display !== 'none';
-  p.style.display = open ? 'none' : 'block';
-  document.getElementById('fixToggle2').textContent = (open?'▸':'▾') + ' Eenmalig: Threeforce + dubbele registraties opruimen';
-});
-document.getElementById('applyFixesBtn2').addEventListener('click', async ()=>{
-  const statusEl = document.getElementById('applyFixesStatus2');
-  statusEl.textContent = 'Bezig...';
-  let contractFixed = 0, duplicatesRemoved = 0, strayRemoved = 0;
-
-  // 1. Threeforce: dag 28 + variabel
-  for(const c of contracts){
-    if(c.naam === 'Threeforce (Luminus factuurinning)'){
-      await update(ref(db, hhPath+'/contracts/'+c.id), {dagVanMaand: 28, variabel: true});
-      contractFixed++;
-    }
-  }
-
-  // 2. Exacte dubbele registraties deze maand verwijderen (houd de eerste, verwijder de rest)
-  const seen = new Map();
-  for(const e of budgetData.entries){
-    const key = `${e.type}|${e.category}|${e.amount}|${e.note||''}|${e.date}`;
-    if(seen.has(key)){
-      await remove(ref(db, hhPath+'/budgetEntries/'+e.id));
-      duplicatesRemoved++;
-    } else {
-      seen.set(key, e.id);
-    }
-  }
-
-  // 3. Foutieve RFID-bedrag (~€2,95) onder Energie & water verwijderen
-  for(const e of budgetData.entries){
-    if(e.category === 'Energie & water' && e.type==='expense' && Math.abs(e.amount - 2.95) < 0.05){
-      await remove(ref(db, hhPath+'/budgetEntries/'+e.id));
-      strayRemoved++;
-    }
-  }
-
-  statusEl.textContent = `Klaar: Threeforce ${contractFixed?'ingesteld':'niet gevonden'}, ${duplicatesRemoved} dubbele registratie(s) verwijderd, ${strayRemoved} foutieve Energie-registratie(s) verwijderd. Dit vak verdwijnt nu automatisch...`;
-  await set(fixAppliedRef2, true);
-  setTimeout(()=>{ const card=document.getElementById('fixToggle2'); if(card) card.closest('.card').style.display='none'; }, 4000);
-});
-document.getElementById('fixToggle3').addEventListener('click', ()=>{
-  const p = document.getElementById('fixPanel3');
-  const open = p.style.display !== 'none';
-  p.style.display = open ? 'none' : 'block';
-  document.getElementById('fixToggle3').textContent = (open?'▸':'▾') + ' Eenmalig: Autokeuring, kinderopvang & jaarlijkse vervaldagen';
-});
-const FIX3_INFOONLY = ['Autokeuring', 'Mini Garden BV (kinderopvang Remon)'];
-const FIX3_YEARLY = {
-  'Woningpolis (KBC)': { dag:28, maand:11 },
-  'Tractive GPS-tracker (huisdier)': { dag:8, maand:4 },
-  'Bol.com Select': { dag:16, maand:9 }
-};
-document.getElementById('applyFixesBtn3').addEventListener('click', async ()=>{
-  const statusEl = document.getElementById('applyFixesStatus3');
-  statusEl.textContent = 'Bezig...';
-  let infoSet=0, yearlySet=0, autokeuringPrijs=0;
-  for(const c of contracts){
-    if(FIX3_INFOONLY.includes(c.naam)){
-      await update(ref(db, hhPath+'/contracts/'+c.id), {infoOnly:true});
-      infoSet++;
-    }
-    if(c.naam === 'Autokeuring'){
-      await update(ref(db, hhPath+'/contracts/'+c.id), {prijs:null, notitie:'Geslaagd, ±€35 eenmalig ter plaatse te betalen bij volgende keuring (niet maandelijks), volgende over 2 jaar'});
-      autokeuringPrijs++;
-    }
-    if(FIX3_YEARLY[c.naam]){
-      const {dag,maand} = FIX3_YEARLY[c.naam];
-      await update(ref(db, hhPath+'/contracts/'+c.id), {jaarlijks:true, vervalDag:dag, vervalMaand:maand});
-      yearlySet++;
-    }
-  }
-  statusEl.textContent = `Klaar: ${infoSet} op "niet herbekijken" gezet, Autokeuring-prijs gecorrigeerd, ${yearlySet} contracten met jaarlijkse vervaldag ingesteld. Dit vak verdwijnt nu automatisch...`;
-  await set(fixAppliedRef3, true);
-  setTimeout(()=>{ const card=document.getElementById('fixToggle3'); if(card) card.closest('.card').style.display='none'; }, 4000);
-});
 document.getElementById('copySummaryBtn').addEventListener('click', async ()=>{
   const d = window._budgetSummaryData;
   const statusEl = document.getElementById('copySummaryStatus');
@@ -1555,58 +1447,6 @@ document.querySelectorAll('.tip-row-head, .tip-toggle').forEach(h=>{
     target.style.display = open ? 'none' : 'block';
     h.textContent = (open?'▸':'▾') + h.textContent.slice(1);
   });
-});
-document.getElementById('fixToggle').addEventListener('click', ()=>{
-  const p = document.getElementById('fixPanel');
-  const open = p.style.display !== 'none';
-  p.style.display = open ? 'none' : 'block';
-  document.getElementById('fixToggle').textContent = (open?'▸':'▾') + ' Eenmalig: correcties toepassen (aug 2026)';
-});
-const FIX_UPDATES = {
-  'Threeforce (Luminus factuurinning)': { categorie:'EV laden', notitie:'Herzien: jullie laadpas is nog van Luminus (niet Engie/Electrabel, dat is enkel het huishoudcontract) — dit zijn vermoedelijk laadkosten onderweg, niet de huishoudelijke energiefactuur. €46,85 is het gemiddelde, bedrag varieert sterk (€6-94) met laadgedrag' },
-  'Netflix': { prijs:10.97, laatstGecheckt:'2026-07-29', notitie:'Bruto €31,97/maand, waarvan €21 terugbetaald door 2 andere gezinnen — netto kost €10,97/maand' },
-  'Tractive GPS-tracker (huisdier)': { prijs:8, laatstGecheckt:'2026-04-08', notitie:'€96/jaar, hier weergegeven als maandelijks equivalent (€96 ÷ 12)' },
-  'Proximus': { prijs:138.48, laatstGecheckt:'2026-07-31', notitie:'Na opzeggen Digibox TV' },
-  'Autokeuring': { prijs:35, laatstGecheckt:'2026-07-28' },
-  'Electrabel / Engie (elektriciteit+gas)': { laatstGecheckt:'2026-07-20' },
-  'Luminus RFID-laadpas (onderweg laden)': { laatstGecheckt:'2026-08-10' },
-  'KBC Schuldsaldopolis - Tom': { laatstGecheckt:'2026-08-10' },
-  'KBC Schuldsaldopolis - Kimberly': { laatstGecheckt:'2026-08-10' },
-  'Belfius Direct - BDI Assistance (autobijstand)': { laatstGecheckt:'2026-07-30' },
-  'Belfius Direct - BDI Kilometerverzekering': { laatstGecheckt:'2026-07-30' },
-  'Mini Garden BV (kinderopvang Remon)': { laatstGecheckt:'2026-08-02' },
-  'Bol.com Select': { laatstGecheckt:'2025-09-16' },
-  'Woningpolis (KBC)': { laatstGecheckt:'2025-11-28' }
-};
-const FIX_DELETE_NAMES = ['Luminus SA (oud contract, afgesloten)', 'Threeforce (afbetalingsplan oude Luminus-factuur)', 'Versleverancier via Mollie'];
-const FIX_ADD = [
-  { naam:'Disney+', categorie:'Streaming', prijs:5.99, laatstGecheckt:'2026-08-05', intervalMaanden:12, dagVanMaand:5, notitie:'Sinds juli 2026, via kaart Kimberly' },
-  { naam:'KBC-Plusrekening bijdrage', categorie:'Bankkosten', prijs:4.25, laatstGecheckt:'2026-07-31', intervalMaanden:12, dagVanMaand:30, notitie:'Beheerskost zichtrekening, gestegen van €3,75 (2025) naar €4,25 (sinds jan. 2026). Wordt geïnd op de laatste bankwerkdag van de maand (varieert 27e-31e)' },
-  { naam:'Threeforce (Luminus factuurinning)', categorie:'Energie', prijs:46.85, laatstGecheckt:'2026-07-24', intervalMaanden:6, notitie:'Correctie: géén afgesloten contract — actieve betaalverwerker van Luminus, int jullie energiefactuur in 2 termijnen/maand. Bedrag varieert sterk (€6-94), €46,85 is het gemiddelde. Nog steeds actief (laatst gezien 24 juli 2026)' }
-];
-document.getElementById('applyFixesBtn').addEventListener('click', async ()=>{
-  const statusEl = document.getElementById('applyFixesStatus');
-  statusEl.textContent = 'Bezig...';
-  let updated=0, deleted=0, added=0, skippedAdd=0;
-  for(const c of contracts){
-    if(FIX_UPDATES[c.naam]){
-      await update(ref(db, hhPath+'/contracts/'+c.id), FIX_UPDATES[c.naam]);
-      updated++;
-    }
-    if(FIX_DELETE_NAMES.includes(c.naam)){
-      await remove(ref(db, hhPath+'/contracts/'+c.id));
-      deleted++;
-    }
-  }
-  const existingNames = new Set(contracts.map(c=>c.naam));
-  for(const item of FIX_ADD){
-    if(existingNames.has(item.naam)){ skippedAdd++; continue; }
-    await push(contractsRef, item);
-    added++;
-  }
-  statusEl.textContent = `Klaar: ${updated} bijgewerkt, ${deleted} verwijderd, ${added} toegevoegd${skippedAdd?', '+skippedAdd+' overgeslagen (bestond al)':''}. Dit vak verdwijnt nu automatisch...`;
-  await set(fixAppliedRef, true);
-  setTimeout(()=>{ const card=document.getElementById('fixToggle'); if(card) card.closest('.card').style.display='none'; }, 3000);
 });
 function renderContracts(){
   const expectedTotalEl = document.getElementById('conExpectedTotal');
