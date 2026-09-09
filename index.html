@@ -660,7 +660,7 @@ function renderTodayOverview(){
   html += `<div class="today-section"><div class="today-section-head">🤝 Gedeelde taken</div>`;
   html += todoCount===0
     ? `<div class="today-empty">Geen gedeelde taken open.</div>`
-    : `<div class="today-line">${todoCount} taak${todoCount>1?'en':''} open <span style="color:var(--muted);">(max 4)</span></div>`;
+    : `<div class="today-line">${todoCount} ${todoCount>1?'taken':'taak'} open <span style="color:var(--muted);">(max 4)</span></div>`;
   html += `</div>`;
 
   // ---- Sectie 4: jaarlijkse kost op komst (enkel binnen 1-2 maanden) ----
