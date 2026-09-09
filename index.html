@@ -99,6 +99,9 @@
   .review-sheet{background:var(--accent-light);border-radius:var(--radius);padding:14px;margin-bottom:14px;border:1px solid #EAD6A8;}
   .review-sheet h3{color:#7A5A1E;}
   .review-row{background:var(--surface);border-radius:10px;padding:10px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px;}
+  .review-type-btn{flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--muted);font-weight:600;font-size:12.5px;cursor:pointer;}
+  .review-type-btn.active-expense{background:var(--danger-light);color:var(--danger);border-color:transparent;}
+  .review-type-btn.active-income{background:var(--primary-light);color:var(--primary);border-color:transparent;}
   .review-row .rrow{display:flex;gap:6px;}
   .review-row select, .review-row input{padding:7px 8px;font-size:12.5px;}
   .review-actions{display:flex;gap:8px;margin-top:10px;}
@@ -879,12 +882,12 @@ document.getElementById('receiptInput').addEventListener('change', async (e)=>{
     const mediaType = dataUrl.substring(5, dataUrl.indexOf(';'));
     const base64 = dataUrl.split(',')[1];
     const todayIso = fmtDate(new Date());
-    const prompt = `Dit is een foto van één of meerdere kassabonnen/bonnetjes voor een Belgisch gezin (Nederlandstalig). Vandaag is ${todayIso}.
-Er kan één bonnetje op staan, of meerdere bonnetjes naast elkaar. Behandel elk bonnetje als één aparte registratie met het TOTAALbedrag van dát bonnetje (niet de individuele artikelen erop) — tenzij duidelijk verschillende soorten aankopen op één bonnetje samen staan die in een andere categorie horen, splits dan wel per categorie.
-Lees per bonnetje/registratie: het bedrag, de winkel-/bedrijfsnaam, en de datum indien zichtbaar.
-Kies telkens de best passende categorie uit exact deze lijst: ${CATEGORIES.join(', ')}.
-Geef terug als PURE JSON array, GEEN markdown, GEEN uitleg — ook als er maar 1 bonnetje is, dan array met 1 item:
-[{"bedrag": number, "winkel": "korte naam", "datum": "YYYY-MM-DD indien zichtbaar anders leeg", "categorie": "exacte match uit de lijst hierboven"}]`;
+    const prompt = `Dit is een foto van financiële registraties voor een Belgisch gezin (Nederlandstalig) — dit kunnen kassabonnen/bonnetjes zijn, maar ook een screenshot van een bankapp/rekeninguittreksel met meerdere transacties (zowel uitgaven als inkomsten/terugbetalingen door elkaar). Vandaag is ${todayIso}.
+Behandel elke aparte registratie/transactie apart. Bepaal per registratie of het een UITGAVE (geld gaat weg, bv. een aankoop, bonnetje-totaal) of een INKOMST (geld komt binnen, bv. een terugbetaling, overschrijving met "+"-teken, "ontvangen") is.
+Lees per registratie: het bedrag (altijd positief invullen, ongeacht +/− in de bron), het type (inkomst of uitgave), de winkel-/bedrijfsnaam of omschrijving, en de datum indien zichtbaar.
+Kies telkens de best passende categorie uit exact deze lijst: ${CATEGORIES.join(', ')} — voor inkomsten die nergens specifiek bij passen, gebruik "Overig".
+Geef terug als PURE JSON array, GEEN markdown, GEEN uitleg — ook als er maar 1 registratie is, dan array met 1 item:
+[{"bedrag": number, "type": "inkomst of uitgave", "winkel": "korte naam/omschrijving", "datum": "YYYY-MM-DD indien zichtbaar anders leeg", "categorie": "exacte match uit de lijst hierboven"}]`;
     const text = await geminiAnalyzeImage(base64, mediaType, prompt);
     const clean = text.replace(/```json|```/g,'').trim();
     const parsed = JSON.parse(clean);
@@ -892,6 +895,7 @@ Geef terug als PURE JSON array, GEEN markdown, GEEN uitleg — ook als er maar 1
     receiptReviewItems = arr.map(it=>({
       rid: Math.random().toString(36).slice(2,8),
       bedrag: it.bedrag || 0,
+      type: (it.type && it.type.toLowerCase().startsWith('ink')) ? 'income' : 'expense',
       winkel: it.winkel || '',
       datum: (it.datum && /^\d{4}-\d{2}-\d{2}$/.test(it.datum)) ? it.datum : todayIso,
       categorie: (it.categorie && CATEGORIES.includes(it.categorie)) ? it.categorie : CATEGORIES[0]
@@ -915,13 +919,20 @@ function renderReceiptReview(){
   receiptReviewItems.forEach((it, idx)=>{
     const row = document.createElement('div'); row.className='review-row';
     const catOpts = CATEGORIES.map(c=>`<option value="${c}" ${c===it.categorie?'selected':''}>${c}</option>`).join('');
-    const dup = findPossibleDuplicate('expense', it.categorie, parseFloat(it.bedrag)||0, it.winkel);
+    const dup = findPossibleDuplicate(it.type, it.categorie, parseFloat(it.bedrag)||0, it.winkel);
     const dupWarning = dup ? `<div style="font-size:11px;color:var(--danger);font-weight:600;margin-top:2px;">⚠️ Lijkt op "${escapeHtml(dup.note||dup.category)}" (${fmtMoney(dup.amount)}, ${fmtDateNL(dup.date)}) — mogelijk al geregistreerd</div>` : '';
     row.innerHTML = `<input type="text" value="${escapeHtml(it.winkel)}" placeholder="Winkel/omschrijving" data-f="winkel">
+      <div class="rrow">
+        <button type="button" class="review-type-btn ${it.type==='expense'?'active-expense':''}" data-type="expense">Uitgave</button>
+        <button type="button" class="review-type-btn ${it.type==='income'?'active-income':''}" data-type="income">Inkomst</button>
+      </div>
       <div class="rrow"><input type="number" step="0.01" value="${it.bedrag}" data-f="bedrag"><input type="date" value="${it.datum}" data-f="datum"></div>
       <div class="rrow"><select data-f="categorie">${catOpts}</select><button type="button" class="del-btn" data-remove="1">✕</button></div>
       ${dupWarning}`;
     row.querySelectorAll('[data-f]').forEach(inp=>{ inp.addEventListener('input', ()=>{ receiptReviewItems[idx][inp.dataset.f] = inp.value; }); });
+    row.querySelectorAll('.review-type-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{ receiptReviewItems[idx].type = btn.dataset.type; renderReceiptReview(); });
+    });
     row.querySelector('[data-remove]').addEventListener('click', ()=>{ receiptReviewItems.splice(idx,1); renderReceiptReview(); });
     rowsEl.appendChild(row);
   });
@@ -930,7 +941,7 @@ function renderReceiptReview(){
     receiptReviewItems.forEach(it=>{
       const bedrag = parseFloat(it.bedrag);
       if(!bedrag || bedrag<=0) return;
-      push(budgetEntriesRef, { type:'expense', amount:bedrag, category:it.categorie, date:it.datum, note:it.winkel });
+      push(budgetEntriesRef, { type:it.type, amount:bedrag, category:it.categorie, date:it.datum, note:it.winkel });
     });
     receiptReviewItems = null; renderReceiptReview();
     document.getElementById('receiptStatus').style.display='block';
