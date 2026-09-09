@@ -892,14 +892,19 @@ Geef terug als PURE JSON array, GEEN markdown, GEEN uitleg — ook als er maar 1
     const clean = text.replace(/```json|```/g,'').trim();
     const parsed = JSON.parse(clean);
     const arr = Array.isArray(parsed) ? parsed : [parsed];
-    receiptReviewItems = arr.map(it=>({
-      rid: Math.random().toString(36).slice(2,8),
-      bedrag: it.bedrag || 0,
-      type: (it.type && it.type.toLowerCase().startsWith('ink')) ? 'income' : 'expense',
-      winkel: it.winkel || '',
-      datum: (it.datum && /^\d{4}-\d{2}-\d{2}$/.test(it.datum)) ? it.datum : todayIso,
-      categorie: (it.categorie && CATEGORIES.includes(it.categorie)) ? it.categorie : CATEGORIES[0]
-    }));
+    const INCOME_CATEGORIES = ['Loon','Kinderbijslag','Overig inkomen'];
+    receiptReviewItems = arr.map(it=>{
+      const type = (it.type && it.type.toLowerCase().startsWith('ink')) ? 'income' : 'expense';
+      const validCats = type==='income' ? INCOME_CATEGORIES : CATEGORIES;
+      return {
+        rid: Math.random().toString(36).slice(2,8),
+        bedrag: it.bedrag || 0,
+        type,
+        winkel: it.winkel || '',
+        datum: (it.datum && /^\d{4}-\d{2}-\d{2}$/.test(it.datum)) ? it.datum : todayIso,
+        categorie: (it.categorie && validCats.includes(it.categorie)) ? it.categorie : validCats[validCats.length-1]
+      };
+    });
     status.style.display='none';
     renderReceiptReview();
   }catch(err){
@@ -916,9 +921,11 @@ function renderReceiptReview(){
     <div class="review-actions"><button class="btn outline" id="receiptReviewCancel" type="button">Annuleren</button><button class="btn" id="receiptReviewConfirm" type="button">Alles registreren</button></div>`;
   wrap.innerHTML=''; wrap.appendChild(sheet);
   const rowsEl = sheet.querySelector('#receiptReviewRows');
+  const INCOME_CATEGORIES = ['Loon','Kinderbijslag','Overig inkomen'];
   receiptReviewItems.forEach((it, idx)=>{
     const row = document.createElement('div'); row.className='review-row';
-    const catOpts = CATEGORIES.map(c=>`<option value="${c}" ${c===it.categorie?'selected':''}>${c}</option>`).join('');
+    const catList = it.type==='income' ? INCOME_CATEGORIES : CATEGORIES;
+    const catOpts = catList.map(c=>`<option value="${c}" ${c===it.categorie?'selected':''}>${c}</option>`).join('');
     const dup = findPossibleDuplicate(it.type, it.categorie, parseFloat(it.bedrag)||0, it.winkel);
     const dupWarning = dup ? `<div style="font-size:11px;color:var(--danger);font-weight:600;margin-top:2px;">⚠️ Lijkt op "${escapeHtml(dup.note||dup.category)}" (${fmtMoney(dup.amount)}, ${fmtDateNL(dup.date)}) — mogelijk al geregistreerd</div>` : '';
     row.innerHTML = `<input type="text" value="${escapeHtml(it.winkel)}" placeholder="Winkel/omschrijving" data-f="winkel">
@@ -931,7 +938,15 @@ function renderReceiptReview(){
       ${dupWarning}`;
     row.querySelectorAll('[data-f]').forEach(inp=>{ inp.addEventListener('input', ()=>{ receiptReviewItems[idx][inp.dataset.f] = inp.value; }); });
     row.querySelectorAll('.review-type-btn').forEach(btn=>{
-      btn.addEventListener('click', ()=>{ receiptReviewItems[idx].type = btn.dataset.type; renderReceiptReview(); });
+      btn.addEventListener('click', ()=>{
+        const newType = btn.dataset.type;
+        if(newType !== receiptReviewItems[idx].type){
+          receiptReviewItems[idx].type = newType;
+          const newList = newType==='income' ? INCOME_CATEGORIES : CATEGORIES;
+          if(!newList.includes(receiptReviewItems[idx].categorie)){ receiptReviewItems[idx].categorie = newList[newList.length-1]; }
+        }
+        renderReceiptReview();
+      });
     });
     row.querySelector('[data-remove]').addEventListener('click', ()=>{ receiptReviewItems.splice(idx,1); renderReceiptReview(); });
     rowsEl.appendChild(row);
