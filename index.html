@@ -149,12 +149,11 @@
   .cat-chip{flex-shrink:0;padding:7px 12px;border-radius:20px;background:var(--bg);color:var(--muted);font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;border:1px solid transparent;}
   .cat-chip.active{background:var(--primary);color:#fff;}
   .cat-chip.add{background:var(--primary-light);color:var(--primary);}
-  .todo-item{gap:8px;flex-wrap:wrap;}
-  .todo-item .main-row{display:flex;align-items:center;gap:10px;width:100%;}
-  .todo-item input[type=checkbox]{width:20px;height:20px;accent-color:var(--primary);flex-shrink:0;}
-  .todo-item .txt{flex:1;font-size:14px;}
-  .todo-item .cat-pill{font-size:10px;background:var(--surface);color:var(--muted);padding:2px 7px;border-radius:8px;border:1px solid var(--border);}
-  .todo-item.done .txt{text-decoration:line-through;color:var(--muted);}
+  .todo-item{gap:8px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-left:none;box-shadow:0 1px 3px rgba(31,92,86,0.05);padding:11px 13px;transition:box-shadow .15s ease, opacity .15s ease, background .15s ease;}
+  .todo-item .main-row{display:flex;align-items:center;gap:11px;width:100%;}
+  .todo-item .txt{flex:1;font-size:14px;font-weight:500;}
+  .todo-item.done{background:var(--bg);box-shadow:none;opacity:0.7;}
+  .todo-item.done .txt{text-decoration:line-through;color:var(--muted);font-weight:400;}
   .cal-btn{background:none;border:none;font-size:15px;cursor:pointer;padding:4px;}
   .cal-btn.linked{color:var(--primary);}
   .sched-form{width:100%;display:flex;gap:6px;margin-top:4px;}
@@ -200,10 +199,20 @@
   .c-edit-flags label{display:flex;align-items:center;gap:6px;}
   .c-edit-actions{display:flex;gap:8px;}
   .c-edit-actions button{flex:1;}
-  .shop-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:10px;margin-bottom:6px;border-left:4px solid transparent;}
-  .shop-item input[type=checkbox]{width:20px;height:20px;accent-color:var(--primary);flex-shrink:0;}
-  .shop-item .txt{flex:1;font-size:14px;}
-  .shop-item.done .txt{text-decoration:line-through;color:var(--muted);}
+  .shop-item{display:flex;align-items:center;gap:11px;padding:11px 13px;background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;box-shadow:0 1px 3px rgba(31,92,86,0.05);transition:box-shadow .15s ease, opacity .15s ease, background .15s ease;}
+  .shop-item .txt{flex:1;font-size:14px;font-weight:500;}
+  .shop-item.done{background:var(--bg);box-shadow:none;opacity:0.7;}
+  .shop-item.done .txt{text-decoration:line-through;color:var(--muted);font-weight:400;}
+  .todo-item input[type=checkbox], .shop-item input[type=checkbox]{
+    -webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;
+    border:2px solid var(--border);background:var(--surface);flex-shrink:0;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;
+    transition:background .15s ease, border-color .15s ease;position:relative;margin:0;
+  }
+  .todo-item input[type=checkbox]:checked, .shop-item input[type=checkbox]:checked{background:var(--primary);border-color:var(--primary);}
+  .todo-item input[type=checkbox]:checked::after, .shop-item input[type=checkbox]:checked::after{
+    content:'✓';color:#fff;font-size:13px;font-weight:700;line-height:1;
+  }
   .deal-item{background:var(--bg);border-radius:10px;padding:12px;margin-bottom:8px;border-left:4px solid var(--primary);}
   .deal-item.expired{border-left-color:var(--border);opacity:0.6;}
   .deal-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
@@ -373,9 +382,8 @@
       <div class="card" id="ownerCard" style="display:none;"><h3>Voor wie is dit toestel?</h3><div class="owner-pick" id="ownerPick"></div></div>
       <div id="todoMain" style="display:none;">
         <div class="card">
-          <h3>Mijn To Do <span class="sub" id="ownerLabel"></span></h3>
-          <div class="cat-row" id="catRow"></div>
-          <div class="add-row"><input type="text" id="todoInput" placeholder="Nieuwe taak..."><select id="todoCategorySelect"></select><button id="todoAddBtn" class="btn">+</button></div>
+          <h3>✅ Mijn To Do <span class="sub" id="ownerLabel"></span></h3>
+          <div class="add-row"><input type="text" id="todoInput" placeholder="Nieuwe taak..."><button id="todoAddBtn" class="btn">+</button></div>
           <div id="todoList"></div>
           <div id="todoDoneWrap" style="display:none;margin-top:10px;">
             <div style="cursor:pointer;font-size:12.5px;color:var(--muted);font-weight:600;" class="tip-toggle" id="todoDoneToggle" data-target="todoDoneList">▸ Voltooid (0)</div>
@@ -443,7 +451,7 @@
     </section>
     <section id="panel-lijst" class="panel">
       <div class="card">
-        <h3>Boodschappenlijst<span class="sub">Gedeeld tussen jullie beiden, live bijgewerkt.</span></h3>
+        <h3>🛒 Boodschappenlijst<span class="sub">Gedeeld tussen jullie beiden, live bijgewerkt.</span></h3>
         <div class="add-row">
           <input type="text" id="shopInput" placeholder="Bv. melk, brood, wc-papier...">
           <button id="shopAddBtn" class="btn">+</button>
@@ -536,7 +544,6 @@ const MONTHS = ['januari','februari','maart','april','mei','juni','juli','august
 const DOWS = ['ma','di','wo','do','vr','za','zo'];
 const DOW_FULL = ['maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag','zondag'];
 const PERSONS = [{key:'Tom',color:'var(--p-tom)'},{key:'Kimberly',color:'var(--p-kimberly)'},{key:'Remon',color:'var(--p-remon)'},{key:'Wij',color:'var(--p-wij)'}];
-const OWNER_DEFAULT_CATS = {'Tom':['Gezin','Tom','SCG'],'Kimberly':['Gezin','Kimberly','Werk']};
 
 let calEvents = [];
 let budgetData = {entries:[], goals:{}};
@@ -546,9 +553,8 @@ let dealsItems = [];
 let sharedTodoItems = [];
 let openDateEditFor = null;
 let todoItems = [];
-let todoCategories = [];
 let owner = localStorage.getItem('gezinshub-owner') || null;
-let todosRef=null, todoCatsRef=null;
+let todosRef=null;
 let viewMonth = new Date().getMonth();
 let viewYear = new Date().getFullYear();
 let budViewMonth = new Date().getMonth();
@@ -557,7 +563,6 @@ let selectedDate = fmtDate(new Date());
 let weekmenuData = {};
 let menuWeekStart = mondayOf(fmtDate(new Date()));
 let selectedPerson = 'Wij';
-let activeTodoCat = 'Alle';
 let reviewItems = null;
 let openSchedFor = null;
 
@@ -976,7 +981,7 @@ function renderReceiptReview(){
     const row = document.createElement('div'); row.className='review-row';
     const catList = it.type==='income' ? INCOME_CATEGORIES : CATEGORIES;
     const catOpts = catList.map(c=>`<option value="${c}" ${c===it.categorie?'selected':''}>${c}</option>`).join('');
-    const dup = findPossibleDuplicate(it.type, it.categorie, parseFloat(it.bedrag)||0, it.winkel);
+    const dup = findPossibleDuplicate(it.type, it.categorie, parseFloat(it.bedrag)||0, it.winkel, it.datum);
     const dupWarning = dup ? `<div style="font-size:11px;color:var(--danger);font-weight:600;margin-top:2px;">⚠️ Lijkt op "${escapeHtml(dup.note||dup.category)}" (${fmtMoney(dup.amount)}, ${fmtDateNL(dup.date)}) — mogelijk al geregistreerd</div>` : '';
     row.innerHTML = `<input type="text" value="${escapeHtml(it.winkel)}" placeholder="Winkel/omschrijving" data-f="winkel">
       <div class="rrow">
@@ -1089,21 +1094,24 @@ Geef terug als PURE JSON array, zelfde volgorde en lengte, GEEN markdown, GEEN u
   }
   e.target.value='';
 });
-function findPossibleDuplicate(type, category, amount, note, excludeId){
-  const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 14);
-  const cutoffIso = fmtDate(cutoff);
+function findPossibleDuplicate(type, category, amount, note, date, excludeId){
+  // Venster van ±14 dagen rond de datum van de transactie zelf (niet t.o.v. vandaag) —
+  // zo werkt de check ook correct bij een bulk-import van oudere/historische transacties (bv. CSV van een heel jaar).
+  const refDate = date || fmtDate(new Date());
+  const lowerIso = addDays(refDate, -14);
+  const upperIso = addDays(refDate, 14);
   const noteNorm = (note||'').trim().toLowerCase();
   return budgetData.entries.find(e=>{
     if(e.id===excludeId) return false;
     if(e.type!==type || e.category!==category) return false;
-    if(e.date < cutoffIso) return false;
+    if(!e.date || e.date < lowerIso || e.date > upperIso) return false;
     const sameAmount = Math.abs(e.amount - amount) <= Math.max(1, amount*0.10);
     const sameNote = noteNorm && (e.note||'').trim().toLowerCase()===noteNorm;
     return sameAmount || sameNote;
   });
 }
-function confirmIfDuplicate(type, category, amount, note){
-  const dup = findPossibleDuplicate(type, category, amount, note);
+function confirmIfDuplicate(type, category, amount, note, date){
+  const dup = findPossibleDuplicate(type, category, amount, note, date);
   if(!dup) return true;
   return confirm(`Dit lijkt op een registratie die al bestaat: "${dup.note||dup.category}" — ${fmtMoney(dup.amount)} op ${fmtDateNL(dup.date)}.\n\nToch doorgaan en opnieuw registreren?`);
 }
@@ -1113,8 +1121,9 @@ document.getElementById('entryForm').addEventListener('submit', (e)=>{
   if(!amount || amount<=0) return;
   const category = document.getElementById('entryCategory').value;
   const note = document.getElementById('entryNote').value.trim();
-  if(!confirmIfDuplicate(currentType, category, amount, note)) return;
-  push(budgetEntriesRef, { type:currentType, amount, category, date:document.getElementById('entryDate').value, note });
+  const entryDateVal = document.getElementById('entryDate').value;
+  if(!confirmIfDuplicate(currentType, category, amount, note, entryDateVal)) return;
+  push(budgetEntriesRef, { type:currentType, amount, category, date:entryDateVal, note });
   e.target.reset();
   document.getElementById('entryDate').value = fmtDate(new Date());
   document.getElementById('receiptStatus').style.display='none';
@@ -1261,12 +1270,13 @@ function renderFixedCosts(monthEntries){
         if(invoer === null) return;
         const bedrag = parseFloat(invoer.replace(',','.'));
         if(isNaN(bedrag) || bedrag<=0){ alert('Ongeldig bedrag.'); return; }
+        const fcDateIso = fmtDate(fcDate);
         if(isIncome){
-          if(!confirmIfDuplicate('income', 'Overig inkomen', bedrag, naam)) return;
-          push(budgetEntriesRef, { type:'income', amount:bedrag, category:'Overig inkomen', date:fmtDate(fcDate), note:naam });
+          if(!confirmIfDuplicate('income', 'Overig inkomen', bedrag, naam, fcDateIso)) return;
+          push(budgetEntriesRef, { type:'income', amount:bedrag, category:'Overig inkomen', date:fcDateIso, note:naam });
         } else {
-          if(!confirmIfDuplicate('expense', budgetCat, bedrag, naam)) return;
-          push(budgetEntriesRef, { type:'expense', amount:bedrag, category:budgetCat, date:fmtDate(fcDate), note:naam });
+          if(!confirmIfDuplicate('expense', budgetCat, bedrag, naam, fcDateIso)) return;
+          push(budgetEntriesRef, { type:'expense', amount:bedrag, category:budgetCat, date:fcDateIso, note:naam });
         }
       });
     }
@@ -1506,54 +1516,17 @@ function renderTodoOwnerGate(){
 function setupTodoRefs(){
   if(todosRef) return;
   todosRef = ref(db, hhPath + '/todos/' + owner + '/items');
-  todoCatsRef = ref(db, hhPath + '/todos/' + owner + '/categories');
-  get(todoCatsRef).then(snap=>{
-    if(!snap.val()){ set(todoCatsRef, OWNER_DEFAULT_CATS[owner] || ['Gezin']); }
-  });
-  onValue(todoCatsRef, snap=>{ todoCategories = snap.val() || []; renderTodos(); });
   onValue(todosRef, snap=>{ todoItems = snapToArray(snap.val()); renderTodos(); });
-}
-function renderCatRow(){
-  const row = document.getElementById('catRow'); row.innerHTML='';
-  const all = document.createElement('div'); all.className='cat-chip'+(activeTodoCat==='Alle'?' active':''); all.textContent='Alle';
-  all.addEventListener('click', ()=>{ activeTodoCat='Alle'; renderTodos(); });
-  row.appendChild(all);
-  todoCategories.forEach(cat=>{
-    const chip = document.createElement('div'); chip.className='cat-chip'+(activeTodoCat===cat?' active':''); chip.textContent=cat;
-    chip.addEventListener('click', ()=>{ activeTodoCat=cat; renderTodos(); });
-    chip.addEventListener('dblclick', ()=>{
-      if(!confirm('Categorie "'+cat+'" verwijderen? Taken worden verplaatst naar de eerste categorie.')) return;
-      const newCats = todoCategories.filter(c=>c!==cat);
-      const fallback = newCats[0] || 'Overig';
-      todoItems.filter(t=>t.category===cat).forEach(t=>{ update(ref(db, hhPath+'/todos/'+owner+'/items/'+t.id), {category:fallback}); });
-      if(activeTodoCat===cat) activeTodoCat='Alle';
-      set(todoCatsRef, newCats);
-    });
-    row.appendChild(chip);
-  });
-  const add = document.createElement('div'); add.className='cat-chip add'; add.textContent='+ categorie';
-  add.addEventListener('click', ()=>{
-    const name = prompt('Naam nieuwe categorie:'); if(!name) return;
-    const trimmed = name.trim();
-    if(trimmed && !todoCategories.includes(trimmed)){ set(todoCatsRef, [...todoCategories, trimmed]); }
-  });
-  row.appendChild(add);
-}
-function refreshTodoCategorySelect(){
-  const sel = document.getElementById('todoCategorySelect'); sel.innerHTML='';
-  todoCategories.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
-  if(activeTodoCat!=='Alle' && todoCategories.includes(activeTodoCat)){ sel.value = activeTodoCat; }
 }
 function addTodo(){
   const inp = document.getElementById('todoInput'); const val = inp.value.trim(); if(!val) return;
-  const cat = document.getElementById('todoCategorySelect').value || (todoCategories[0]||'Overig');
-  push(todosRef, { text:val, done:false, category:cat, scheduledDate:null });
+  push(todosRef, { text:val, done:false, scheduledDate:null });
   inp.value=''; inp.focus();
 }
 document.getElementById('todoAddBtn').addEventListener('click', addTodo);
 document.getElementById('todoInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') addTodo(); });
 document.getElementById('todoClearDoneBtn').addEventListener('click', ()=>{
-  const doneNow = todoItems.filter(t=>t.done && (activeTodoCat==='Alle' || t.category===activeTodoCat));
+  const doneNow = todoItems.filter(t=>t.done);
   if(doneNow.length===0) return;
   if(!confirm(`${doneNow.length} voltooide taak/taken definitief verwijderen?`)) return;
   doneNow.forEach(t=>{ remove(ref(db, hhPath+'/todos/'+owner+'/items/'+t.id)); });
@@ -1565,14 +1538,13 @@ function renderTodoRow(td, list){
     const cb = document.createElement('input'); cb.type='checkbox'; cb.checked=!!td.done;
     cb.addEventListener('change', ()=>{ update(ref(db, hhPath+'/todos/'+owner+'/items/'+td.id), {done:cb.checked}); });
     const txt = document.createElement('div'); txt.className='txt'; txt.textContent = td.text;
-    const catPill = document.createElement('span'); catPill.className='cat-pill'; catPill.textContent = td.category || '';
     const calBtn = document.createElement('button'); calBtn.className='cal-btn'+(td.scheduledDate?' linked':'');
     calBtn.title = td.scheduledDate ? ('Op kalender: '+td.scheduledDate) : 'Zet op kalender';
     calBtn.textContent = td.scheduledDate ? '✓' : '📅';
     calBtn.addEventListener('click', ()=>{ openSchedFor = openSchedFor===td.id ? null : td.id; renderTodos(); });
     const del = document.createElement('button'); del.className='del-btn'; del.textContent='✕';
     del.addEventListener('click', ()=>{ remove(ref(db, hhPath+'/todos/'+owner+'/items/'+td.id)); });
-    main.appendChild(cb); main.appendChild(txt); main.appendChild(catPill); main.appendChild(calBtn); main.appendChild(del);
+    main.appendChild(cb); main.appendChild(txt); main.appendChild(calBtn); main.appendChild(del);
     row.appendChild(main);
     if(openSchedFor===td.id){
       const sf = document.createElement('div'); sf.className='sched-form';
@@ -1592,15 +1564,13 @@ function renderTodoRow(td, list){
 }
 
 function renderTodos(){
-  renderCatRow(); refreshTodoCategorySelect();
   const list = document.getElementById('todoList');
   let items = [...todoItems];
-  if(activeTodoCat!=='Alle') items = items.filter(t=>t.category===activeTodoCat);
   const active = items.filter(t=>!t.done);
   const doneItems = items.filter(t=>t.done);
   list.innerHTML='';
   if(active.length===0){
-    list.innerHTML = '<div class="empty-state">' + (doneItems.length>0 ? 'Niets meer te doen in deze categorie — mooi zo! 🎉' : 'Nog geen taken in deze categorie.') + '</div>';
+    list.innerHTML = '<div class="empty-state">' + (doneItems.length>0 ? 'Niets meer te doen — mooi zo! 🎉' : 'Nog geen taken.') + '</div>';
   } else {
     active.forEach(td=>renderTodoRow(td, list));
   }
