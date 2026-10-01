@@ -194,10 +194,27 @@
   .quick-add-chips button:active{background:var(--primary-light);}
   .c-actions button{flex:1 1 auto;min-width:90px;padding:11px 10px;font-size:12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;font-weight:600;}
   .c-actions button.primary{background:var(--primary);color:#fff;border-color:var(--primary);}
+  .c-edit-panel{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);display:flex;flex-direction:column;gap:8px;}
+  .c-edit-panel input, .c-edit-panel select{font-size:13px;padding:9px 10px;}
+  .c-edit-flags{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--ink);}
+  .c-edit-flags label{display:flex;align-items:center;gap:6px;}
+  .c-edit-actions{display:flex;gap:8px;}
+  .c-edit-actions button{flex:1;}
   .shop-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:10px;margin-bottom:6px;border-left:4px solid transparent;}
   .shop-item input[type=checkbox]{width:20px;height:20px;accent-color:var(--primary);flex-shrink:0;}
   .shop-item .txt{flex:1;font-size:14px;}
   .shop-item.done .txt{text-decoration:line-through;color:var(--muted);}
+  .deal-item{background:var(--bg);border-radius:10px;padding:12px;margin-bottom:8px;border-left:4px solid var(--primary);}
+  .deal-item.expired{border-left-color:var(--border);opacity:0.6;}
+  .deal-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+  .deal-title{font-weight:700;font-size:14px;color:var(--ink);}
+  .deal-desc{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.4;}
+  .deal-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+  .deal-meta .cat-pill{font-size:11px;background:var(--surface);color:var(--muted);padding:4px 9px;border-radius:12px;border:1px solid var(--border);}
+  .deal-valid-tag, .deal-expired-tag{font-size:11px;font-weight:600;padding:4px 9px;border-radius:12px;}
+  .deal-valid-tag{background:var(--primary-light);color:var(--primary);}
+  .deal-expired-tag{background:var(--accent-light);color:var(--danger);}
+  .deal-link{display:inline-block;margin-top:8px;font-size:12.5px;font-weight:600;color:var(--primary);text-decoration:none;}
   .fc-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:10px;margin-bottom:6px;border-left:4px solid var(--border);}
   .fc-item.passed{border-left-color:var(--primary);}
   .fc-item.today{border-left-color:var(--accent);}
@@ -253,6 +270,7 @@
     <button class="tab-btn" data-tab="todo"><span class="ic">✅</span>To Do</button>
     <button class="tab-btn" data-tab="con"><span class="ic">📄</span>Contracten</button>
     <button class="tab-btn" data-tab="lijst"><span class="ic">🛒</span>Lijst</button>
+    <button class="tab-btn" data-tab="deals"><span class="ic">🎁</span>Deals</button>
     <button class="tab-btn" data-tab="menu" style="display:none;"><span class="ic">🍽️</span>Menu</button>
   </nav>
   <main>
@@ -296,25 +314,32 @@
       <div class="cal-head"><button id="prevBudMonth">‹</button><div class="label" id="budMonthLabel"></div><button id="nextBudMonth">›</button></div>
       <div id="septPin" style="display:none;background:var(--primary-light);color:var(--primary);border-radius:10px;padding:9px 12px;font-size:12.5px;font-weight:600;margin-bottom:12px;text-align:center;">🎯 Nieuwe budgetten actief sinds 1 september</div>
       <div class="card">
-        <h3>Nieuwe registratie</h3>
+        <h3>💳 Transacties uploaden<span class="sub">Beste manier: 1-2x/week een foto van je bankapp (meerdere transacties tegelijk mag) of een CSV-export van KBC/Fortis/... uploaden. Wij herkennen en categoriseren alles automatisch, jij controleert even.</span></h3>
         <div id="oldCatFix" style="display:none;margin-bottom:10px;padding:10px 12px;background:var(--accent-light);border-radius:10px;">
           <div style="font-size:12.5px;margin-bottom:8px;"><span id="oldCatFixCount">0</span> oude registratie(s) staan nog onder de vervallen categorie "Gezondheid & verzekering".</div>
           <button class="btn ghost" id="oldCatFixBtn" type="button" style="font-size:12px;padding:8px 12px;">Herverdeel naar Verzekering / Gezondheid</button>
         </div>
-        <div id="quickAddRow" style="display:none;margin-bottom:10px;"><div class="quick-add-label">⚡ Snel toevoegen</div><div class="quick-add-chips" id="quickAddChips"></div></div>
-        <div style="margin-bottom:10px;">
+        <div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;">
           <input type="file" id="receiptInput" accept="image/*" style="display:none;">
-          <button class="btn ghost" id="receiptBtn" type="button">📷 Bonnetje scannen</button>
-          <div id="receiptStatus" style="font-size:12px;color:var(--muted);margin-top:6px;display:none;"></div>
-          <div id="receiptReviewWrap"></div>
+          <button class="btn" id="receiptBtn" type="button" style="flex:1;">📷 Foto / screenshot</button>
+          <input type="file" id="csvInput" accept=".csv,text/csv" style="display:none;">
+          <button class="btn" id="csvBtn" type="button" style="flex:1;">📄 CSV-bestand</button>
         </div>
-        <form class="inline" id="entryForm">
-          <div class="type-toggle"><button type="button" class="active expense" data-type="expense">Uitgave</button><button type="button" class="income" data-type="income">Inkomst</button></div>
-          <div class="row2"><input type="number" step="0.01" id="entryAmount" placeholder="Bedrag €" required><input type="date" id="entryDate" required></div>
-          <select id="entryCategory"></select>
-          <input type="text" id="entryNote" placeholder="Omschrijving (optioneel)">
-          <button type="submit" class="btn">Registreren</button>
-        </form>
+        <div id="receiptStatus" style="font-size:12px;color:var(--muted);margin-top:2px;display:none;"></div>
+        <div id="receiptReviewWrap"></div>
+      </div>
+      <div class="card">
+        <h3 style="cursor:pointer;" class="tip-toggle" id="manualEntryToggle" data-target="manualEntryWrap">▸ Handmatig registreren (1 transactie)</h3>
+        <div id="manualEntryWrap" style="display:none;">
+          <div id="quickAddRow" style="display:none;margin-bottom:10px;"><div class="quick-add-label">⚡ Snel toevoegen</div><div class="quick-add-chips" id="quickAddChips"></div></div>
+          <form class="inline" id="entryForm">
+            <div class="type-toggle"><button type="button" class="active expense" data-type="expense">Uitgave</button><button type="button" class="income" data-type="income">Inkomst</button></div>
+            <div class="row2"><input type="number" step="0.01" id="entryAmount" placeholder="Bedrag €" required><input type="date" id="entryDate" required></div>
+            <select id="entryCategory"></select>
+            <input type="text" id="entryNote" placeholder="Omschrijving (optioneel)">
+            <button type="submit" class="btn">Registreren</button>
+          </form>
+        </div>
       </div>
       <div class="card" id="tipsCard" style="display:none;"><h3>Aandachtspunten</h3><div id="tipsList"></div></div>
       <div class="budget-total-card" id="budgetTotalCard" style="display:none;">
@@ -352,6 +377,11 @@
           <div class="cat-row" id="catRow"></div>
           <div class="add-row"><input type="text" id="todoInput" placeholder="Nieuwe taak..."><select id="todoCategorySelect"></select><button id="todoAddBtn" class="btn">+</button></div>
           <div id="todoList"></div>
+          <div id="todoDoneWrap" style="display:none;margin-top:10px;">
+            <div style="cursor:pointer;font-size:12.5px;color:var(--muted);font-weight:600;" class="tip-toggle" id="todoDoneToggle" data-target="todoDoneList">▸ Voltooid (0)</div>
+            <div id="todoDoneList" style="display:none;margin-top:6px;"></div>
+            <button class="btn outline" id="todoClearDoneBtn" type="button" style="margin-top:8px;display:none;font-size:12px;padding:8px 12px;">Wis voltooide taken</button>
+          </div>
         </div>
       </div>
     </section>
@@ -422,6 +452,19 @@
         <button class="btn outline" id="clearCheckedBtn" type="button" style="margin-top:10px;display:none;">Wis afgevinkte items</button>
       </div>
     </section>
+    <section id="panel-deals" class="panel">
+      <div class="card">
+        <h3>🎁 Deals & acties<span class="sub">Lokale kortingen en belevenissen, getayloord op jullie gezin. Plak hier (1x/week) je koopjes/belevenissen-overzicht of JSON — wij zetten het om in een overzichtelijke lijst.</span></h3>
+        <textarea id="dealsPasteBox" rows="5" placeholder="Plak hier de inhoud van je wekelijkse koopjes- of belevenissenoverzicht..."></textarea>
+        <button class="btn" id="dealsParseBtn" type="button" style="margin-top:8px;">Deals toevoegen</button>
+        <div id="dealsParseStatus" style="font-size:12px;color:var(--muted);margin-top:6px;display:none;"></div>
+      </div>
+      <div class="card">
+        <h3>Actuele deals<span class="sub" id="dealsCountSub"></span></h3>
+        <div id="dealsList"></div>
+        <button class="btn outline" id="dealsClearExpiredBtn" type="button" style="margin-top:10px;display:none;"></button>
+      </div>
+    </section>
     <section id="panel-menu" class="panel">
       <div class="cal-head"><button id="prevMenuWeek">‹</button><div class="label" id="menuWeekLabel"></div><button id="nextMenuWeek">›</button></div>
       <div class="card">
@@ -461,6 +504,10 @@ async function geminiAnalyzeImage(base64, mimeType, prompt){
   const result = await geminiModel.generateContent([{ inlineData: { data: base64, mimeType } }, prompt]);
   return result.response.text();
 }
+async function geminiAnalyzeText(prompt){
+  const result = await geminiModel.generateContent([prompt]);
+  return result.response.text();
+}
 
 const hhPath = 'households/' + HOUSEHOLD_ID;
 const eventsRef = ref(db, hhPath + '/calendarEvents');
@@ -470,6 +517,7 @@ const contractsRef = ref(db, hhPath + '/contracts');
 const shoppingListRef = ref(db, hhPath + '/shoppingList');
 const sharedTodoRef = ref(db, hhPath + '/sharedTodo');
 const weekmenuRef = ref(db, hhPath + '/weekmenu');
+const dealsRef = ref(db, hhPath + '/weeklyDeals');
 
 const CATEGORIES = ['Wonen','Energie & water','Telecom & media','Boodschappen','Eten & drinken buitenshuis','Auto & vervoer','Kinderen','Verzekering','Gezondheid','Online shopping','Streaming','Bankkosten','Sparen','Overig'];
 const CONTRACT_CATEGORIES = ['Energie','Telecom & internet','Verzekering','Hypotheek & lening','EV laden','Onderhoud huis','Onderhoud auto','Online shopping','Streaming','Kinderen','Bankkosten','Abonnement','Overig'];
@@ -494,6 +542,7 @@ let calEvents = [];
 let budgetData = {entries:[], goals:{}};
 let contracts = [];
 let shoppingItems = [];
+let dealsItems = [];
 let sharedTodoItems = [];
 let openDateEditFor = null;
 let todoItems = [];
@@ -581,6 +630,7 @@ function attachListeners(){
   onValue(budgetGoalsRef, snap=>{ budgetData.goals = snap.val() || {}; renderBudget(); markLive(); });
   onValue(contractsRef, snap=>{ contracts = snapToArray(snap.val()); renderContracts(); renderBudget(); renderTodayOverview(); markLive(); });
   onValue(shoppingListRef, snap=>{ shoppingItems = snapToArray(snap.val()); renderShoppingList(); markLive(); });
+  onValue(dealsRef, snap=>{ dealsItems = snapToArray(snap.val()); renderDeals(); markLive(); });
   onValue(sharedTodoRef, snap=>{ sharedTodoItems = snapToArray(snap.val()); renderSharedTodo(); renderTodayOverview(); markLive(); });
   onValue(weekmenuRef, snap=>{ weekmenuData = snap.val() || {}; renderWeekmenu(); markLive(); });
   renderTodoOwnerGate();
@@ -917,7 +967,7 @@ function renderReceiptReview(){
   const wrap = document.getElementById('receiptReviewWrap');
   if(!receiptReviewItems || receiptReviewItems.length===0){ wrap.innerHTML=''; return; }
   const sheet = document.createElement('div'); sheet.className='review-sheet';
-  sheet.innerHTML = `<h3>Controleer herkende bonnetjes (${receiptReviewItems.length})</h3><div id="receiptReviewRows"></div>
+  sheet.innerHTML = `<h3>Controleer herkende transacties (${receiptReviewItems.length})</h3><div id="receiptReviewRows"></div>
     <div class="review-actions"><button class="btn outline" id="receiptReviewCancel" type="button">Annuleren</button><button class="btn" id="receiptReviewConfirm" type="button">Alles registreren</button></div>`;
   wrap.innerHTML=''; wrap.appendChild(sheet);
   const rowsEl = sheet.querySelector('#receiptReviewRows');
@@ -964,6 +1014,81 @@ function renderReceiptReview(){
     setTimeout(()=>{ document.getElementById('receiptStatus').style.display='none'; }, 3000);
   });
 }
+// ---------- CSV-import (KBC/Fortis/... bankexport) ----------
+function parseBankCsv(text){
+  text = text.replace(/^﻿/, '');
+  const lines = text.split(/\r\n|\r|\n/).filter(l=>l.trim().length>0);
+  if(lines.length < 2) return [];
+  const headers = lines[0].split(';').map(h=>h.trim().toLowerCase());
+  const idx = (name)=>headers.indexOf(name);
+  const iDatum = idx('datum'), iOmschrijving = idx('omschrijving'), iBedrag = idx('bedrag');
+  if(iDatum<0 || iBedrag<0) return [];
+  const rows = [];
+  for(let i=1;i<lines.length;i++){
+    const cols = lines[i].split(';');
+    if(cols.length <= Math.max(iDatum, iBedrag)) continue;
+    const datumRaw = (cols[iDatum]||'').trim();
+    const bedragRaw = (cols[iBedrag]||'').trim().replace(/\./g,'').replace(',', '.');
+    const bedrag = parseFloat(bedragRaw);
+    if(!datumRaw || isNaN(bedrag) || bedrag===0) continue;
+    const m = datumRaw.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if(!m) continue;
+    const dateIso = `${m[3]}-${m[2]}-${m[1]}`;
+    const omschrijving = iOmschrijving>=0 ? (cols[iOmschrijving]||'').trim().replace(/\s+/g,' ').slice(0,200) : '';
+    rows.push({ datum: dateIso, omschrijving, bedrag });
+  }
+  return rows;
+}
+document.getElementById('csvBtn').addEventListener('click', ()=>{ document.getElementById('csvInput').click(); });
+document.getElementById('csvInput').addEventListener('change', async (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  const status = document.getElementById('receiptStatus');
+  status.style.display='block'; status.textContent='CSV wordt gelezen...';
+  try{
+    const text = await new Promise((res, rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=()=>rej(new Error('read failed')); r.readAsText(file); });
+    const rows = parseBankCsv(text);
+    if(rows.length===0){ status.textContent = 'Geen transacties herkend in dit bestand. Is het een CSV-export van je bank (met kolommen Datum/Omschrijving/Bedrag)?'; e.target.value=''; return; }
+    status.textContent = `${rows.length} transacties gevonden, categorieën worden bepaald...`;
+    const INCOME_CATEGORIES = ['Loon','Kinderbijslag','Overig inkomen'];
+    const results = [];
+    const BATCH = 60;
+    for(let b=0; b<rows.length; b+=BATCH){
+      const batch = rows.slice(b, b+BATCH).map((r,i)=>({i:b+i, omschrijving:r.omschrijving, bedrag:r.bedrag}));
+      const prompt = `Dit zijn transacties uit een CSV-export van een Belgische bankrekening (KBC/Fortis/...), voor een Nederlandstalig gezin. Geef voor elke transactie een korte leesbare winkelnaam/omschrijving (max ~35 tekens, haal referentienummers, mandaatreferenties en overbodige ruis eruit) en kies de best passende categorie. Het bedrag is al gegeven (negatief = uitgave, positief = inkomst): kies bij een uitgave een categorie uit exact deze lijst: ${CATEGORIES.join(', ')}. Kies bij een inkomst een categorie uit exact deze lijst: ${INCOME_CATEGORIES.join(', ')}.
+Transacties: ${JSON.stringify(batch)}
+Geef terug als PURE JSON array, zelfde volgorde en lengte, GEEN markdown, GEEN uitleg: [{"i": number, "winkel": "korte naam", "categorie": "exacte match uit de juiste lijst"}]`;
+      try{
+        const txt = await geminiAnalyzeText(prompt);
+        const clean = txt.replace(/```json|```/g,'').trim();
+        const parsed = JSON.parse(clean);
+        results.push(...parsed);
+      }catch(err){
+        console.error('CSV batch categorisatie mislukt', err);
+        batch.forEach(r=>{ results.push({ i:r.i, winkel: r.omschrijving.slice(0,35), categorie: null }); });
+      }
+    }
+    receiptReviewItems = rows.map((r, i)=>{
+      const type = r.bedrag < 0 ? 'expense' : 'income';
+      const validCats = type==='income' ? INCOME_CATEGORIES : CATEGORIES;
+      const match = results.find(x=>x.i===i) || {};
+      const cat = (match.categorie && validCats.includes(match.categorie)) ? match.categorie : (type==='income' ? 'Overig inkomen' : 'Overig');
+      return {
+        rid: Math.random().toString(36).slice(2,8),
+        bedrag: Math.abs(r.bedrag),
+        type,
+        winkel: match.winkel || r.omschrijving.slice(0,40) || '',
+        datum: r.datum,
+        categorie: cat
+      };
+    });
+    status.style.display='none';
+    renderReceiptReview();
+  }catch(err){
+    console.error(err);
+    status.textContent = 'Fout bij lezen CSV: ' + (err && err.message ? err.message : String(err));
+  }
+  e.target.value='';
+});
 function findPossibleDuplicate(type, category, amount, note, excludeId){
   const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 14);
   const cutoffIso = fmtDate(cutoff);
@@ -1417,25 +1542,24 @@ function renderCatRow(){
 function refreshTodoCategorySelect(){
   const sel = document.getElementById('todoCategorySelect'); sel.innerHTML='';
   todoCategories.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+  if(activeTodoCat!=='Alle' && todoCategories.includes(activeTodoCat)){ sel.value = activeTodoCat; }
 }
 function addTodo(){
   const inp = document.getElementById('todoInput'); const val = inp.value.trim(); if(!val) return;
   const cat = document.getElementById('todoCategorySelect').value || (todoCategories[0]||'Overig');
   push(todosRef, { text:val, done:false, category:cat, scheduledDate:null });
-  inp.value='';
+  inp.value=''; inp.focus();
 }
 document.getElementById('todoAddBtn').addEventListener('click', addTodo);
 document.getElementById('todoInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') addTodo(); });
+document.getElementById('todoClearDoneBtn').addEventListener('click', ()=>{
+  const doneNow = todoItems.filter(t=>t.done && (activeTodoCat==='Alle' || t.category===activeTodoCat));
+  if(doneNow.length===0) return;
+  if(!confirm(`${doneNow.length} voltooide taak/taken definitief verwijderen?`)) return;
+  doneNow.forEach(t=>{ remove(ref(db, hhPath+'/todos/'+owner+'/items/'+t.id)); });
+});
 
-function renderTodos(){
-  renderCatRow(); refreshTodoCategorySelect();
-  const list = document.getElementById('todoList');
-  let items = [...todoItems];
-  if(activeTodoCat!=='Alle') items = items.filter(t=>t.category===activeTodoCat);
-  items.sort((a,b)=> (a.done===b.done)?0:(a.done?1:-1));
-  if(items.length===0){ list.innerHTML = '<div class="empty-state">Nog geen taken in deze categorie.</div>'; return; }
-  list.innerHTML='';
-  items.forEach(td=>{
+function renderTodoRow(td, list){
     const row = document.createElement('div'); row.className='todo-item'+(td.done?' done':'');
     const main = document.createElement('div'); main.className='main-row';
     const cb = document.createElement('input'); cb.type='checkbox'; cb.checked=!!td.done;
@@ -1465,7 +1589,34 @@ function renderTodos(){
       row.appendChild(sf);
     }
     list.appendChild(row);
-  });
+}
+
+function renderTodos(){
+  renderCatRow(); refreshTodoCategorySelect();
+  const list = document.getElementById('todoList');
+  let items = [...todoItems];
+  if(activeTodoCat!=='Alle') items = items.filter(t=>t.category===activeTodoCat);
+  const active = items.filter(t=>!t.done);
+  const doneItems = items.filter(t=>t.done);
+  list.innerHTML='';
+  if(active.length===0){
+    list.innerHTML = '<div class="empty-state">' + (doneItems.length>0 ? 'Niets meer te doen in deze categorie — mooi zo! 🎉' : 'Nog geen taken in deze categorie.') + '</div>';
+  } else {
+    active.forEach(td=>renderTodoRow(td, list));
+  }
+  const doneWrap = document.getElementById('todoDoneWrap');
+  const doneListEl = document.getElementById('todoDoneList');
+  const clearBtn = document.getElementById('todoClearDoneBtn');
+  if(doneItems.length===0){
+    doneWrap.style.display='none';
+  } else {
+    doneWrap.style.display='block';
+    clearBtn.style.display='inline-block';
+    const isOpen = doneListEl.style.display !== 'none';
+    document.getElementById('todoDoneToggle').textContent = (isOpen?'▾':'▸') + ' Voltooid (' + doneItems.length + ')';
+    doneListEl.innerHTML='';
+    doneItems.forEach(td=>renderTodoRow(td, doneListEl));
+  }
 }
 
 // ---------- contracten ----------
@@ -1623,92 +1774,79 @@ function renderContracts(){
       checkBtn.addEventListener('click', ()=>{ update(ref(db, hhPath+'/contracts/'+c.id), {laatstGecheckt: fmtDate(new Date())}); });
       actions.appendChild(checkBtn);
     }
-    const moreBtn = document.createElement('button'); moreBtn.type='button'; moreBtn.textContent = '⋯ Meer';
-    actions.appendChild(moreBtn);
+    const editBtn = document.createElement('button'); editBtn.type='button'; editBtn.textContent='✎ Bewerken';
+    actions.appendChild(editBtn);
     row.appendChild(actions);
 
-    const more = document.createElement('div'); more.className='c-actions c-more'; more.style.display='none';
-    const editBtn = document.createElement('button'); editBtn.type='button'; editBtn.textContent='✎ Datum';
+    const editPanel = document.createElement('div'); editPanel.className='c-edit-panel'; editPanel.style.display='none';
+    editPanel.innerHTML = `
+      <input type="text" data-f="naam" value="${escapeHtml(c.naam)}" placeholder="Naam">
+      <div class="row2">
+        <select data-f="categorie">${CONTRACT_CATEGORIES.map(cc=>`<option value="${cc}" ${cc===c.categorie?'selected':''}>${cc}</option>`).join('')}</select>
+        <input type="number" step="0.01" data-f="prijs" value="${c.prijs!=null ? (c.jaarlijks ? (c.prijs*12).toFixed(2) : c.prijs) : ''}" placeholder="Prijs €">
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin:-4px 0 6px;">Prijs is per maand, tenzij je hieronder een jaarlijkse vervaldag instelt (dan per jaar).</div>
+      <div class="row2">
+        <div style="flex:1;"><label style="font-size:11px;color:var(--muted);">Dag v/d maand</label><input type="number" min="1" max="31" data-f="dagVanMaand" value="${c.dagVanMaand||''}" placeholder="bv. 10"></div>
+        <div style="flex:1;"><label style="font-size:11px;color:var(--muted);">Jaarlijkse vervaldag</label><input type="text" data-f="vervaldag" placeholder="DD/MM, leeg = maandelijks" value="${c.jaarlijks && c.vervalDag ? String(c.vervalDag).padStart(2,'0')+'/'+String(c.vervalMaand).padStart(2,'0') : ''}"></div>
+      </div>
+      <div style="flex:1;margin-bottom:8px;"><label style="font-size:11px;color:var(--muted);">Laatst gecheckt</label><input type="date" data-f="laatstGecheckt" value="${c.laatstGecheckt||fmtDate(new Date())}"></div>
+      <input type="text" data-f="notitie" value="${escapeHtml(c.notitie||'')}" placeholder="Notitie (optioneel)">
+      <div class="c-edit-flags">
+        <label><input type="checkbox" data-f="variabel" ${c.variabel?'checked':''}> Variabel bedrag</label>
+        <label><input type="checkbox" data-f="infoOnly" ${c.infoOnly?'checked':''}> Louter info (niet meer herzien)</label>
+      </div>
+      <div class="c-edit-actions">
+        <button type="button" class="btn outline" data-act="cancel">Annuleren</button>
+        <button type="button" class="btn" data-act="save">Opslaan</button>
+      </div>
+      <button type="button" class="btn ghost" data-act="delete" style="margin-top:6px;width:100%;color:var(--danger);">Verwijderen</button>
+    `;
+    row.appendChild(editPanel);
     editBtn.addEventListener('click', ()=>{
-      const huidige = c.laatstGecheckt || fmtDate(new Date());
-      const invoer = prompt('Datum "laatst gecheckt" aanpassen (formaat: JJJJ-MM-DD):', huidige);
-      if(invoer === null) return;
-      if(!/^\d{4}-\d{2}-\d{2}$/.test(invoer.trim())){ alert('Ongeldig formaat. Gebruik bv. 2026-08-11.'); return; }
-      update(ref(db, hhPath+'/contracts/'+c.id), {laatstGecheckt: invoer.trim()});
+      const open = editPanel.style.display !== 'none';
+      editPanel.style.display = open ? 'none' : 'block';
+      editBtn.textContent = open ? '✎ Bewerken' : '✕ Sluiten';
     });
-    if(!c.infoOnly) more.appendChild(editBtn);
-    const dayBtn = document.createElement('button'); dayBtn.type='button'; dayBtn.textContent = c.dagVanMaand ? `📅 Dag ${c.dagVanMaand}` : '📅 Dag instellen';
-    dayBtn.addEventListener('click', ()=>{
-      const invoer = prompt('Op welke dag van de maand gaat dit er meestal af? (1-31, leeg om te wissen)', c.dagVanMaand || '');
-      if(invoer === null) return;
-      if(invoer.trim() === ''){ update(ref(db, hhPath+'/contracts/'+c.id), {dagVanMaand: null}); return; }
-      const dag = parseInt(invoer.trim(), 10);
-      if(!dag || dag<1 || dag>31){ alert('Geef een getal tussen 1 en 31.'); return; }
-      update(ref(db, hhPath+'/contracts/'+c.id), {dagVanMaand: dag});
+    editPanel.querySelector('[data-act="cancel"]').addEventListener('click', ()=>{
+      editPanel.style.display='none'; editBtn.textContent='✎ Bewerken';
     });
-    more.appendChild(dayBtn);
-    const varBtn = document.createElement('button'); varBtn.type='button'; varBtn.textContent = c.variabel ? '🔀 Variabel bedrag' : '🔀 Vast bedrag';
-    varBtn.addEventListener('click', ()=>{ update(ref(db, hhPath+'/contracts/'+c.id), {variabel: !c.variabel}); });
-    more.appendChild(varBtn);
-    const noteBtn = document.createElement('button'); noteBtn.type='button'; noteBtn.textContent='✏️ Notitie';
-    noteBtn.addEventListener('click', ()=>{
-      const invoer = prompt('Notitie aanpassen:', c.notitie || '');
-      if(invoer === null) return;
-      update(ref(db, hhPath+'/contracts/'+c.id), {notitie: invoer.trim()});
+    editPanel.querySelector('[data-act="delete"]').addEventListener('click', ()=>{
+      if(confirm('"'+c.naam+'" verwijderen?')) remove(ref(db, hhPath+'/contracts/'+c.id));
     });
-    more.appendChild(noteBtn);
-    const priceBtn = document.createElement('button'); priceBtn.type='button'; priceBtn.textContent='✎ Prijs';
-    priceBtn.addEventListener('click', ()=>{
-      if(c.jaarlijks){
-        const huidigJaar = c.prijs ? (c.prijs*12).toFixed(2) : '';
-        const invoer = prompt('Jaarbedrag aanpassen (€/jaar — volledig bedrag, geen deling nodig):', huidigJaar);
-        if(invoer === null) return;
-        if(invoer.trim() === ''){ update(ref(db, hhPath+'/contracts/'+c.id), {prijs: null}); return; }
-        const jaarBedrag = parseFloat(invoer.replace(',','.'));
-        if(isNaN(jaarBedrag) || jaarBedrag<0){ alert('Ongeldig bedrag.'); return; }
-        update(ref(db, hhPath+'/contracts/'+c.id), {prijs: jaarBedrag/12});
-      } else {
-        const invoer = prompt('Prijs aanpassen (€/maand):', c.prijs || '');
-        if(invoer === null) return;
-        if(invoer.trim() === ''){ update(ref(db, hhPath+'/contracts/'+c.id), {prijs: null}); return; }
-        const bedrag = parseFloat(invoer.replace(',','.'));
-        if(isNaN(bedrag) || bedrag<0){ alert('Ongeldig bedrag.'); return; }
-        update(ref(db, hhPath+'/contracts/'+c.id), {prijs: bedrag});
+    editPanel.querySelector('[data-act="save"]').addEventListener('click', ()=>{
+      const naam = editPanel.querySelector('[data-f="naam"]').value.trim();
+      if(!naam){ alert('Naam mag niet leeg zijn.'); return; }
+      const categorie = editPanel.querySelector('[data-f="categorie"]').value;
+      const prijsRaw = editPanel.querySelector('[data-f="prijs"]').value.trim();
+      const dagRaw = editPanel.querySelector('[data-f="dagVanMaand"]').value.trim();
+      const laatstGecheckt = editPanel.querySelector('[data-f="laatstGecheckt"]').value || fmtDate(new Date());
+      const notitie = editPanel.querySelector('[data-f="notitie"]').value.trim();
+      const variabel = editPanel.querySelector('[data-f="variabel"]').checked;
+      const infoOnly = editPanel.querySelector('[data-f="infoOnly"]').checked;
+      const vervaldagRaw = editPanel.querySelector('[data-f="vervaldag"]').value.trim();
+      let jaarlijks = false, vervalDag = null, vervalMaand = null;
+      if(vervaldagRaw){
+        const m = vervaldagRaw.match(/^(\d{1,2})\/(\d{1,2})$/);
+        if(!m){ alert('Ongeldige vervaldag. Gebruik DD/MM, bv. 28/11.'); return; }
+        const dag = parseInt(m[1],10), maand = parseInt(m[2],10);
+        if(dag<1||dag>31||maand<1||maand>12){ alert('Ongeldige dag of maand.'); return; }
+        jaarlijks = true; vervalDag = dag; vervalMaand = maand;
       }
-    });
-    more.appendChild(priceBtn);
-    const catBtn = document.createElement('button'); catBtn.type='button'; catBtn.textContent='🏷️ Categorie';
-    catBtn.addEventListener('click', ()=>{
-      const invoer = prompt(`Categorie aanpassen. Geldige opties:\n${CONTRACT_CATEGORIES.join(', ')}`, c.categorie || '');
-      if(invoer === null) return;
-      const match = CONTRACT_CATEGORIES.find(cc=>cc.toLowerCase()===invoer.trim().toLowerCase());
-      if(!match){ alert('Onbekende categorie. Kies exact uit: ' + CONTRACT_CATEGORIES.join(', ')); return; }
-      update(ref(db, hhPath+'/contracts/'+c.id), {categorie: match});
-    });
-    more.appendChild(catBtn);
-    const infoBtn = document.createElement('button'); infoBtn.type='button'; infoBtn.textContent = c.infoOnly ? 'ℹ️ Niet herbekijken' : 'ℹ️ Wel herbekijken';
-    infoBtn.addEventListener('click', ()=>{ update(ref(db, hhPath+'/contracts/'+c.id), {infoOnly: !c.infoOnly}); });
-    more.appendChild(infoBtn);
-    const yearBtn = document.createElement('button'); yearBtn.type='button'; yearBtn.textContent = c.jaarlijks ? `🗓️ Jaarlijks (${c.vervalDag}/${c.vervalMaand})` : '🗓️ Zet op jaarlijks';
-    yearBtn.addEventListener('click', ()=>{
-      if(c.jaarlijks){ update(ref(db, hhPath+'/contracts/'+c.id), {jaarlijks:false, vervalDag:null, vervalMaand:null}); return; }
-      const invoer = prompt('Vervaldag van de jaarlijkse factuur? (DD/MM, bv. 28/11)', '');
-      if(invoer === null) return;
-      const m = invoer.trim().match(/^(\d{1,2})\/(\d{1,2})$/);
-      if(!m){ alert('Ongeldig formaat. Gebruik DD/MM.'); return; }
-      const dag = parseInt(m[1],10), maand = parseInt(m[2],10);
-      if(dag<1||dag>31||maand<1||maand>12){ alert('Ongeldige dag of maand.'); return; }
-      update(ref(db, hhPath+'/contracts/'+c.id), {jaarlijks:true, vervalDag:dag, vervalMaand:maand});
-    });
-    more.appendChild(yearBtn);
-    const delBtn = document.createElement('button'); delBtn.type='button'; delBtn.textContent='Verwijderen';
-    delBtn.addEventListener('click', ()=>{ if(confirm('"'+c.naam+'" verwijderen?')) remove(ref(db, hhPath+'/contracts/'+c.id)); });
-    more.appendChild(delBtn);
-    row.appendChild(more);
-    moreBtn.addEventListener('click', ()=>{
-      const open = more.style.display !== 'none';
-      more.style.display = open ? 'none' : 'flex';
-      moreBtn.textContent = open ? '⋯ Meer' : '⋯ Verberg';
+      let prijs = null;
+      if(prijsRaw){
+        const bedrag = parseFloat(prijsRaw.replace(',','.'));
+        if(isNaN(bedrag) || bedrag<0){ alert('Ongeldige prijs.'); return; }
+        prijs = jaarlijks ? bedrag/12 : bedrag;
+      }
+      let dagVanMaand = null;
+      if(dagRaw){
+        const dag = parseInt(dagRaw,10);
+        if(!dag || dag<1 || dag>31){ alert('Dag v/d maand moet tussen 1 en 31 liggen.'); return; }
+        dagVanMaand = dag;
+      }
+      update(ref(db, hhPath+'/contracts/'+c.id), { naam, categorie, prijs, dagVanMaand, laatstGecheckt, notitie, variabel, infoOnly, jaarlijks, vervalDag, vervalMaand });
+      editPanel.style.display='none';
     });
     if(!categoryContainers.has(c.categorie)){
       categoryContainers.set(c.categorie, document.createElement('div'));
@@ -1806,6 +1944,93 @@ function renderShoppingList(){
     del.addEventListener('click', ()=>{ remove(ref(db, hhPath+'/shoppingList/'+i.id)); });
     row.appendChild(cb); row.appendChild(txt); row.appendChild(del);
     list.appendChild(row);
+  });
+}
+
+// ---------- deals ----------
+document.getElementById('dealsParseBtn').addEventListener('click', async ()=>{
+  const box = document.getElementById('dealsPasteBox');
+  const raw = box.value.trim();
+  const status = document.getElementById('dealsParseStatus');
+  if(!raw) return;
+  status.style.display='block'; status.textContent='Deals worden verwerkt...';
+  try{
+    let items = null;
+    try{
+      const direct = JSON.parse(raw);
+      if(Array.isArray(direct) && direct.length>0 && direct[0] && typeof direct[0]==='object') items = direct;
+    }catch(_){ /* geen pure JSON, val terug op AI-herkenning */ }
+    if(!items){
+      const prompt = `Hieronder staat tekst met kortingen, deals, acties of leuke belevenissen voor een Belgisch gezin (regio rond Blaasveld/Mechelen/Antwerpen, Nederlandstalig). Het kan een markdown-overzicht, een lijst of losse tekst zijn. Zet dit om in een JSON array met de meest relevante/interessante items (max 15).
+Tekst:
+${raw.slice(0, 12000)}
+
+Geef terug als PURE JSON array, GEEN markdown, GEEN uitleg:
+[{"titel":"korte titel","beschrijving":"1-2 zinnen, incl. korting/prijs indien vermeld","link":"volledige URL indien aanwezig, anders leeg","geldigTot":"YYYY-MM-DD indien een vervaldatum vermeld staat, anders leeg","categorie":"bv. Boodschappen, Uitje, Kinderen, Horeca, Winkelen, Overig"}]`;
+      const text = await geminiAnalyzeText(prompt);
+      const clean = text.replace(/```json|```/g,'').trim();
+      items = JSON.parse(clean);
+    }
+    if(!Array.isArray(items) || items.length===0){ status.textContent = 'Geen deals herkend in deze tekst.'; return; }
+    let count = 0;
+    items.slice(0,20).forEach(it=>{
+      if(!it || !it.titel) return;
+      push(dealsRef, {
+        titel: String(it.titel).slice(0,120),
+        beschrijving: it.beschrijving ? String(it.beschrijving).slice(0,400) : '',
+        link: (it.link && /^https?:\/\//.test(it.link)) ? it.link : '',
+        geldigTot: (it.geldigTot && /^\d{4}-\d{2}-\d{2}$/.test(it.geldigTot)) ? it.geldigTot : null,
+        categorie: it.categorie ? String(it.categorie).slice(0,40) : '',
+        toegevoegd: fmtDate(new Date())
+      });
+      count++;
+    });
+    box.value='';
+    status.textContent = count>0 ? `${count} deal(s) toegevoegd ✓` : 'Geen bruikbare deals herkend.';
+    setTimeout(()=>{ status.style.display='none'; }, 4000);
+  }catch(err){
+    console.error(err);
+    status.textContent = 'Kon de tekst niet verwerken: ' + (err && err.message ? err.message : String(err));
+  }
+});
+document.getElementById('dealsClearExpiredBtn').addEventListener('click', ()=>{
+  const todayIso = fmtDate(new Date());
+  const expired = dealsItems.filter(d=>d.geldigTot && d.geldigTot < todayIso);
+  if(expired.length===0) return;
+  if(!confirm(`${expired.length} verlopen deal(s) verwijderen?`)) return;
+  expired.forEach(d=>{ remove(ref(db, hhPath+'/weeklyDeals/'+d.id)); });
+});
+function renderDeals(){
+  const list = document.getElementById('dealsList');
+  const sub = document.getElementById('dealsCountSub');
+  const clearBtn = document.getElementById('dealsClearExpiredBtn');
+  if(!list) return;
+  const todayIso = fmtDate(new Date());
+  const expiredCount = dealsItems.filter(d=>d.geldigTot && d.geldigTot < todayIso).length;
+  clearBtn.style.display = expiredCount>0 ? 'block' : 'none';
+  clearBtn.textContent = `Wis verlopen deals (${expiredCount})`;
+  sub.textContent = dealsItems.length ? `${dealsItems.length} deal(s)` : '';
+  if(dealsItems.length===0){ list.innerHTML = '<div class="empty-state">Nog geen deals toegevoegd. Plak hierboven je wekelijkse overzicht.</div>'; return; }
+  const sorted = [...dealsItems].sort((a,b)=>{
+    const ae = !!(a.geldigTot && a.geldigTot < todayIso), be = !!(b.geldigTot && b.geldigTot < todayIso);
+    if(ae !== be) return ae ? 1 : -1;
+    const ad = a.geldigTot || '9999-12-31', bd = b.geldigTot || '9999-12-31';
+    return ad.localeCompare(bd);
+  });
+  list.innerHTML='';
+  sorted.forEach(d=>{
+    const expired = d.geldigTot && d.geldigTot < todayIso;
+    const card = document.createElement('div'); card.className='deal-item'+(expired?' expired':'');
+    card.innerHTML = `<div class="deal-top">
+        <div class="deal-title">${escapeHtml(d.titel)}</div>
+      </div>
+      ${d.beschrijving ? `<div class="deal-desc">${escapeHtml(d.beschrijving)}</div>` : ''}
+      <div class="deal-meta">${d.categorie?`<span class="cat-pill">${escapeHtml(d.categorie)}</span>`:''}${d.geldigTot?`<span class="${expired?'deal-expired-tag':'deal-valid-tag'}">${expired?'Verlopen':'Geldig tot'} ${fmtDateNL(d.geldigTot)}</span>`:''}</div>
+      ${d.link ? `<a href="${escapeHtml(d.link)}" target="_blank" rel="noopener" class="deal-link">🔗 Bekijk aanbieding</a>` : ''}`;
+    const del = document.createElement('button'); del.className='del-btn'; del.textContent='✕';
+    del.addEventListener('click', ()=>{ remove(ref(db, hhPath+'/weeklyDeals/'+d.id)); });
+    card.querySelector('.deal-top').appendChild(del);
+    list.appendChild(card);
   });
 }
 </script>
