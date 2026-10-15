@@ -393,7 +393,10 @@
           <button class="btn" id="receiptBtn" type="button" style="flex:1;">📷 Foto / PDF</button>
           <input type="file" id="csvInput" accept=".csv,text/csv" style="display:none;">
           <button class="btn" id="csvBtn" type="button" style="flex:1;">📄 CSV-bestand</button>
+          <input type="file" id="importInput" accept=".json,application/json,.txt" style="display:none;">
+          <button class="btn outline" id="importBtn" type="button" style="flex-basis:100%;font-size:12.5px;padding:9px 12px;">📥 Verwerkt gegevensbestand (.json)</button>
         </div>
+        <div id="importStatus" style="font-size:12px;color:var(--muted);margin:0 0 8px;display:none;white-space:pre-line;"></div>
         <div id="receiptStatus" style="font-size:12px;color:var(--muted);margin-top:2px;display:none;"></div>
         <div id="receiptReviewWrap"></div>
       </div>
@@ -413,11 +416,6 @@
             <input type="text" id="entryNote" placeholder="Omschrijving (optioneel)">
             <button type="submit" class="btn">Registreren</button>
           </form>
-          <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--border);">
-            <input type="file" id="importInput" accept=".json,application/json" style="display:none;">
-            <button type="button" class="btn outline" id="importBtn" style="font-size:12.5px;padding:9px 12px;">📥 Gegevensbestand importeren (.json)</button>
-            <div id="importStatus" style="font-size:12px;color:var(--muted);margin-top:8px;display:none;white-space:pre-line;"></div>
-          </div>
         </div>
       </div>
       <div class="card">
