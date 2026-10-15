@@ -413,6 +413,11 @@
             <input type="text" id="entryNote" placeholder="Omschrijving (optioneel)">
             <button type="submit" class="btn">Registreren</button>
           </form>
+          <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--border);">
+            <input type="file" id="importInput" accept=".json,application/json" style="display:none;">
+            <button type="button" class="btn outline" id="importBtn" style="font-size:12.5px;padding:9px 12px;">📥 Gegevensbestand importeren (.json)</button>
+            <div id="importStatus" style="font-size:12px;color:var(--muted);margin-top:8px;display:none;white-space:pre-line;"></div>
+          </div>
         </div>
       </div>
       <div class="card">
@@ -580,7 +585,7 @@ const sharedTodoRef = ref(db, hhPath + '/sharedTodo');
 const weekmenuRef = ref(db, hhPath + '/weekmenu');
 const dealsRef = ref(db, hhPath + '/weeklyDeals');
 
-const CATEGORIES = ['Wonen','Energie & water','Telecom & media','Boodschappen','Eten & drinken buitenshuis','Auto & vervoer','Kinderen','Verzekering','Gezondheid','Online shopping','Streaming','Bankkosten','Sparen','Overig'];
+const CATEGORIES = ['Wonen','Energie & water','Telecom & media','Boodschappen','Eten & drinken buitenshuis','Auto & vervoer','Kinderen','Verzekering','Gezondheid','Huis & tuin','Huisdieren','Vrije tijd & vakantie','Juridisch & administratie','Online shopping','Streaming','Bankkosten','Sparen','Overig'];
 const CONTRACT_CATEGORIES = ['Energie','Telecom & internet','Verzekering','Hypotheek & lening','EV laden','Onderhoud huis','Onderhoud auto','Online shopping','Streaming','Kinderen','Bankkosten','Abonnement','Overig'];
 const CONTRACT_TO_BUDGET_CATEGORY = {
   'Energie':'Energie & water','Telecom & internet':'Telecom & media','Verzekering':'Verzekering',
@@ -1184,6 +1189,65 @@ document.getElementById('entryForm').addEventListener('submit', (e)=>{
   document.getElementById('receiptStatus').style.display='none';
   refreshCategorySelect();
 });
+
+// ---------- gegevensbestand importeren (.json) ----------
+// Verwerkte bankdata (door Claude gecategoriseerd) inlezen: nieuwe registraties toevoegen, bestaande NIET dupliceren.
+// Bestaande registraties worden enkel bijgewerkt als ze nog "Overig" zijn of een eenmalig-markering/nieuwe categorie missen.
+const IMPORT_NEW_CATS = ['Huis & tuin','Huisdieren','Vrije tijd & vakantie','Juridisch & administratie'];
+document.getElementById('importBtn').addEventListener('click', ()=>{ document.getElementById('importInput').click(); });
+document.getElementById('importInput').addEventListener('change', async (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  const st = document.getElementById('importStatus');
+  st.style.display='block'; st.textContent='Bestand wordt gelezen...';
+  try{
+    const data = JSON.parse(await file.text());
+    const list = Array.isArray(data) ? data : data.entries;
+    if(!Array.isArray(list)) throw new Error('Geen geldig gegevensbestand (verwacht een lijst met registraties).');
+    const valid = list.filter(x=>x && (x.type==='expense'||x.type==='income') && x.amount>0 && /^\d{4}-\d{2}-\d{2}$/.test(x.date||'') && x.category);
+    if(valid.length===0) throw new Error('Geen bruikbare registraties in dit bestand.');
+    const keyOf = (x)=>x.date+'|'+x.type+'|'+Math.round(x.amount*100);
+    const have = {};
+    budgetData.entries.forEach(en=>{ if(!en.date) return; (have[keyOf(en)] = have[keyOf(en)] || []).push(en); });
+    const fresh = [], patches = [];
+    valid.forEach(x=>{
+      const k = keyOf(x);
+      const match = have[k] && have[k].length ? have[k].shift() : null;
+      if(!match){ fresh.push(x); return; }
+      const patch = {};
+      if((match.category==='Overig' && x.category!=='Overig') || (IMPORT_NEW_CATS.includes(x.category) && match.category!==x.category)) patch.category = x.category;
+      if(x.eenmalig && !match.eenmalig) patch.eenmalig = true;
+      if(x.memo && !match.memo) patch.memo = x.memo;
+      if(x.bron && !match.bron) patch.bron = x.bron;
+      if(Object.keys(patch).length) patches.push({id:match.id, patch});
+    });
+    const skipped = valid.length - fresh.length;
+    if(fresh.length===0 && patches.length===0){ st.textContent = `Alles staat al in de app (${valid.length} registraties) — niets gewijzigd.`; e.target.value=''; return; }
+    const ok = confirm(`${fresh.length} nieuwe registraties toevoegen?\n${skipped} staan al in de app (daarvan worden ${patches.length} aangevuld/herverdeeld).\n\nBestaande registraties worden nooit dubbel aangemaakt.`);
+    if(!ok){ st.textContent='Import geannuleerd.'; e.target.value=''; return; }
+    let useExtras = true, n = 0;
+    for(const x of fresh){
+      const obj = { type:x.type, amount:Math.round(x.amount*100)/100, category:x.category, date:x.date, note:(x.note||'').slice(0,80) };
+      const extras = {};
+      if(x.memo) extras.memo = String(x.memo).slice(0,200);
+      if(x.eenmalig) extras.eenmalig = true;
+      if(x.bron) extras.bron = String(x.bron).slice(0,40);
+      try{ await push(budgetEntriesRef, useExtras ? {...obj, ...extras} : obj); }
+      catch(err){
+        if(useExtras && n===0){ useExtras = false; await push(budgetEntriesRef, obj); }   // regels laten extra velden niet toe: zonder opnieuw proberen
+        else throw err;
+      }
+      n++;
+      if(n%25===0) st.textContent = `Bezig... ${n}/${fresh.length}`;
+    }
+    for(const pt of patches){ await update(ref(db, hhPath+'/budgetEntries/'+pt.id), pt.patch); }
+    st.textContent = `Klaar ✓ ${n} toegevoegd, ${patches.length} bestaande aangevuld, ${skipped-patches.length} ongewijzigd.${useExtras?'':'\n(Extra velden zoals toelichting werden niet bewaard.)'}`;
+  }catch(err){
+    console.error(err);
+    st.textContent = 'Import mislukt: ' + (err && err.message ? err.message : String(err));
+  }
+  e.target.value = '';
+});
+
 function currentMonthEntries(){
   const ym = budViewYear+'-'+String(budViewMonth+1).padStart(2,'0');
   return budgetData.entries.filter(e=>e.date && e.date.startsWith(ym));
@@ -1275,7 +1339,7 @@ const FIXED_CATS = ['Wonen','Telecom & media','Energie & water','Kinderen','Stre
 const CATEGORY_ICONS = {
   'Wonen':'🏠','Energie & water':'⚡','Telecom & media':'📶','Boodschappen':'🛒',
   'Eten & drinken buitenshuis':'🍟','Auto & vervoer':'🚗','Kinderen':'🧒',
-  'Gezondheid & verzekering':'💊','Online shopping':'📦','Streaming':'🎬','Sparen':'💰','Overig':'📎'
+  'Gezondheid & verzekering':'💊','Verzekering':'🛡️','Gezondheid':'💊','Huis & tuin':'🪴','Huisdieren':'🐶','Vrije tijd & vakantie':'🏖️','Juridisch & administratie':'⚖️','Bankkosten':'🏦','Online shopping':'📦','Streaming':'🎬','Sparen':'💰','Overig':'📎'
 };
 function renderOldCategoryFix(){
   const old = budgetData.entries.filter(e=>e.category==='Gezondheid & verzekering');
@@ -1329,7 +1393,8 @@ const ONEOFF_MIN = 250;                // losse uitgave vanaf dit bedrag (buiten
 const CAT_ICON = {
   'Wonen':'🏠','Energie & water':'⚡','Telecom & media':'📶','Boodschappen':'🛒','Eten & drinken buitenshuis':'🍟',
   'Auto & vervoer':'🚗','Kinderen':'🧒','Verzekering':'🛡️','Gezondheid':'💊','Online shopping':'📦',
-  'Streaming':'🎬','Bankkosten':'🏦','Sparen':'💰','Overig':'📎'
+  'Streaming':'🎬','Bankkosten':'🏦','Sparen':'💰','Overig':'📎',
+  'Huis & tuin':'🪴','Huisdieren':'🐶','Vrije tijd & vakantie':'🏖️','Juridisch & administratie':'⚖️'
 };
 function fmtEur0(n){ return '€' + Math.round(n).toLocaleString('nl-BE'); }
 function fmtDayMonth(dateStr){ return new Date(dateStr+'T00:00:00').toLocaleDateString('nl-BE',{day:'numeric', month:'long'}); }
@@ -1342,7 +1407,9 @@ function ymKey(y,m){ return y+'-'+String(m+1).padStart(2,'0'); }
 function shiftMonth(y,m,delta){ const d = new Date(y, m+delta, 1); return {y:d.getFullYear(), m:d.getMonth()}; }
 function sumAmt(list){ return list.reduce((s,e)=>s+e.amount,0); }
 function isOneOffEntry(e){
-  return e.type==='expense' && !NON_EXPENSE_CATS.includes(e.category) && e.amount>=ONEOFF_MIN && !FIXED_CATS.includes(e.category);
+  if(e.type!=='expense' || NON_EXPENSE_CATS.includes(e.category)) return false;
+  if(e.eenmalig === true) return true;   // expliciet als eenmalig gemarkeerd (bv. door de import)
+  return e.amount>=ONEOFF_MIN && !FIXED_CATS.includes(e.category);
 }
 // Statistieken van één maand; cutoffDay = enkel transacties t.e.m. die dag van de maand (null = hele maand)
 function monthStats(y, m, cutoffDay){
@@ -1430,20 +1497,36 @@ function analyzeBudget(){
     a.proj = { expense: projExpense, income: projIncome, net: projIncome>0 ? projIncome - projExpense : null };
   }
 
+  // ----- terugkerende betaling die 2x in één maand valt (verschoven betaaldatum, geen echte extra kost) -----
+  const doubles = [], extraByCat = {};
+  {
+    const grp = {};
+    budgetData.entries.filter(e=>e.type==='expense' && e.date && e.date.startsWith(ymKey(y,m)) && (!cutoff || parseInt(e.date.slice(8,10),10)<=cutoff) && e.amount>=100 && e.note && !NON_EXPENSE_CATS.includes(e.category) && !isOneOffEntry(e)).forEach(e=>{
+      const k = e.note+'|'+Math.round(e.amount);
+      (grp[k] = grp[k] || {note:e.note, amount:e.amount, cat:e.category, n:0}).n++;
+    });
+    Object.values(grp).filter(g=>g.n>=2).forEach(g=>{ doubles.push(g); extraByCat[g.cat] = (extraByCat[g.cat]||0) + g.amount*(g.n-1); });
+  }
+  a.extraByCat = extraByCat;
+  const doublesExplained = new Set();
+
   // ----- aandachtspunten: categorieën t.o.v. normaal -----
   if(base && !tooEarly){
     const cats = new Set([...Object.keys(cur.byCat), ...Object.keys(base.catMtd)]);
     const goods = [];
     cats.forEach(cat=>{
-      const c = cur.byCat[cat]||0, b = base.catMtd[cat]||0;
+      const c = (cur.byCat[cat]||0) - (extraByCat[cat]||0), b = base.catMtd[cat]||0;
+      const dbl = doubles.filter(g=>g.cat===cat);
+      const dblTxt = dbl.length ? ` Bevat ${dbl.map(g=>`${g.n}× ${escapeHtml(g.note)} à ${fmtEur0(g.amount)}`).join(' en ')} (verschoven betaaldatum?) — de extra betaling is hier niet meegeteld.` : '';
+      if(dbl.length) doublesExplained.add(cat);
       const fixed = FIXED_CATS.includes(cat);
       const thr = fixed ? 1.15 : 1.3, minDiff = fixed ? 25 : 40;
       const ic = CAT_ICON[cat]||'📎';
       if(b >= 15 && c >= b*thr && c-b >= minDiff){
         const pct = Math.round((c/b-1)*100);
-        push((c>=b*1.6 && c-b>=100)?'bad':'warn', ic, `${cat}: ${pct}% boven normaal`, `${fmtEur0(c)} ${untilTxt}, gewoonlijk ±${fmtEur0(b)}.`);
+        push((c>=b*1.6 && c-b>=100)?'bad':'warn', ic, `${cat}: ${pct}% boven normaal`, `${fmtEur0(c)} ${untilTxt}, gewoonlijk ±${fmtEur0(b)}.${dblTxt}`);
       } else if(b < 15 && c >= 150){
-        push('warn', ic, `${cat}: nieuw of ongewoon`, `${fmtEur0(c)} ${untilTxt}, terwijl dit in vorige maanden amper voorkwam.`);
+        push('warn', ic, `${cat}: nieuw of ongewoon`, `${fmtEur0(c)} ${untilTxt}, terwijl dit in vorige maanden amper voorkwam.${dblTxt}`);
       } else if(b >= 60 && c <= b*0.8 && b-c >= 60 && (nearlyComplete || !fixed)){
         goods.push({diff:b-c, cat, ic, c, b});
       }
@@ -1452,6 +1535,10 @@ function analyzeBudget(){
       push('good', g.ic, `${g.cat}: lager dan normaal`, `${fmtEur0(g.c)} ${untilTxt} tegenover gewoonlijk ±${fmtEur0(g.b)}.`);
     });
   }
+
+  doubles.filter(g=>!doublesExplained.has(g.cat)).forEach(g=>{
+    push('info', '🔁', `${escapeHtml(g.note)}: ${g.n}× in één maand`, `${g.n}× ${fmtEur0(g.amount)} — vaak een verschoven betaaldatum (bv. de factuur van vorige maand), dus geen echte extra kost.`);
+  });
 
   // ----- eenmalige uitschieters -----
   if(cur.oneOffItems.length){
@@ -1637,10 +1724,11 @@ function renderAnalysisHtml(a){
     const rowHtml = r=>{
       let cls='', chip='';
       const hasB = r.base !== null && r.base >= 15;
+      const adj = r.cur - ((a.extraByCat||{})[r.c]||0);   // dubbele terugkerende betaling niet meetellen
       if(base){
-        if(r.base !== null && r.base < 15 && r.cur >= 150){ cls='bad'; chip=`<span class="dl bad">nieuw</span>`; }
+        if(r.base !== null && r.base < 15 && adj >= 150){ cls='bad'; chip=`<span class="dl bad">nieuw</span>`; }
         else if(hasB){
-          const ratio = r.cur / r.base;
+          const ratio = adj / r.base;
           if(r.cur === 0) chip = `<span class="dl neutral">nog niet</span>`;
           else if(ratio >= 1.3){ cls = ratio>=1.6?'bad':'warn'; chip = `<span class="dl ${cls}">+${Math.round((ratio-1)*100)}%</span>`; }
           else if(ratio <= 0.8) chip = `<span class="dl good">−${Math.round((1-ratio)*100)}%</span>`;
@@ -1770,7 +1858,7 @@ function renderBudget(){
     const row = document.createElement('div'); row.className='entry-item';
     const sign = en.type==='income' ? '+' : '−';
     const color = en.type==='income' ? 'var(--primary)' : 'var(--danger)';
-    row.innerHTML = `<div class="meta"><span class="t">${escapeHtml(en.category)}</span><span class="s">${en.date}${en.note?' · '+escapeHtml(en.note):''}</span></div>
+    row.innerHTML = `<div class="meta"><span class="t">${escapeHtml(en.category)}</span><span class="s">${en.date}${en.note?' · '+escapeHtml(en.note):''}${en.eenmalig?' · eenmalig':''}</span>${en.memo?`<span class="s" style="opacity:.75;">${escapeHtml(en.memo)}</span>`:''}</div>
       <div style="display:flex;align-items:center;gap:8px;"><span style="color:${color};font-weight:700;">${sign}${fmtMoney(en.amount)}</span></div>`;
     const btn = document.createElement('button'); btn.className='del-btn'; btn.textContent='✕';
     btn.addEventListener('click', ()=>{ remove(ref(db, hhPath+'/budgetEntries/'+en.id)); });
