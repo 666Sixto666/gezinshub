@@ -1,8 +1,12 @@
 {
- "datum": "2026-10-28",
+ "datum": "2026-10-29",
  "deals": [
+  {"titel": "Gratis bordspeldag in de bib van Puurs",
+   "tekst": "Zaterdag 31/10 van 14 tot 22 uur, gratis en voor alle leeftijden: kom en ga wanneer je wil. Een goedkoop uitje in de herfstvakantie, vlak bij huis. Neem zelf een vieruurtje mee.",
+   "waar": "Hoofdbibliotheek Puurs, Hondsmarkt 2", "geldigTot": "2026-10-31",
+   "link": "https://www.puurs-sint-amands.be/activiteiten/bordspeldag-de-bib"},
   {"titel": "Meepakkers bij de Okay: tot 3+3 gratis",
-   "tekst": "Je gaat het vaakst naar de Okay Blaasveld (±10× per maand). Tot en met 3/11 krijg je op de Meepakkers-producten 1+1, 2+2 of 3+3 gratis. Zet wat je toch nodig hebt (houdbaar of diepvries) meteen op de Lijst, en koop het in één keer.",
+   "tekst": "Jullie gaan het vaakst naar de Okay. Tot en met 3/11 krijg je op de Meepakkers 1+1, 2+2 of 3+3 gratis. Neem alleen wat je toch nodig hebt (houdbaar of diepvries).",
    "waar": "Okay Blaasveld", "geldigTot": "2026-11-03",
    "link": "https://www.okay.be/nl/promos/meepakkers"}
  ]
