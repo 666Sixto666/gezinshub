@@ -1,12 +1,12 @@
 {
- "datum": "2026-10-29",
+ "datum": "2026-10-30",
  "deals": [
-  {"titel": "Gratis bordspeldag in de bib van Puurs",
-   "tekst": "Zaterdag 31/10 van 14 tot 22 uur, gratis en voor alle leeftijden: kom en ga wanneer je wil. Een goedkoop uitje in de herfstvakantie, vlak bij huis. Neem zelf een vieruurtje mee.",
-   "waar": "Hoofdbibliotheek Puurs, Hondsmarkt 2", "geldigTot": "2026-10-31",
-   "link": "https://www.puurs-sint-amands.be/activiteiten/bordspeldag-de-bib"},
+  {"titel": "Gratis voorleesnamiddag in de bib van Bornem",
+   "tekst": "Woensdag 4/11 van 14 tot 14:30 uur wordt er gratis voorgelezen in de bib van Bornem. Het is bedoeld voor 3 tot 6 jaar, maar jongere kindjes zijn ook welkom: een kort, rustig uitje in de herfstvakantie.",
+   "waar": "BIB Bornem, Sint-Amandsesteenweg 41-43", "geldigTot": "2026-11-04",
+   "link": "https://www.bornem.be/activiteiten/detail/4564/voorleesnamiddag-in-de-bib"},
   {"titel": "Meepakkers bij de Okay: tot 3+3 gratis",
-   "tekst": "Jullie gaan het vaakst naar de Okay. Tot en met 3/11 krijg je op de Meepakkers 1+1, 2+2 of 3+3 gratis. Neem alleen wat je toch nodig hebt (houdbaar of diepvries).",
+   "tekst": "Jullie gaan het vaakst naar de Okay. Nog tot en met 3/11 krijg je op de Meepakkers 1+1, 2+2 of 3+3 gratis. Neem alleen wat je toch nodig hebt (houdbaar of diepvries).",
    "waar": "Okay Blaasveld", "geldigTot": "2026-11-03",
    "link": "https://www.okay.be/nl/promos/meepakkers"}
  ]
