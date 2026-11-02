@@ -1,13 +1,13 @@
 {
- "datum": "2026-11-01",
+ "datum": "2026-11-02",
  "deals": [
+  {"titel": "Gratis Vredesfeest in Fort Liezele op 11/11",
+   "tekst": "Woensdag 11/11 (een vrije dag) kunnen kinderen van 13:00 tot 17:00 gratis op springkastelen, een klimmuur en een reuze knikkerbaan. Om 13:30, 15:00 en 15:30 wordt er ook voorgelezen. Het is een gratis namiddag uit, vlakbij in Puurs-Sint-Amands.",
+   "waar": "Park Fort Liezele, Fortbaan 2, Liezele", "geldigTot": "2026-11-11",
+   "link": "https://www.puurs-sint-amands.be/activiteiten/vredesfeest-2026"},
   {"titel": "Gratis voorleesnamiddag in de bib van Bornem",
-   "tekst": "Woensdag 4/11 van 14:00 tot 14:30 uur wordt er voorgelezen voor kinderen van 3 tot 6 jaar, maar jongere kinderen zijn ook welkom. Het is gratis en duurt kort, dus het past goed bij een peuter. Na vijf keer komen krijgt je kind een cadeautje (vraag een spaarkaart aan de balie).",
+   "tekst": "Woensdag 4/11 van 14:00 tot 14:30 uur wordt er voorgelezen voor kinderen van 3 tot 6 jaar, maar jongere kinderen zijn ook welkom. Het is gratis en duurt kort, dus het past goed bij een peuter.",
    "waar": "Bib Bornem, Sint-Amandsesteenweg 41-43, Bornem", "geldigTot": "2026-11-04",
-   "link": "https://www.bornem.be/activiteiten/detail/4564/voorleesnamiddag-in-de-bib"},
-  {"titel": "Meepakkers bij de Okay: tot 3+3 gratis",
-   "tekst": "Jullie gaan het vaakst naar de Okay. Nog tot en met 3/11 krijg je op de Meepakkers 1+1, 2+2 of 3+3 gratis. Neem alleen wat je toch nodig hebt (houdbaar of diepvries).",
-   "waar": "Okay Blaasveld", "geldigTot": "2026-11-03",
-   "link": "https://www.okay.be/nl/promos/meepakkers"}
+   "link": "https://www.bornem.be/activiteiten/detail/4564/voorleesnamiddag-in-de-bib"}
  ]
 }
