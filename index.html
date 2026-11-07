@@ -111,12 +111,15 @@
   .grid .day.past{color:#A3ABA6;font-weight:500;}
   .grid .day.empty{visibility:hidden;cursor:default;}
   .grid .day.today{border-color:var(--primary);color:var(--primary);font-weight:800;}
+  .grid .day.vac{background:#DCE7F6;}
+  .grid .day.vac.we{background:#D0DDF0;}
   .grid .day.selected{background:var(--primary);color:#fff;border-color:var(--primary);}
   .grid .dots{position:absolute;bottom:18%;display:flex;gap:3px;}
   .grid .dots span{width:6px;height:6px;border-radius:50%;}
   .grid .day.selected .dots span{box-shadow:0 0 0 1.5px #fff;}
   .legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
   .legend .chip{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
+  .vac-line{font-size:13px;padding:8px 10px;border-radius:10px;background:#E6EEF8;margin-bottom:8px;}
   .legend .sw{width:9px;height:9px;border-radius:50%;display:inline-block;}
   .day-events{margin-top:0;}
   .day-events h4{font-size:15px;color:var(--primary);margin:0 0 10px;font-weight:700;font-family:'Space Grotesk',system-ui,sans-serif;}
@@ -1100,8 +1103,35 @@ document.getElementById('resetOwnerBtn').addEventListener('click', ()=>{
   if(todosUnsub){ todosUnsub(); todosUnsub = null; } todosRef = null; todoItems = [];
   renderTodoOwnerGate(); renderSettings(); showPanel('todo');
 });
+// ---------- schoolvakanties en vrije dagen (Vlaanderen, officiële schoolkalender) ----------
+// Openbare gegevens, geen gezinsdata. Elk jaar in de zomer het volgende schooljaar toevoegen.
+const SCHOOLVRIJ = [
+  {van:'2026-11-02', tot:'2026-11-08', naam:'Herfstvakantie'},
+  {van:'2026-11-11', tot:'2026-11-11', naam:'Wapenstilstand (geen school)'},
+  {van:'2026-12-21', tot:'2027-01-03', naam:'Kerstvakantie'},
+  {van:'2027-02-08', tot:'2027-02-14', naam:'Krokusvakantie'},
+  {van:'2027-03-29', tot:'2027-04-11', naam:'Paasvakantie'},
+  {van:'2027-05-06', tot:'2027-05-07', naam:'Hemelvaart en brugdag (geen school)'},
+  {van:'2027-05-17', tot:'2027-05-17', naam:'Pinkstermaandag (geen school)'},
+  {van:'2027-07-01', tot:'2027-08-31', naam:'Zomervakantie'},
+];
+function schoolvrijOp(d){ return SCHOOLVRIJ.find(v=>v.van<=d && d<=v.tot) || null; }
+function vacRange(v){
+  const f = (x)=>new Date(x+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'short', day:'numeric', month:'short'});
+  return v.van===v.tot ? f(v.van) : f(v.van)+' – '+f(v.tot);
+}
+// Vandaag: lopende vakantie, of de eerstvolgende binnen 14 dagen
+function vacHomeLine(todayIso){
+  const now = schoolvrijOp(todayIso);
+  if(now) return `<div class="vac-line">🏖️ <strong>${escapeHtml(now.naam)}</strong>${now.van!==now.tot?` · nog t.e.m. ${new Date(now.tot+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'long', day:'numeric', month:'long'})}`:''}</div>`;
+  const next = SCHOOLVRIJ.find(v=>v.van>todayIso);
+  if(!next) return '';
+  const days = Math.round((new Date(next.van+'T00:00:00') - new Date(todayIso+'T00:00:00'))/86400000);
+  if(days>14) return '';
+  return `<div class="vac-line">🏖️ ${days===1?'Morgen':'Over '+days+' dagen'}: <strong>${escapeHtml(next.naam)}</strong> · ${vacRange(next)}</div>`;
+}
 // ---------- calendar ----------
-function renderLegend(){ document.getElementById('legend').innerHTML = PERSONS.map(p=>`<div class="chip"><span class="sw" style="background:${p.color}"></span>${p.key}</div>`).join(''); }
+function renderLegend(){ document.getElementById('legend').innerHTML = PERSONS.map(p=>`<div class="chip"><span class="sw" style="background:${p.color}"></span>${p.key}</div>`).join('') + `<div class="chip"><span class="sw" style="background:#C9D8EE;border-radius:3px;"></span>Schoolvrij</div>`; }
 function renderEvPersonSelect(){
   const wrap = document.getElementById('evPersonSelect'); wrap.innerHTML='';
   PERSONS.forEach(p=>{
@@ -1203,7 +1233,7 @@ function renderHome(){
   dateEl.textContent = now.toLocaleDateString('nl-BE',{weekday:'long', day:'numeric', month:'long'});
   const tToday = eventsOn(todayIso), tTomorrow = eventsOn(tomorrowIso);
   document.getElementById('homeSub').textContent = tToday.length ? `${tToday.length} afspra${tToday.length>1?'ken':'ak'} vandaag` : 'Geen afspraken vandaag';
-  let html = `<div class="ag-day-head is-today">Vandaag</div>` + (tToday.length ? tToday.map(agendaItemHtml).join('') : `<div class="today-empty">Niets gepland.</div>`);
+  let html = vacHomeLine(todayIso) + `<div class="ag-day-head is-today">Vandaag</div>` + (tToday.length ? tToday.map(agendaItemHtml).join('') : `<div class="today-empty">Niets gepland.</div>`);
   html += `<div class="ag-day-head">Morgen · ${new Date(tomorrowIso+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'long', day:'numeric', month:'short'})}</div>` + (tTomorrow.length ? tTomorrow.map(agendaItemHtml).join('') : `<div class="today-empty">Niets gepland.</div>`);
   // de rest van de week, compact
   const later = [];
@@ -1238,6 +1268,7 @@ function renderCalendar(){
     if(dateStr<todayStr) el.classList.add('past');
     if(dateStr===todayStr) el.classList.add('today');
     if(dateStr===selectedDate) el.classList.add('selected');
+    const sv = schoolvrijOp(dateStr); if(sv){ el.classList.add('vac'); el.title = sv.naam; }
     el.textContent = d;
     const dayEvs = calEvents.filter(e=>e.date===dateStr);
     if(dayEvs.length>0){
@@ -1264,8 +1295,10 @@ function renderDayEvents(){
   document.getElementById('newEvToggle').textContent = '＋ Afspraak op ' + d.toLocaleDateString('nl-BE',{weekday:'short', day:'numeric', month:'short'});
   const list = document.getElementById('dayEventsList');
   const items = eventsOn(selectedDate);
-  if(items.length===0){ list.innerHTML = '<div class="today-empty" style="padding:6px 2px 10px;">Niets gepland op deze dag.</div>'; return; }
-  list.innerHTML='';
+  const sv = schoolvrijOp(selectedDate);
+  const vacHtml = sv ? `<div class="vac-line">🏖️ <strong>${escapeHtml(sv.naam)}</strong>${sv.van!==sv.tot?' · '+vacRange(sv):''}</div>` : '';
+  if(items.length===0){ list.innerHTML = vacHtml + '<div class="today-empty" style="padding:6px 2px 10px;">Niets gepland op deze dag.</div>'; return; }
+  list.innerHTML = vacHtml;
   items.forEach(ev=>{
     const wrap = document.createElement('div'); wrap.innerHTML = agendaItemHtml(ev);
     const row = wrap.firstElementChild;
