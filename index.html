@@ -326,6 +326,32 @@
   .ba-ins .t{font-weight:700;font-size:13.5px;}
   .ba-ins .d{font-size:12.5px;color:var(--ink);opacity:.8;margin-top:2px;line-height:1.45;}
   .ba-ins .t + .d{font-size:12px;}
+  .money-card .mc-label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;}
+  .money-card .mc-big{font-family:'Space Grotesk',system-ui,sans-serif;font-size:34px;font-weight:700;line-height:1.1;margin:4px 0 2px;}
+  .money-card .mc-big.good{color:var(--primary);} .money-card .mc-big.warn{color:#B9771B;} .money-card .mc-big.bad{color:var(--danger);}
+  .money-card .mc-calc{font-size:12px;color:var(--muted);line-height:1.45;}
+  .money-card .mc-hint{font-size:13px;font-weight:600;margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--danger-light);}
+  .money-card .mc-hint.warn{background:var(--accent-light);} .money-card .mc-hint.good{background:var(--primary-light);}
+  .mc-row{display:flex;gap:8px;font-size:12.5px;padding:4px 0;border-bottom:1px solid var(--border);}
+  .mc-row:last-child{border-bottom:none;} .mc-row .w{flex:1;} .mc-row .dt{min-width:46px;color:var(--muted);font-weight:600;} .mc-row.past{opacity:.55;}
+  .mc-row .in{color:var(--primary);font-weight:600;}
+  .goal-bar{height:8px;border-radius:6px;background:var(--bg);overflow:hidden;margin-top:6px;} .goal-bar span{display:block;height:100%;background:var(--primary);border-radius:6px;}
+  .home-alert{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:12px;background:var(--accent-light);border:1px solid #F0D6A8;font-size:14px;font-weight:600;margin-bottom:14px;}
+  .new-line{font-size:13px;padding:3px 0;}
+  .new-line .k{color:var(--muted);font-weight:600;margin-right:4px;}
+  .add-bar select.every{width:118px;flex:0 0 118px;padding:12px 6px;font-size:13px;border-radius:12px;background:var(--surface);}
+  .chore-meta{font-size:11px;color:var(--muted);margin-top:1px;}
+  .chore-meta.due{color:var(--danger);font-weight:600;}
+  .shop-group{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin:12px 2px 6px;}
+  .shop-group:first-child{margin-top:2px;}
+  .fav-wrap{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 12px;align-items:center;}
+  .fav-wrap .lbl{font-size:11.5px;color:var(--muted);font-weight:600;margin-right:2px;}
+  .fav-chip{border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:6px 11px;font-size:13px;cursor:pointer;font-family:inherit;color:var(--ink);}
+  .fav-chip:active{background:var(--primary-light);}
+  .star-btn{background:none;border:none;font-size:17px;cursor:pointer;padding:4px 4px;color:var(--muted);line-height:1;}
+  .star-btn.on{color:var(--accent);}
+  .ics-btn{background:none;border:1px solid var(--border);border-radius:8px;font-size:11.5px;cursor:pointer;padding:4px 7px;color:var(--primary);font-weight:600;white-space:nowrap;font-family:inherit;}
+  .details-head{cursor:pointer;margin:0;}
   .ba-more{background:none;border:none;color:var(--primary);font-weight:600;font-size:12.5px;cursor:pointer;padding:4px 2px;font-family:'Inter',sans-serif;}
   .ba-cat{margin-bottom:12px;}
   .ba-cat .row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;margin-bottom:6px;gap:8px;}
@@ -378,6 +404,12 @@
   <main>
     <section id="panel-home" class="panel active">
       <div class="page-head"><div class="d" id="homeDate"></div><div class="s" id="homeSub"></div></div>
+      <div id="homeAlert"></div>
+      <div class="card money-card" id="homeMoneyCard" style="display:none;"><div id="homeMoney"></div></div>
+      <div class="card" id="homeNewCard" style="display:none;">
+        <h3>🆕 Nieuw sinds je vorige bezoek</h3>
+        <div id="homeNew"></div>
+      </div>
       <div class="card">
         <h3>📅 Agenda</h3>
         <div id="homeAgenda"></div>
@@ -394,6 +426,10 @@
         <h3>🤝 Samen<span class="sub">Max 4 tegelijk — rond er één af voor je een nieuwe toevoegt.</span></h3>
         <div id="homeShared"></div>
       </div>
+      <div class="card" id="homeChoresCard" style="display:none;">
+        <h3>🔁 Vaste taken<span class="sub">Nu aan de beurt. Afvinken = gedaan, ze komen vanzelf terug.</span></h3>
+        <div id="homeChores"></div>
+      </div>
       <div class="card" id="dealCard" style="display:none;">
         <h3>🏷️ Deal van de dag<span class="sub" id="dealSub"></span></h3>
         <div id="dealBody"></div>
@@ -405,6 +441,11 @@
         <h3>👤 Dit toestel</h3>
         <div style="font-size:13px;margin-bottom:10px;">Persoonlijke takenlijst van: <strong id="settingsOwner">–</strong></div>
         <button class="btn outline" id="resetOwnerBtn" type="button" style="width:100%;">Andere persoon kiezen</button>
+      </div>
+      <div class="card">
+        <h3>💾 Back-up<span class="sub">Bewaart alles uit de app (kalender, taken, lijst, contracten, registraties en analyse) in één bestand. Bewaar het in Bestanden of Dropbox. Eén keer per maand volstaat.</span></h3>
+        <button class="btn" id="backupBtn" type="button" style="width:100%;">💾 Back-up maken</button>
+        <div id="backupStatus" style="font-size:12px;color:var(--muted);margin-top:8px;"></div>
       </div>
       <div class="card">
         <h3>🔒 Account</h3>
@@ -449,7 +490,6 @@
     </section>
     <section id="panel-bud" class="panel">
       <div class="seg"><button type="button" class="active" data-seg="bud">💶 Budget</button><button type="button" data-seg="con">📄 Contracten<span class="cnt" id="segConCnt" style="display:none;"></span></button></div>
-      <div class="cal-head"><button id="prevBudMonth">‹</button><div class="label" id="budMonthLabel"></div><button id="nextBudMonth">›</button></div>
       <button type="button" class="ba-strip" id="uploadStrip"><span id="uploadStripTxt"></span><span class="go" id="uploadStripGo">⬆️ Uploaden</span></button>
       <div class="card" id="uploadCard" style="display:none;">
         <h3>💳 Gegevens bijwerken<span class="sub">De vaste werkwijze: bezorg Claude de CSV-export van KBC. Claude categoriseert alles, schrijft de analyse en stuurt een gegevensbestand (.json) terug — dat laad je hier in. Bestaande registraties worden nooit dubbel aangemaakt.</span></h3>
@@ -460,20 +500,18 @@
         <div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;">
           <input type="file" id="importInput" accept=".json,application/json,.txt" style="display:none;">
           <button class="btn" id="importBtn" type="button" style="flex-basis:100%;">📥 Gegevensbestand van Claude (.json)</button>
-          <div style="flex-basis:100%;font-size:11.5px;color:var(--muted);margin-top:4px;">Of tussendoor zelf iets toevoegen (automatisch herkend, jij controleert):</div>
-          <input type="file" id="receiptInput" accept="image/*,application/pdf" style="display:none;">
-          <button class="btn ghost" id="receiptBtn" type="button" style="flex:1;font-size:13px;">📷 Bonnetje / foto</button>
-          <input type="file" id="csvInput" accept=".csv,text/csv" style="display:none;">
-          <button class="btn ghost" id="csvBtn" type="button" style="flex:1;font-size:13px;">📄 CSV</button>
         </div>
         <div id="importStatus" style="font-size:12px;color:var(--muted);margin:0 0 8px;display:none;white-space:pre-line;"></div>
-        <div id="receiptStatus" style="font-size:12px;color:var(--muted);margin-top:2px;display:none;"></div>
-        <div id="receiptReviewWrap"></div>
       </div>
       <div class="card" id="claudeCard" style="display:none;">
         <h3>💬 Analyse van Claude<span class="sub" id="claudeSub"></span></h3>
         <div id="claudeBody"></div>
       </div>
+      <div class="card" id="budDetailsCard">
+        <h3 class="details-head" id="budDetailsToggle"><span id="budDetailsArrow">▸</span> 📊 Details per maand<span class="sub">De automatische cijfers: per categorie, vaste betalingen, gewoontes, trends. Handmatig iets registreren kan hier ook.</span></h3>
+      </div>
+      <div id="budDetails" style="display:none;">
+      <div class="cal-head"><button id="prevBudMonth">‹</button><div class="label" id="budMonthLabel"></div><button id="nextBudMonth">›</button></div>
       <div id="budAnalysis"></div>
       <div class="card" id="yearlyCostsCard" style="display:none;">
         <h3>⏰ Jaarlijkse kost op komst<span class="sub">Verschijnt enkel wanneer een jaarlijkse betaling binnen 1-2 maanden verwacht wordt.</span></h3>
@@ -492,13 +530,8 @@
           </form>
         </div>
       </div>
-      <div class="card">
-        <h3 style="cursor:pointer;" class="tip-toggle" id="goalsToggle" data-target="goalsWrap">▸ Maandbudgetten per categorie (optioneel)</h3>
-        <div id="goalsWrap" style="display:none;">
-          <div id="goalsList"></div>
-        </div>
-      </div>
       <div class="card"><h3 style="cursor:pointer;" class="tip-toggle" id="entriesToggle" data-target="entriesWrap">▸ Registraties bekijken (0)</h3><div id="entriesWrap" style="display:none;"><div id="entriesList"></div></div></div>
+      </div>
     </section>
     <section id="panel-todo" class="panel">
       <div class="card" id="ownerCard" style="display:none;"><h3>Voor wie is dit toestel?</h3><div class="owner-pick" id="ownerPick"></div></div>
@@ -519,6 +552,11 @@
         <form class="add-bar" id="sharedTodoAddRow" autocomplete="off"><input type="text" id="sharedTodoInput" placeholder="Nieuwe gedeelde taak" enterkeyhint="done"><button id="sharedTodoAddBtn" class="plus" type="submit" aria-label="Gedeelde taak toevoegen" disabled>+</button></form>
         <div id="sharedTodoFullMsg" style="display:none;font-size:12px;color:var(--muted);margin-bottom:8px;">Vol (4/4) — rond er eerst één af.</div>
         <div id="sharedTodoList"></div>
+      </div>
+      <div class="card">
+        <h3>🔁 Vaste taken<span class="sub">Terugkerend huishoudwerk voor jullie allebei. Het verschijnt op Vandaag wanneer het aan de beurt is.</span></h3>
+        <form class="add-bar" id="choreAddForm" autocomplete="off"><input type="text" id="choreInput" placeholder="Nieuwe vaste taak" enterkeyhint="done"><select id="choreEvery" class="every" aria-label="Hoe vaak"><option value="7">elke week</option><option value="14">om de 2 weken</option><option value="30">elke maand</option><option value="1">elke dag</option><option value="91">elk kwartaal</option></select><button id="choreAddBtn" class="plus" type="submit" aria-label="Vaste taak toevoegen" disabled>+</button></form>
+        <div id="choreList"></div>
       </div>
     </section>
     <section id="panel-con" class="panel">
@@ -582,6 +620,7 @@
       <div class="card">
         <h3>🛒 Boodschappenlijst<span class="sub">Gedeeld tussen jullie beiden, live bijgewerkt.</span></h3>
         <form class="add-bar" id="shopAddForm" autocomplete="off"><input type="text" id="shopInput" placeholder="Bv. melk, brood, wc-papier" enterkeyhint="done"><button id="shopAddBtn" class="plus" type="submit" aria-label="Toevoegen aan lijst" disabled>+</button></form>
+        <div id="shopFavs"></div>
         <div id="shopList"></div>
         <button class="btn outline" id="clearCheckedBtn" type="button" style="margin-top:10px;display:none;">Wis afgevinkte items</button>
       </div>
@@ -618,19 +657,17 @@ async function geminiAnalyzeImage(base64, mimeType, prompt){
   const result = await geminiModel.generateContent([{ inlineData: { data: base64, mimeType } }, prompt]);
   return result.response.text();
 }
-async function geminiAnalyzeText(prompt){
-  const result = await geminiModel.generateContent([prompt]);
-  return result.response.text();
-}
 
 const hhPath = 'households/' + HOUSEHOLD_ID;
 const eventsRef = ref(db, hhPath + '/calendarEvents');
 const budgetEntriesRef = ref(db, hhPath + '/budgetEntries');
-const budgetGoalsRef = ref(db, hhPath + '/budgetGoals');
 const contractsRef = ref(db, hhPath + '/contracts');
 const shoppingListRef = ref(db, hhPath + '/shoppingList');
 const sharedTodoRef = ref(db, hhPath + '/sharedTodo');
-const claudeAnalyseRef = ref(db, hhPath + '/claudeAnalyse');   // analyse + tips die Claude meestuurt in het gegevensbestand
+const claudeAnalyseRef = ref(db, hhPath + '/claudeAnalyse');
+const choresRef = ref(db, hhPath + '/vasteTaken');      // terugkerende huishoudtaken {tekst, elke (dagen), volgende}
+const shopFavRef = ref(db, hhPath + '/lijstVast');      // vaste items voor de boodschappenlijst {tekst}
+const metaRef = ref(db, hhPath + '/meta');              // {laatsteBackup}   // analyse + tips die Claude meestuurt in het gegevensbestand
 
 const CATEGORIES = ['Wonen','Energie & water','Telecom & media','Boodschappen','Eten & drinken buitenshuis','Auto & vervoer','Kinderen','Verzekering','Gezondheid','Huis & tuin','Huisdieren','Vrije tijd & vakantie','Juridisch & administratie','Online shopping','Streaming','Bankkosten','Sparen','Overig'];
 const CONTRACT_CATEGORIES = ['Energie','Telecom & internet','Verzekering','Hypotheek & lening','EV laden','Onderhoud huis','Onderhoud auto','Online shopping','Streaming','Kinderen','Bankkosten','Abonnement','Overig'];
@@ -656,6 +693,9 @@ let contracts = [];
 let shoppingItems = [];
 let sharedTodoItems = [];
 let claudeAnalyse = null;
+let chores = [], choresDenied = false;
+let shopFavs = [], shopFavDenied = false;
+let meta = {};
 let openDateEditFor = null;
 let todoItems = [];
 let owner = localStorage.getItem('gezinshub-owner') || null;
@@ -735,18 +775,22 @@ if(logoutLinkEl){
 function attachListeners(){
   onValue(eventsRef, snap=>{ calEvents = snapToArray(snap.val()); renderLegend(); renderCalendar(); renderDayEvents(); renderHome(); markLive(); });
   onValue(budgetEntriesRef, snap=>{ budgetData.entries = snapToArray(snap.val()); renderBudget(); renderTodayOverview(); markLive(); });
-  onValue(budgetGoalsRef, snap=>{ budgetData.goals = snap.val() || {}; renderBudget(); markLive(); });
   onValue(contractsRef, snap=>{ contracts = snapToArray(snap.val()); renderContracts(); renderBudget(); renderTodayOverview(); markLive(); });
-  onValue(shoppingListRef, snap=>{ shoppingItems = snapToArray(snap.val()); renderShoppingList(); renderNavBadges(); markLive(); });
+  onValue(shoppingListRef, snap=>{ shoppingItems = snapToArray(snap.val()); renderShoppingList(); renderNavBadges(); renderNew(); markLive(); });
   onValue(sharedTodoRef, snap=>{ sharedTodoItems = snapToArray(snap.val()); renderSharedTodo(); renderHome(); markLive(); });
-  onValue(claudeAnalyseRef, snap=>{ claudeAnalyse = snap.val() || null; renderClaudeAnalyse(); markLive(); }, ()=>{ /* nog geen leesrecht op dit pad: kaart blijft verborgen */ });
+  onValue(claudeAnalyseRef, snap=>{ claudeAnalyse = snap.val() || null; renderClaudeAnalyse(); renderHomeMoney(); renderNew(); markLive(); }, ()=>{ /* nog geen leesrecht op dit pad: kaart blijft verborgen */ });
+  // nieuwe paden (v7): als de databaseregels ze (nog) niet toelaten, blijft de app gewoon werken zonder die functie
+  onValue(choresRef, snap=>{ chores = snapToArray(snap.val()); choresDenied = false; renderChores(); }, ()=>{ choresDenied = true; renderChores(); });
+  onValue(shopFavRef, snap=>{ shopFavs = snapToArray(snap.val()); shopFavDenied = false; renderShoppingList(); }, ()=>{ shopFavDenied = true; renderShoppingList(); });
+  onValue(metaRef, snap=>{ meta = snap.val() || {}; renderTodayOverview(); }, ()=>{});
   renderTodoOwnerGate();
   loadDeals(); lastDealsLoad = Date.now();
 }
 // app terug naar voor (iPhone houdt ze vaak dagen open): Vandaag opnieuw opbouwen
 document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState==='hidden'){ writeSeen(Date.now()); return; }
   if(document.visibilityState!=='visible' || !auth.currentUser) return;
-  renderHome(); renderTodayOverview();
+  prevSeen = readSeen(); renderHome(); renderTodayOverview(); renderHomeMoney(); renderNew(); renderChores();
   if(Date.now()-lastDealsLoad > 60*60*1000){ lastDealsLoad = Date.now(); loadDeals(); }
 });
 
@@ -808,6 +852,7 @@ function claudePointHtml(p){
 }
 function renderClaudeAnalyse(){
   const a = claudeAnalyse;
+  if(lsGet('gezinshub-budDetails')===null) setBudDetails(!(a && a.kop));
   const card = document.getElementById('claudeCard'), homeCard = document.getElementById('homeClaudeCard');
   if(!a || !a.kop){ card.style.display='none'; homeCard.style.display='none'; return; }
   const punten = Array.isArray(a.punten) ? a.punten : Object.values(a.punten||{});
@@ -848,6 +893,237 @@ async function loadDeals(){
   }catch(err){ card.style.display='none'; }
 }
 let lastDealsLoad = 0;
+
+// ---------- eigen toevoegingen herkennen + "nieuw sinds je vorige bezoek" ----------
+// Firebase-sleutels van push() bevatten het tijdstip van aanmaken: zo is er geen extra veld nodig.
+const PUSH_CHARS = '-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz';
+function pushTime(id){
+  if(!id || id.length < 8) return 0;
+  let t = 0;
+  for(let i=0;i<8;i++){ const v = PUSH_CHARS.indexOf(id[i]); if(v<0) return 0; t = t*64 + v; }
+  return t;
+}
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
+let mineIds = new Set(); try{ mineIds = new Set(JSON.parse(lsGet('gezinshub-mine')||'[]')); }catch(e){}
+function pushMine(r, obj){
+  const p = push(r, obj);
+  if(p && p.key){ mineIds.add(p.key); lsSet('gezinshub-mine', JSON.stringify([...mineIds].slice(-400))); }
+  return p;
+}
+function readSeen(){ const v = parseInt(lsGet('gezinshub-lastSeen')||'0', 10); return v > 0 ? v : Date.now(); }
+function writeSeen(t){ lsSet('gezinshub-lastSeen', String(t)); }
+let prevSeen = readSeen();
+writeSeen(Date.now());
+function renderNew(){
+  const card = document.getElementById('homeNewCard'); if(!card) return;
+  const fresh = (x)=>pushTime(x.id) > prevSeen && !mineIds.has(x.id);
+  const lines = [];
+  const evs = calEvents.filter(e=>fresh(e) && e.seriesId!=='afval');
+  // een herhalende reeks telt als één afspraak
+  const seen = new Set();
+  evs.sort((a,b)=>a.date.localeCompare(b.date)).forEach(e=>{
+    const k = e.seriesId || e.id; if(seen.has(k)) return; seen.add(k);
+    const when = new Date(e.date+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'short', day:'numeric', month:'short'});
+    lines.push(`<div class="new-line"><span class="k">📅</span>${escapeHtml(e.title)} <span style="color:var(--muted);">· ${when}${e.time?' '+e.time:''}${e.seriesId?' · herhaalt':''}</span></div>`);
+  });
+  const shop = shoppingItems.filter(i=>fresh(i) && !i.done);
+  if(shop.length) lines.push(`<div class="new-line"><span class="k">🛒</span>Op de lijst: ${shop.slice(0,4).map(i=>escapeHtml(i.tekst)).join(', ')}${shop.length>4?` (+${shop.length-4})`:''}</div>`);
+  sharedTodoItems.filter(fresh).forEach(i=>lines.push(`<div class="new-line"><span class="k">🤝</span>Samen: ${escapeHtml(i.tekst)}</div>`));
+  const a = claudeAnalyse;
+  if(a && a.ingeladen && a.ingeladen > prevSeen && String(a.ingeladen)!==lsGet('gezinshub-ownImport'))
+    lines.push(`<div class="new-line"><span class="k">💬</span>Nieuwe analyse van Claude (gegevens t.e.m. ${fmtDayMonth(a.gegevensTot||a.datum)})</div>`);
+  if(!lines.length){ card.style.display='none'; return; }
+  card.style.display='block';
+  document.getElementById('homeNew').innerHTML = lines.slice(0,8).join('') + (lines.length>8?`<div class="today-empty">+ ${lines.length-8} meer</div>`:'')
+    + `<button type="button" class="ba-more" id="newSeenBtn" style="margin-top:4px;">Gezien ✓</button>`;
+  document.getElementById('newSeenBtn').addEventListener('click', ()=>{ prevSeen = Date.now(); writeSeen(prevSeen); renderNew(); });
+}
+
+// ---------- geld: wat is er vrij tot de volgende bijdragen? ----------
+// Claude zet in het gegevensbestand: analyse.prognose = {tot, saldo, saldoDatum, uit:[{datum,wat,bedrag}], in:[...], buffer}
+// en optioneel analyse.spaardoel = {naam, doel, huidig}. De app rekent niets bij: het blijft Claudes schatting.
+function asList(v){ return Array.isArray(v) ? v : Object.values(v||{}); }
+function renderHomeMoney(){
+  const card = document.getElementById('homeMoneyCard'); if(!card) return;
+  const a = claudeAnalyse, p = a && a.prognose;
+  if(!p || typeof p.saldo!=='number'){ card.style.display='none'; return; }
+  const todayIso = fmtDate(new Date());
+  const el = document.getElementById('homeMoney');
+  card.style.display = 'block';
+  if(p.tot && p.tot < todayIso){
+    el.innerHTML = `<div class="mc-label">Tot de volgende bijdragen</div><div class="today-line" style="margin-top:6px;">De vorige schatting liep tot ${fmtDayMonth(p.tot)}. Bezorg Claude een nieuwe KBC-export voor een nieuwe.</div>`;
+    return;
+  }
+  const uit = asList(p.uit).filter(x=>x && x.bedrag>0), inn = asList(p.in).filter(x=>x && x.bedrag>0);
+  const sumU = uit.reduce((s,x)=>s+x.bedrag,0), sumI = inn.reduce((s,x)=>s+x.bedrag,0);
+  const vrij = p.saldo - sumU + sumI;
+  const buffer = typeof p.buffer==='number' ? p.buffer : 0;
+  const level = vrij < 0 ? 'bad' : (vrij < Math.max(150, buffer) ? 'warn' : 'good');
+  // wanneer gaat de rekening onder nul? (dag per dag, posten zonder datum verspreid tot het einde)
+  const rows = [...uit.map(x=>({...x, s:-1})), ...inn.map(x=>({...x, s:1}))]
+    .sort((x,y)=>(x.datum||'9999').localeCompare(y.datum||'9999') || x.s-y.s);
+  // dag per dag: posten met datum op hun dag, posten zonder datum gelijk verspreid over de resterende dagen
+  let firstNeg = null;
+  const startIso = [todayIso, addDays(p.saldoDatum||a.gegevensTot||todayIso, 1)].sort().pop();
+  const endIso = p.tot || addDays(startIso, 21);
+  const nDays = Math.max(1, Math.round((new Date(endIso+'T00:00:00') - new Date(startIso+'T00:00:00'))/86400000) + 1);
+  const spread = rows.filter(r=>!r.datum).reduce((t,r)=>t + r.s*r.bedrag, 0) / nDays;
+  let run = p.saldo + rows.filter(r=>r.datum && r.datum < startIso).reduce((t,r)=>t + r.s*r.bedrag, 0);
+  for(let k=0, day=startIso; k<nDays; k++, day=addDays(day,1)){
+    run += rows.filter(r=>r.datum===day).reduce((t,r)=>t + r.s*r.bedrag, 0) + spread;
+    if(run < 0){ firstNeg = day; break; }
+  }
+  const totTxt = p.tot ? fmtDayMonth(p.tot) : 'de volgende bijdragen';
+  let hint = '';
+  if(vrij < 0) hint = `<div class="mc-hint">Er moet ±${fmtEur0(-vrij)} bij${firstNeg?`, ten laatste vóór ${fmtDayMonth(firstNeg)}`:''}.</div>`;
+  else if(level==='warn') hint = `<div class="mc-hint warn">Het komt net rond. Hou de uitgaven buiten de vaste kosten klein.</div>`;
+  else hint = `<div class="mc-hint good">Er blijft ruimte over.${buffer?'':' Zet een deel opzij als buffer.'}</div>`;
+  const rowHtml = rows.map(r=>{
+    const past = r.datum && r.datum < todayIso;
+    return `<div class="mc-row${past?' past':''}"><span class="dt">${r.datum?new Date(r.datum+'T00:00:00').toLocaleDateString('nl-BE',{day:'numeric', month:'numeric'}):'rest'}</span><span class="w">${escapeHtml(r.wat||'')}${past?' <span style="font-size:11px;">(wellicht al betaald)</span>':''}</span><span class="${r.s>0?'in':''}">${r.s>0?'+':'−'}${fmtEur0(r.bedrag)}</span></div>`;
+  }).join('');
+  let goal = '';
+  const sd = a.spaardoel;
+  if(sd && sd.doel>0){
+    const pct = Math.max(0, Math.min(100, (sd.huidig||0)/sd.doel*100));
+    goal = `<div style="margin-top:12px;"><div class="mc-label">${escapeHtml(sd.naam||'Buffer')}</div><div style="font-size:13px;margin-top:3px;"><strong>${fmtEur0(sd.huidig||0)}</strong> van ${fmtEur0(sd.doel)}</div><div class="goal-bar"><span style="width:${pct}%"></span></div></div>`;
+  }
+  el.innerHTML = `<div class="mc-label">Vrij tot de bijdragen van ${totTxt}</div>
+    <div class="mc-big ${level}">${vrij<0?'−':''}${fmtEur0(Math.abs(vrij))}</div>
+    <div class="mc-calc">Saldo ${fmtEur0(p.saldo)} op ${fmtDayMonth(p.saldoDatum||a.gegevensTot||a.datum)} − nog te betalen ${fmtEur0(sumU)}${sumI?` + nog te ontvangen ${fmtEur0(sumI)}`:''}. Schatting van Claude.</div>
+    ${hint}
+    <button type="button" class="ba-more" id="mcToggle" style="margin-top:6px;">Toon wat er nog komt ▾</button>
+    <div id="mcRows" style="display:none;margin-top:4px;">${rowHtml}</div>${goal}`;
+  document.getElementById('mcToggle').addEventListener('click', (e)=>{
+    const r = document.getElementById('mcRows'); const open = r.style.display!=='none';
+    r.style.display = open ? 'none' : 'block'; e.target.textContent = open ? 'Toon wat er nog komt ▾' : 'Verberg ▴';
+  });
+}
+
+// ---------- afvalophaling: morgen buitenzetten ----------
+function renderHomeAlert(){
+  const el = document.getElementById('homeAlert'); if(!el) return;
+  const tomorrow = addDays(fmtDate(new Date()), 1);
+  const afval = calEvents.filter(e=>e.date===tomorrow && /^🗑/.test(e.title||'')).map(e=>e.title.replace(/^🗑️?\s*/,''));
+  el.innerHTML = afval.length ? `<div class="home-alert"><span style="font-size:22px;">🗑️</span><div>Vanavond buitenzetten: ${afval.map(escapeHtml).join(', ')}</div></div>` : '';
+}
+
+// ---------- vaste taken (terugkerend huishoudwerk) ----------
+const EVERY_LABEL = {1:'elke dag', 7:'elke week', 14:'om de 2 weken', 30:'elke maand', 91:'elk kwartaal'};
+function choreDue(c){ return !c.volgende || c.volgende <= fmtDate(new Date()); }
+function choreDone(c, row){
+  const todayIso = fmtDate(new Date());
+  if(row){ row.classList.add('done'); }
+  setTimeout(()=>update(ref(db, hhPath+'/vasteTaken/'+c.id), { volgende: addDays(todayIso, c.elke||7), laatst: todayIso }), row?350:0);
+}
+function choreRow(c, withMeta){
+  const row = document.createElement('div'); row.className='shop-item';
+  const cb = document.createElement('input'); cb.type='checkbox';
+  const due = choreDue(c);
+  cb.addEventListener('change', ()=>{ if(cb.checked) choreDone(c, row); });
+  const txt = document.createElement('div'); txt.className='txt'; txt.style.cursor='pointer';
+  txt.innerHTML = escapeHtml(c.tekst) + (withMeta ? `<div class="chore-meta${due?' due':''}">${EVERY_LABEL[c.elke]||('om de '+c.elke+' dagen')} · ${due?'nu aan de beurt':'volgende: '+new Date(c.volgende+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'short', day:'numeric', month:'short'})}${c.laatst?' · laatst '+new Date(c.laatst+'T00:00:00').toLocaleDateString('nl-BE',{day:'numeric', month:'short'}):''}</div>` : '');
+  txt.addEventListener('click', ()=>{ cb.checked = true; choreDone(c, row); });
+  row.appendChild(cb); row.appendChild(txt);
+  return row;
+}
+function renderChores(){
+  const list = document.getElementById('choreList'); if(!list) return;
+  const form = document.getElementById('choreAddForm');
+  const homeCard = document.getElementById('homeChoresCard'), home = document.getElementById('homeChores');
+  if(choresDenied){
+    form.style.display='none';
+    list.innerHTML = '<div class="empty-state">Nog niet beschikbaar: de databaseregels moeten dit eerst toelaten.</div>';
+    homeCard.style.display='none'; return;
+  }
+  form.style.display='flex';
+  const sorted = [...chores].sort((a,b)=>(a.volgende||'').localeCompare(b.volgende||''));
+  if(!sorted.length) list.innerHTML = '<div class="empty-state">Nog geen vaste taken. Bv. bedden verversen (om de 2 weken), filter vaatwasser (elke maand).</div>';
+  else {
+    list.innerHTML = '';
+    sorted.forEach(c=>{
+      const row = choreRow(c, true);
+      const del = document.createElement('button'); del.className='del-btn'; del.textContent='✕'; del.title='Verwijderen';
+      del.addEventListener('click', ()=>{ if(confirm(`"${c.tekst}" niet meer opvolgen?`)) remove(ref(db, hhPath+'/vasteTaken/'+c.id)); });
+      row.appendChild(del); list.appendChild(row);
+    });
+  }
+  const due = sorted.filter(choreDue);
+  homeCard.style.display = due.length ? 'block' : 'none';
+  home.innerHTML = ''; due.forEach(c=>home.appendChild(choreRow(c, false)));
+}
+wireAddBar('choreAddForm', 'choreInput', 'choreAddBtn', (val)=>{
+  const elke = parseInt(document.getElementById('choreEvery').value, 10) || 7;
+  push(choresRef, { tekst: val, elke, volgende: fmtDate(new Date()) }).catch(err=>{ console.error(err); alert('Bewaren lukte niet: de databaseregels laten vaste taken nog niet toe.'); });
+});
+
+// ---------- in je eigen agenda zetten (.ics) ----------
+function icsEscape(t){ return String(t||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n'); }
+function icsFor(ev){
+  const d = ev.date.replace(/-/g,'');
+  const stamp = new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'');
+  let when;
+  if(ev.time && /^\d{2}:\d{2}$/.test(ev.time)){
+    const [h,m] = ev.time.split(':').map(Number);
+    const end = new Date(ev.date+'T00:00:00'); end.setHours(h+1, m);
+    const pad = (n)=>String(n).padStart(2,'0');
+    // zwevende lokale tijd: de iPhone gebruikt gewoon de Belgische tijd van het toestel
+    when = `DTSTART:${d}T${pad(h)}${pad(m)}00\r\nDTEND:${fmtDate(end).replace(/-/g,'')}T${pad(end.getHours())}${pad(end.getMinutes())}00`;
+  } else {
+    when = `DTSTART;VALUE=DATE:${d}\r\nDTEND;VALUE=DATE:${addDays(ev.date,1).replace(/-/g,'')}`;
+  }
+  const who = ev.person && ev.person!=='Wij' ? ` (${ev.person})` : '';
+  return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Gezinshub//NL','CALSCALE:GREGORIAN','BEGIN:VEVENT',
+    `UID:${ev.id}@gezinshub`, `DTSTAMP:${stamp}`, when, `SUMMARY:${icsEscape(ev.title+who)}`,
+    ev.notes ? `DESCRIPTION:${icsEscape(ev.notes)}` : null, 'END:VEVENT','END:VCALENDAR'].filter(Boolean).join('\r\n');
+}
+function openIcs(ev){
+  const ics = icsFor(ev);
+  const a = document.createElement('a');
+  if(/iPhone|iPad|iPod/.test(navigator.userAgent)){
+    // iOS opent een agenda-bestand rechtstreeks in Agenda ("Voeg toe")
+    a.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics); a.target = '_blank';
+  } else {
+    a.href = URL.createObjectURL(new Blob([ics], {type:'text/calendar'}));
+    a.download = (ev.title||'afspraak').replace(/[^\w\- ]+/g,'').trim().slice(0,40) + '.ics';
+    setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+  }
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+// ---------- back-up ----------
+const BACKUP_PATHS = ['calendarEvents','budgetEntries','budgetGoals','contracts','shoppingList','sharedTodo','claudeAnalyse','todos','vasteTaken','lijstVast','meta'];
+async function makeBackup(){
+  const st = document.getElementById('backupStatus');
+  st.textContent = 'Gegevens worden opgehaald...';
+  const data = {}, missed = [];
+  for(const pth of BACKUP_PATHS){
+    try{ const snap = await get(ref(db, hhPath+'/'+pth)); if(snap.exists()) data[pth] = snap.val(); }
+    catch(err){
+      if(pth==='todos' && owner){ try{ const s2 = await get(ref(db, hhPath+'/todos/'+owner)); if(s2.exists()) data.todos = {[owner]: s2.val()}; continue; }catch(e){} }
+      if(!['vasteTaken','lijstVast','meta','budgetGoals'].includes(pth)) missed.push(pth);
+    }
+  }
+  const todayIso = fmtDate(new Date());
+  const name = `gezinshub-backup-${todayIso}.json`;
+  const text = JSON.stringify({ app:'gezinshub', gemaakt:new Date().toISOString(), door: owner||'', data }, null, 1);
+  const file = new File([text], name, {type:'application/json'});
+  let saved = false;
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{ await navigator.share({files:[file], title:name}); saved = true; }
+    catch(err){ if(err && err.name==='AbortError'){ st.textContent = 'Geannuleerd: er is niets bewaard.'; return; } }
+  }
+  if(!saved){
+    const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+  }
+  lsSet('gezinshub-lastBackup', todayIso);
+  set(ref(db, hhPath+'/meta/laatsteBackup'), todayIso).catch(()=>{});
+  st.textContent = `Back-up gemaakt: ${name} (${Math.round(text.length/1024)} kB).` + (missed.length ? ` Niet gelukt voor: ${missed.join(', ')}.` : '');
+}
+document.getElementById('backupBtn').addEventListener('click', ()=>{ makeBackup().catch(err=>{ console.error(err); document.getElementById('backupStatus').textContent = 'Back-up mislukt: ' + (err.message||err); }); });
+function lastBackupDate(){ const a = meta && meta.laatsteBackup, b = lsGet('gezinshub-lastBackup'); return [a,b].filter(Boolean).sort().pop() || null; }
 
 // ---------- instellingen ----------
 function renderSettings(){
@@ -941,14 +1217,19 @@ function renderTodayOverview(){
     }
   }
 
+  const lb = lastBackupDate();
+  const lbDays = lb ? Math.round((today - new Date(lb+'T00:00:00'))/86400000) : null;
+  if(lbDays===null || lbDays > 35){
+    html += `<div class="today-line" style="margin-top:4px;">💾 ${lb?`Laatste back-up op ${fmtDayMonth(lb)}`:'Nog geen back-up gemaakt'} — <a href="#" data-go="settings" style="color:var(--primary);font-weight:600;">maak er een ›</a></div>`;
+  }
   el.innerHTML = html;
-  el.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click', (e)=>{ e.preventDefault(); lastMoneyPanel = a.dataset.go; showPanel(a.dataset.go); }));
+  el.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click', (e)=>{ e.preventDefault(); if(a.dataset.go!=='settings') lastMoneyPanel = a.dataset.go; showPanel(a.dataset.go); }));
 }
 // ---------- agenda-weergave (Vandaag + Kalender) ----------
 function agendaItemHtml(ev){
   const p = ev.person||'Wij';
   const time = ev.time ? `<div class="ag-time">${ev.time}</div>` : `<div class="ag-time allday">hele dag</div>`;
-  return `<div class="ag-item">${time}<span class="ag-bar" style="background:${personColor(p)}"></span><div class="ag-main"><div class="ag-title">${ev.seriesId?'🔁 ':''}${escapeHtml(ev.title)}</div><div class="ag-sub"><span class="p-pill" style="background:${personColor(p)}">${p}</span>${ev.notes?`<span>${escapeHtml(ev.notes)}</span>`:''}</div></div></div>`;
+  return `<div class="ag-item">${time}<span class="ag-bar" style="background:${personColor(p)}"></span><div class="ag-main"><div class="ag-title">${ev.seriesId && ev.seriesId!=='afval'?'🔁 ':''}${escapeHtml(ev.title)}</div><div class="ag-sub"><span class="p-pill" style="background:${personColor(p)}">${p}</span>${ev.notes?`<span>${escapeHtml(ev.notes)}</span>`:''}</div></div></div>`;
 }
 function eventsOn(dateStr){ return calEvents.filter(e=>e.date===dateStr).sort((a,b)=>(a.time||'').localeCompare(b.time||'')); }
 function renderHome(){
@@ -973,6 +1254,7 @@ function renderHome(){
     sh.innerHTML = '';
     sharedTodoItems.forEach(i=>sh.appendChild(sharedTodoRow(i)));
   }
+  renderHomeAlert(); renderNew();
 }
 function renderCalendar(){
   document.getElementById('monthLabel').textContent = MONTHS[viewMonth] + ' ' + viewYear;
@@ -1022,6 +1304,9 @@ function renderDayEvents(){
   items.forEach(ev=>{
     const wrap = document.createElement('div'); wrap.innerHTML = agendaItemHtml(ev);
     const row = wrap.firstElementChild;
+    const ics = document.createElement('button'); ics.type='button'; ics.className='ics-btn'; ics.textContent='📲 Agenda'; ics.title='In je eigen agenda zetten';
+    ics.addEventListener('click', ()=>openIcs(ev));
+    row.appendChild(ics);
     const btn = document.createElement('button'); btn.className='del-btn'; btn.textContent='✕'; btn.title='Verwijderen';
     btn.addEventListener('click', ()=>{
       if(!ev.seriesId && !confirm(`"${ev.title}" verwijderen?`)) return;
@@ -1051,7 +1336,7 @@ document.getElementById('eventForm').addEventListener('submit', (e)=>{
   const repeat = document.getElementById('evRepeat').value;
   const base = { title, time, notes, person: selectedPerson };
   if(repeat==='none'){
-    push(eventsRef, { ...base, date: selectedDate });
+    pushMine(eventsRef, { ...base, date: selectedDate });
   } else {
     const count = Math.min(52, Math.max(1, parseInt(document.getElementById('evRepeatCount').value) || 1));
     const seriesId = Date.now()+'-'+Math.random().toString(36).slice(2,7);
@@ -1061,7 +1346,7 @@ document.getElementById('eventForm').addEventListener('submit', (e)=>{
       if(repeat==='weekly') d.setDate(d.getDate() + 7*i);
       else if(repeat==='biweekly') d.setDate(d.getDate() + 14*i);
       else if(repeat==='monthly') d.setMonth(d.getMonth() + i);
-      push(eventsRef, { ...base, date: fmtDate(d), seriesId });
+      pushMine(eventsRef, { ...base, date: fmtDate(d), seriesId });
     }
   }
   e.target.reset();
@@ -1137,7 +1422,7 @@ function renderReviewSheet(){
   });
   sheet.querySelector('#reviewCancel').addEventListener('click', ()=>{ reviewItems=null; renderReviewSheet(); });
   sheet.querySelector('#reviewConfirm').addEventListener('click', ()=>{
-    reviewItems.forEach(it=>{ push(eventsRef, { date:it.date, title:it.title, time:it.time, notes:'', person:it.person }); });
+    reviewItems.forEach(it=>{ pushMine(eventsRef, { date:it.date, title:it.title, time:it.time, notes:'', person:it.person }); });
     reviewItems = null; renderReviewSheet();
   });
 }
@@ -1157,176 +1442,6 @@ function refreshCategorySelect(){
 }
 refreshCategorySelect();
 document.getElementById('entryDate').value = fmtDate(new Date());
-document.getElementById('receiptBtn').addEventListener('click', ()=>{
-  document.getElementById('receiptInput').click();
-});
-let receiptReviewItems = null;
-document.getElementById('receiptInput').addEventListener('change', async (e)=>{
-  const file = e.target.files[0]; if(!file) return;
-  const status = document.getElementById('receiptStatus');
-  status.style.display='block'; status.textContent='Bestand wordt gelezen...';
-  try{
-    const dataUrl = await new Promise((res, rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=()=>rej(new Error('read failed')); r.readAsDataURL(file); });
-    const mediaType = dataUrl.substring(5, dataUrl.indexOf(';'));
-    const base64 = dataUrl.split(',')[1];
-    const todayIso = fmtDate(new Date());
-    const prompt = `Dit is een foto of PDF van financiële registraties voor een Belgisch gezin (Nederlandstalig) — dit kunnen kassabonnen/bonnetjes zijn, maar ook een screenshot of PDF van een bankapp/rekeninguittreksel met meerdere transacties (zowel uitgaven als inkomsten/terugbetalingen door elkaar). Vandaag is ${todayIso}.
-Behandel elke aparte registratie/transactie apart. Bepaal per registratie of het een UITGAVE (geld gaat weg, bv. een aankoop, bonnetje-totaal) of een INKOMST (geld komt binnen, bv. een terugbetaling, overschrijving met "+"-teken, "ontvangen") is.
-Lees per registratie: het bedrag (altijd positief invullen, ongeacht +/− in de bron), het type (inkomst of uitgave), de winkel-/bedrijfsnaam of omschrijving, en de datum indien zichtbaar.
-Kies telkens de best passende categorie uit exact deze lijst: ${CATEGORIES.join(', ')} — voor inkomsten die nergens specifiek bij passen, gebruik "Overig".
-Geef terug als PURE JSON array, GEEN markdown, GEEN uitleg — ook als er maar 1 registratie is, dan array met 1 item:
-[{"bedrag": number, "type": "inkomst of uitgave", "winkel": "korte naam/omschrijving", "datum": "YYYY-MM-DD indien zichtbaar anders leeg", "categorie": "exacte match uit de lijst hierboven"}]`;
-    const text = await geminiAnalyzeImage(base64, mediaType, prompt);
-    const clean = text.replace(/```json|```/g,'').trim();
-    const parsed = JSON.parse(clean);
-    const arr = Array.isArray(parsed) ? parsed : [parsed];
-    const INCOME_CATEGORIES = ['Loon','Kinderbijslag','Overig inkomen'];
-    receiptReviewItems = arr.map(it=>{
-      const type = (it.type && it.type.toLowerCase().startsWith('ink')) ? 'income' : 'expense';
-      const validCats = type==='income' ? INCOME_CATEGORIES : CATEGORIES;
-      return {
-        rid: Math.random().toString(36).slice(2,8),
-        bedrag: it.bedrag || 0,
-        type,
-        winkel: it.winkel || '',
-        datum: (it.datum && /^\d{4}-\d{2}-\d{2}$/.test(it.datum)) ? it.datum : todayIso,
-        categorie: (it.categorie && validCats.includes(it.categorie)) ? it.categorie : validCats[validCats.length-1]
-      };
-    });
-    status.style.display='none';
-    renderReceiptReview();
-  }catch(err){
-    console.error(err);
-    status.textContent = 'Fout bij lezen: ' + (err && err.message ? err.message : String(err));
-  }
-  e.target.value = '';
-});
-function renderReceiptReview(){
-  const wrap = document.getElementById('receiptReviewWrap');
-  if(!receiptReviewItems || receiptReviewItems.length===0){ wrap.innerHTML=''; return; }
-  const sheet = document.createElement('div'); sheet.className='review-sheet';
-  sheet.innerHTML = `<h3>Controleer herkende transacties (${receiptReviewItems.length})</h3><div id="receiptReviewRows"></div>
-    <div class="review-actions"><button class="btn outline" id="receiptReviewCancel" type="button">Annuleren</button><button class="btn" id="receiptReviewConfirm" type="button">Alles registreren</button></div>`;
-  wrap.innerHTML=''; wrap.appendChild(sheet);
-  const rowsEl = sheet.querySelector('#receiptReviewRows');
-  const INCOME_CATEGORIES = ['Loon','Kinderbijslag','Overig inkomen'];
-  receiptReviewItems.forEach((it, idx)=>{
-    const row = document.createElement('div'); row.className='review-row';
-    const catList = it.type==='income' ? INCOME_CATEGORIES : CATEGORIES;
-    const catOpts = catList.map(c=>`<option value="${c}" ${c===it.categorie?'selected':''}>${c}</option>`).join('');
-    const dup = findPossibleDuplicate(it.type, it.categorie, parseFloat(it.bedrag)||0, it.winkel, it.datum);
-    const dupWarning = dup ? `<div style="font-size:11px;color:var(--danger);font-weight:600;margin-top:2px;">⚠️ Lijkt op "${escapeHtml(dup.note||dup.category)}" (${fmtMoney(dup.amount)}, ${fmtDateNL(dup.date)}) — mogelijk al geregistreerd</div>` : '';
-    row.innerHTML = `<input type="text" value="${escapeHtml(it.winkel)}" placeholder="Winkel/omschrijving" data-f="winkel">
-      <div class="rrow">
-        <button type="button" class="review-type-btn ${it.type==='expense'?'active-expense':''}" data-type="expense">Uitgave</button>
-        <button type="button" class="review-type-btn ${it.type==='income'?'active-income':''}" data-type="income">Inkomst</button>
-      </div>
-      <div class="rrow"><input type="number" step="0.01" value="${it.bedrag}" data-f="bedrag"><input type="date" value="${it.datum}" data-f="datum"></div>
-      <div class="rrow"><select data-f="categorie">${catOpts}</select><button type="button" class="del-btn" data-remove="1">✕</button></div>
-      ${dupWarning}`;
-    row.querySelectorAll('[data-f]').forEach(inp=>{ inp.addEventListener('input', ()=>{ receiptReviewItems[idx][inp.dataset.f] = inp.value; }); });
-    row.querySelectorAll('.review-type-btn').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const newType = btn.dataset.type;
-        if(newType !== receiptReviewItems[idx].type){
-          receiptReviewItems[idx].type = newType;
-          const newList = newType==='income' ? INCOME_CATEGORIES : CATEGORIES;
-          if(!newList.includes(receiptReviewItems[idx].categorie)){ receiptReviewItems[idx].categorie = newList[newList.length-1]; }
-        }
-        renderReceiptReview();
-      });
-    });
-    row.querySelector('[data-remove]').addEventListener('click', ()=>{ receiptReviewItems.splice(idx,1); renderReceiptReview(); });
-    rowsEl.appendChild(row);
-  });
-  sheet.querySelector('#receiptReviewCancel').addEventListener('click', ()=>{ receiptReviewItems=null; renderReceiptReview(); });
-  sheet.querySelector('#receiptReviewConfirm').addEventListener('click', ()=>{
-    receiptReviewItems.forEach(it=>{
-      const bedrag = parseFloat(it.bedrag);
-      if(!bedrag || bedrag<=0) return;
-      push(budgetEntriesRef, { type:it.type, amount:bedrag, category:it.categorie, date:it.datum, note:it.winkel });
-    });
-    receiptReviewItems = null; renderReceiptReview();
-    document.getElementById('receiptStatus').style.display='block';
-    document.getElementById('receiptStatus').textContent = 'Geregistreerd ✓';
-    setTimeout(()=>{ document.getElementById('receiptStatus').style.display='none'; }, 3000);
-  });
-}
-// ---------- CSV-import (KBC/Fortis/... bankexport) ----------
-function parseBankCsv(text){
-  text = text.replace(/^﻿/, '');
-  const lines = text.split(/\r\n|\r|\n/).filter(l=>l.trim().length>0);
-  if(lines.length < 2) return [];
-  const headers = lines[0].split(';').map(h=>h.trim().toLowerCase());
-  const idx = (name)=>headers.indexOf(name);
-  const iDatum = idx('datum'), iOmschrijving = idx('omschrijving'), iBedrag = idx('bedrag');
-  if(iDatum<0 || iBedrag<0) return [];
-  const rows = [];
-  for(let i=1;i<lines.length;i++){
-    const cols = lines[i].split(';');
-    if(cols.length <= Math.max(iDatum, iBedrag)) continue;
-    const datumRaw = (cols[iDatum]||'').trim();
-    const bedragRaw = (cols[iBedrag]||'').trim().replace(/\./g,'').replace(',', '.');
-    const bedrag = parseFloat(bedragRaw);
-    if(!datumRaw || isNaN(bedrag) || bedrag===0) continue;
-    const m = datumRaw.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-    if(!m) continue;
-    const dateIso = `${m[3]}-${m[2]}-${m[1]}`;
-    const omschrijving = iOmschrijving>=0 ? (cols[iOmschrijving]||'').trim().replace(/\s+/g,' ').slice(0,200) : '';
-    rows.push({ datum: dateIso, omschrijving, bedrag });
-  }
-  return rows;
-}
-document.getElementById('csvBtn').addEventListener('click', ()=>{ document.getElementById('csvInput').click(); });
-document.getElementById('csvInput').addEventListener('change', async (e)=>{
-  const file = e.target.files[0]; if(!file) return;
-  const status = document.getElementById('receiptStatus');
-  status.style.display='block'; status.textContent='CSV wordt gelezen...';
-  try{
-    const text = await new Promise((res, rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=()=>rej(new Error('read failed')); r.readAsText(file); });
-    const rows = parseBankCsv(text);
-    if(rows.length===0){ status.textContent = 'Geen transacties herkend in dit bestand. Is het een CSV-export van je bank (met kolommen Datum/Omschrijving/Bedrag)?'; e.target.value=''; return; }
-    status.textContent = `${rows.length} transacties gevonden, categorieën worden bepaald...`;
-    const INCOME_CATEGORIES = ['Loon','Kinderbijslag','Overig inkomen'];
-    const results = [];
-    const BATCH = 60;
-    for(let b=0; b<rows.length; b+=BATCH){
-      const batch = rows.slice(b, b+BATCH).map((r,i)=>({i:b+i, omschrijving:r.omschrijving, bedrag:r.bedrag}));
-      const prompt = `Dit zijn transacties uit een CSV-export van een Belgische bankrekening (KBC/Fortis/...), voor een Nederlandstalig gezin. Geef voor elke transactie een korte leesbare winkelnaam/omschrijving (max ~35 tekens, haal referentienummers, mandaatreferenties en overbodige ruis eruit) en kies de best passende categorie. Het bedrag is al gegeven (negatief = uitgave, positief = inkomst): kies bij een uitgave een categorie uit exact deze lijst: ${CATEGORIES.join(', ')}. Kies bij een inkomst een categorie uit exact deze lijst: ${INCOME_CATEGORIES.join(', ')}.
-Transacties: ${JSON.stringify(batch)}
-Geef terug als PURE JSON array, zelfde volgorde en lengte, GEEN markdown, GEEN uitleg: [{"i": number, "winkel": "korte naam", "categorie": "exacte match uit de juiste lijst"}]`;
-      try{
-        const txt = await geminiAnalyzeText(prompt);
-        const clean = txt.replace(/```json|```/g,'').trim();
-        const parsed = JSON.parse(clean);
-        results.push(...parsed);
-      }catch(err){
-        console.error('CSV batch categorisatie mislukt', err);
-        batch.forEach(r=>{ results.push({ i:r.i, winkel: r.omschrijving.slice(0,35), categorie: null }); });
-      }
-    }
-    receiptReviewItems = rows.map((r, i)=>{
-      const type = r.bedrag < 0 ? 'expense' : 'income';
-      const validCats = type==='income' ? INCOME_CATEGORIES : CATEGORIES;
-      const match = results.find(x=>x.i===i) || {};
-      const cat = (match.categorie && validCats.includes(match.categorie)) ? match.categorie : (type==='income' ? 'Overig inkomen' : 'Overig');
-      return {
-        rid: Math.random().toString(36).slice(2,8),
-        bedrag: Math.abs(r.bedrag),
-        type,
-        winkel: match.winkel || r.omschrijving.slice(0,40) || '',
-        datum: r.datum,
-        categorie: cat
-      };
-    });
-    status.style.display='none';
-    renderReceiptReview();
-  }catch(err){
-    console.error(err);
-    status.textContent = 'Fout bij lezen CSV: ' + (err && err.message ? err.message : String(err));
-  }
-  e.target.value='';
-});
 function findPossibleDuplicate(type, category, amount, note, date, excludeId){
   // Venster van ±14 dagen rond de datum van de transactie zelf (niet t.o.v. vandaag) —
   // zo werkt de check ook correct bij een bulk-import van oudere/historische transacties (bv. CSV van een heel jaar).
@@ -1359,7 +1474,6 @@ document.getElementById('entryForm').addEventListener('submit', (e)=>{
   push(budgetEntriesRef, { type:currentType, amount, category, date:entryDateVal, note });
   e.target.reset();
   document.getElementById('entryDate').value = fmtDate(new Date());
-  document.getElementById('receiptStatus').style.display='none';
   refreshCategorySelect();
 });
 
@@ -1394,17 +1508,30 @@ document.getElementById('importInput').addEventListener('change', async (e)=>{
       if(Object.keys(patch).length) patches.push({id:match.id, patch});
     });
     const skipped = valid.length - fresh.length;
+    // afvalkalender (optioneel in het bestand): [{datum, soort}] -> afspraken voor 'Wij', zonder dubbels
+    const importAfval = async ()=>{
+      const list = Array.isArray(data.afval) ? data.afval : [];
+      let n = 0;
+      for(const x of list){
+        if(!x || !/^\d{4}-\d{2}-\d{2}$/.test(x.datum||'') || !x.soort) continue;
+        const title = '🗑️ ' + String(x.soort).slice(0,40);
+        if(calEvents.some(e=>e.date===x.datum && e.title===title)) continue;
+        await pushMine(eventsRef, { date:x.datum, title, time:'', notes:'Afvalophaling', person:'Wij', seriesId:'afval' }); n++;
+      }
+      if(n) analyseMsg += `\nAfvalkalender: ${n} ophaling${n>1?'en':''} toegevoegd ✓`;
+    };
     // analyse + tips van Claude (optioneel in het bestand): vervangt de vorige
     let analyseMsg = '';
     const saveAnalyse = async ()=>{
       if(!(data && data.analyse && typeof data.analyse==='object')) return;
-      try{ await set(claudeAnalyseRef, JSON.parse(JSON.stringify(data.analyse))); analyseMsg = '\nAnalyse van Claude bijgewerkt ✓'; }
+      const stamp = Date.now();
+      try{ await set(claudeAnalyseRef, {...JSON.parse(JSON.stringify(data.analyse)), ingeladen: stamp}); lsSet('gezinshub-ownImport', String(stamp)); analyseMsg = '\nAnalyse van Claude bijgewerkt ✓'; }
       catch(err){ console.error(err); analyseMsg = '\n(Analyse van Claude kon niet bewaard worden: ' + (err.message||err) + ')'; }
     };
-    if(fresh.length===0 && patches.length===0){ await saveAnalyse(); st.textContent = `Alles staat al in de app (${valid.length} registraties) — niets gewijzigd.${analyseMsg}`; e.target.value=''; return; }
+    if(fresh.length===0 && patches.length===0){ await saveAnalyse(); await importAfval(); st.textContent = `Alles staat al in de app (${valid.length} registraties) — niets gewijzigd.${analyseMsg}`; e.target.value=''; return; }
     const ok = confirm(`${fresh.length} nieuwe registraties toevoegen?\n${skipped} staan al in de app (daarvan worden ${patches.length} aangevuld/herverdeeld).\n\nBestaande registraties worden nooit dubbel aangemaakt.`);
     if(!ok){ st.textContent='Import geannuleerd.'; e.target.value=''; return; }
-    await saveAnalyse();
+    await saveAnalyse(); await importAfval();
     let useExtras = true, n = 0;
     for(const x of fresh){
       const obj = { type:x.type, amount:Math.round(x.amount*100)/100, category:x.category, date:x.date, note:(x.note||'').slice(0,80) };
@@ -2081,7 +2208,7 @@ function renderUploadStrip(){
     else txt.textContent = `Gegevens tot ${fmtDayMonth(latest)}${diff<=0?' (vandaag)':''}`;
   }
   strip.classList.toggle('stale', stale);
-  if(uploadOpen === null) card.style.display = (!latest || receiptReviewItems) ? 'block' : 'none';
+  if(uploadOpen === null) card.style.display = !latest ? 'block' : 'none';
   else card.style.display = uploadOpen ? 'block' : 'none';
   go.textContent = card.style.display==='none' ? '⬆️ Uploaden' : 'Sluiten ▴';
 }
@@ -2099,24 +2226,18 @@ document.getElementById('budAnalysis').addEventListener('click', (ev)=>{
   t.textContent = open ? t.dataset.more : t.dataset.less;
 });
 
-function renderGoals(monthEntries){
-  const goalsList = document.getElementById('goalsList'); goalsList.innerHTML='';
-  CATEGORIES.forEach(cat=>{
-    const spent = monthEntries.filter(e=>e.type==='expense' && e.category===cat).reduce((s,e)=>s+e.amount,0);
-    const goal = budgetData.goals[cat] || 0;
-    const pct = goal>0 ? Math.min(100, spent/goal*100) : 0;
-    const cls = goal>0 ? (spent>goal*1.05 ? 'over' : spent>=goal*0.85 ? 'warn' : '') : '';
-    const row = document.createElement('div'); row.className='goal-row';
-    row.innerHTML = `<div class="g-head"><span class="g-cat">${CAT_ICON[cat]||''} ${cat}</span><span class="g-amt">${fmtMoney(spent)}${goal>0?' <span style="opacity:.6">(van '+fmtMoney(goal)+')</span>':''}</span></div>
-      <div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div>
-      <div class="goal-input"><span>Maandbudget:</span><input type="number" step="0.01" value="${goal||''}" placeholder="–" data-cat="${cat}"></div>`;
-    goalsList.appendChild(row);
-  });
-  goalsList.querySelectorAll('input[data-cat]').forEach(inp=>{
-    inp.addEventListener('change', ()=>{ const v=parseFloat(inp.value); set(ref(db, hhPath+'/budgetGoals/'+inp.dataset.cat), v>0?v:null); });
-  });
+// details per maand: standaard dicht zodra er een analyse van Claude is; de keuze wordt per toestel onthouden
+function setBudDetails(open){
+  document.getElementById('budDetails').style.display = open ? 'block' : 'none';
+  document.getElementById('budDetailsArrow').textContent = open ? '▾' : '▸';
 }
+document.getElementById('budDetailsToggle').addEventListener('click', ()=>{
+  const open = document.getElementById('budDetails').style.display === 'none';
+  setBudDetails(open); lsSet('gezinshub-budDetails', open ? '1' : '0');
+});
 function renderBudget(){
+  const pref = lsGet('gezinshub-budDetails');
+  setBudDetails(pref===null ? !(claudeAnalyse && claudeAnalyse.kop) : pref==='1');
   const monthEntries = currentMonthEntries();
   renderQuickAdd();
   renderOldCategoryFix();
@@ -2124,7 +2245,6 @@ function renderBudget(){
   renderUploadStrip();
   const a = analyzeBudget();
   document.getElementById('budAnalysis').innerHTML = renderAnalysisHtml(a);
-  renderGoals(monthEntries);
   const entriesList = document.getElementById('entriesList');
   const entriesCountLabel = document.getElementById('entriesToggle');
   const recent = [...monthEntries].sort((a2,b2)=>b2.date.localeCompare(a2.date));
@@ -2221,7 +2341,7 @@ function renderTodoRow(td, list){
       PERSONS.forEach(p=>{ const o=document.createElement('option'); o.value=p.key; o.textContent=p.key; if(p.key===owner) o.selected=true; persSel.appendChild(o); });
       const okBtn = document.createElement('button'); okBtn.className='btn'; okBtn.type='button'; okBtn.textContent='Zet op kalender'; okBtn.style.flex='1';
       okBtn.addEventListener('click', ()=>{
-        push(eventsRef, { date:dateInp.value, title:td.text, time:'', notes:'Vanuit To Do', person:persSel.value });
+        pushMine(eventsRef, { date:dateInp.value, title:td.text, time:'', notes:'Vanuit To Do', person:persSel.value });
         update(ref(db, hhPath+'/todos/'+owner+'/items/'+td.id), {scheduledDate:dateInp.value});
         openSchedFor = null; renderTodos();
       });
@@ -2518,7 +2638,7 @@ function renderContracts(){
 
 // ---------- boodschappenlijst ----------
 wireAddBar('shopAddForm', 'shopInput', 'shopAddBtn', (val)=>{
-  push(shoppingListRef, { tekst: val, done:false });
+  pushMine(shoppingListRef, { tekst: val, done:false });
 });
 document.getElementById('clearCheckedBtn').addEventListener('click', ()=>{
   shoppingItems.filter(i=>i.done).forEach(i=>{ remove(ref(db, hhPath+'/shoppingList/'+i.id)); });
@@ -2527,7 +2647,7 @@ document.getElementById('clearCheckedBtn').addEventListener('click', ()=>{
 const SHARED_TODO_MAX = 4;
 wireAddBar('sharedTodoAddRow', 'sharedTodoInput', 'sharedTodoAddBtn', (val)=>{
   if(sharedTodoItems.length >= SHARED_TODO_MAX) return false;
-  push(sharedTodoRef, { tekst: val });
+  pushMine(sharedTodoRef, { tekst: val });
 });
 // afvinken = klaar = weg (zoals voorheen); kort zichtbaar als afgevinkt
 function sharedTodoRow(i){
@@ -2557,28 +2677,88 @@ function renderSharedTodo(){
     list.appendChild(row);
   });
 }
+// afdelingen: een woord van het item dat begint met een van deze stammen bepaalt de groep (eerste treffer wint)
+const AFDELINGEN = [
+  ['🥦 Groenten & fruit', 'appel aardappel patat banan peer peren tomat sla komkom wortel ui uien look paprika fruit groente citroen druif druiv aardbei courget prei broccoli bloemkool spinazie champign avocado kiwi mandarijn sinaas bessen witloof'],
+  ['🍞 Brood & ontbijt', 'brood pistolet croissant beschuit ontbijt granola cornflakes muesli confituur choco pindakaas honing koffie thee boterham'],
+  ['🧀 Zuivel & eieren', 'melk kaas yoghurt boter room eieren ei platte pudding skyr'],
+  ['🥩 Vlees & vis', 'vlees kip gehakt worst ham spek vis zalm steak filet salami scampi tonijn kalkoen'],
+  ['🧊 Diepvries', 'diepvries ijs frieten pizza'],
+  ['🥫 Voorraad', 'pasta spaghetti macaroni rijst bloem suiker zout peper olie azijn saus ketchup mayo soep blik bonen chips koek snoep noten kruiden bouillon puree wraps'],
+  ['🥤 Drank', 'water cola frisdrank bier wijn sap limonade fristi'],
+  ['🧻 Huishouden & verzorging', 'wc toilet keukenrol papier afwas vaatwas wasmiddel wasverzachter zeep shampoo tandpasta tandenborstel deo douche vuilniszak zakken spons schoonmaak allesreiniger batterij lamp tissue zakdoek handzeep'],
+  ['👶 Kinderen', 'luier pamper doekjes babyvoeding speen'],
+  ['🐾 Dieren', 'kat katten hond honden kattenbak brokken dierenvoeding kattenvoer hondenvoer'],
+].map(([naam, w])=>[naam, w.split(' ')]);
+function afdelingOf(tekst){
+  const words = String(tekst||'').toLowerCase().split(/[^a-zà-ÿ]+/).filter(Boolean);
+  for(const [naam, stems] of AFDELINGEN){ if(words.some(w=>stems.some(st=>st.length<=2 ? w===st : w.startsWith(st)))) return naam; }
+  return '🛍️ Overig';
+}
+const favKey = (t)=>String(t||'').trim().toLowerCase();
+function renderShopFavs(){
+  const wrap = document.getElementById('shopFavs'); if(!wrap) return;
+  if(shopFavDenied || !shopFavs.length){ wrap.innerHTML = shopFavDenied ? '' : '<div class="fav-wrap"><span class="lbl">Tip: tik op ☆ naast een item om het als vast item te bewaren.</span></div>'; return; }
+  const onList = new Set(shoppingItems.filter(i=>!i.done).map(i=>favKey(i.tekst)));
+  const avail = shopFavs.filter(f=>!onList.has(favKey(f.tekst))).sort((a,b)=>a.tekst.localeCompare(b.tekst,'nl'));
+  if(!avail.length){ wrap.innerHTML = '<div class="fav-wrap"><span class="lbl">⭐ Alle vaste items staan op de lijst.</span></div>'; return; }
+  wrap.innerHTML = '<div class="fav-wrap"><span class="lbl">⭐ Vaste items:</span></div>';
+  const box = wrap.firstElementChild;
+  avail.forEach(f=>{
+    const b = document.createElement('button'); b.type='button'; b.className='fav-chip'; b.textContent = '+ ' + f.tekst;
+    b.addEventListener('click', ()=>{ pushMine(shoppingListRef, { tekst: f.tekst, done:false }); });
+    box.appendChild(b);
+  });
+}
+function toggleFav(tekst){
+  const f = shopFavs.find(x=>favKey(x.tekst)===favKey(tekst));
+  if(f) remove(ref(db, hhPath+'/lijstVast/'+f.id));
+  else push(shopFavRef, { tekst: String(tekst).trim() }).catch(()=>alert('Bewaren lukte niet: de databaseregels laten vaste items nog niet toe.'));
+}
+function shopRow(i){
+  const row = document.createElement('div'); row.className='shop-item'+(i.done?' done':'');
+  const cb = document.createElement('input'); cb.type='checkbox'; cb.checked=!!i.done;
+  cb.addEventListener('change', ()=>{ update(ref(db, hhPath+'/shoppingList/'+i.id), {done:cb.checked}); });
+  const txt = document.createElement('div'); txt.className='txt'; txt.textContent = i.tekst; txt.style.cursor='pointer';
+  txt.addEventListener('click', ()=>{ update(ref(db, hhPath+'/shoppingList/'+i.id), {done:!i.done}); });
+  row.appendChild(cb); row.appendChild(txt);
+  if(!shopFavDenied){
+    const isFav = shopFavs.some(f=>favKey(f.tekst)===favKey(i.tekst));
+    const star = document.createElement('button'); star.type='button'; star.className='star-btn'+(isFav?' on':'');
+    star.textContent = isFav ? '★' : '☆'; star.title = isFav ? 'Geen vast item meer' : 'Bewaar als vast item';
+    star.addEventListener('click', ()=>toggleFav(i.tekst));
+    row.appendChild(star);
+  }
+  const del = document.createElement('button'); del.className='del-btn'; del.textContent='✕';
+  del.addEventListener('click', ()=>{ remove(ref(db, hhPath+'/shoppingList/'+i.id)); });
+  row.appendChild(del);
+  return row;
+}
 function renderShoppingList(){
   const list = document.getElementById('shopList');
   const clearBtn = document.getElementById('clearCheckedBtn');
+  renderShopFavs();
   if(shoppingItems.length===0){
     list.innerHTML = '<div class="empty-state">Lijst is leeg.</div>';
     clearBtn.style.display='none';
     return;
   }
-  const items = [...shoppingItems].sort((a,b)=> (a.done===b.done)?0:(a.done?1:-1));
-  clearBtn.style.display = items.some(i=>i.done) ? 'block' : 'none';
+  const open = shoppingItems.filter(i=>!i.done), done = shoppingItems.filter(i=>i.done);
+  clearBtn.style.display = done.length ? 'block' : 'none';
   list.innerHTML='';
-  items.forEach(i=>{
-    const row = document.createElement('div'); row.className='shop-item'+(i.done?' done':'');
-    const cb = document.createElement('input'); cb.type='checkbox'; cb.checked=!!i.done;
-    cb.addEventListener('change', ()=>{ update(ref(db, hhPath+'/shoppingList/'+i.id), {done:cb.checked}); });
-    const txt = document.createElement('div'); txt.className='txt'; txt.textContent = i.tekst; txt.style.cursor='pointer';
-    txt.addEventListener('click', ()=>{ update(ref(db, hhPath+'/shoppingList/'+i.id), {done:!i.done}); });
-    const del = document.createElement('button'); del.className='del-btn'; del.textContent='✕';
-    del.addEventListener('click', ()=>{ remove(ref(db, hhPath+'/shoppingList/'+i.id)); });
-    row.appendChild(cb); row.appendChild(txt); row.appendChild(del);
-    list.appendChild(row);
+  // per afdeling, in de volgorde van een gewone winkelronde
+  const groups = {};
+  open.forEach(i=>{ const g = afdelingOf(i.tekst); (groups[g] = groups[g] || []).push(i); });
+  const order = [...AFDELINGEN.map(a=>a[0]), '🛍️ Overig'].filter(g=>groups[g]);
+  const showHeads = order.length > 1;
+  order.forEach(g=>{
+    if(showHeads){ const h = document.createElement('div'); h.className='shop-group'; h.textContent = g; list.appendChild(h); }
+    groups[g].forEach(i=>list.appendChild(shopRow(i)));
   });
+  if(done.length){
+    const h = document.createElement('div'); h.className='shop-group'; h.textContent = '✓ In de kar'; list.appendChild(h);
+    done.forEach(i=>list.appendChild(shopRow(i)));
+  }
 }
 
 </script>
