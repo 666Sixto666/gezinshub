@@ -350,7 +350,6 @@
   .fav-chip:active{background:var(--primary-light);}
   .star-btn{background:none;border:none;font-size:17px;cursor:pointer;padding:4px 4px;color:var(--muted);line-height:1;}
   .star-btn.on{color:var(--accent);}
-  .ics-btn{background:none;border:1px solid var(--border);border-radius:8px;font-size:11.5px;cursor:pointer;padding:4px 7px;color:var(--primary);font-weight:600;white-space:nowrap;font-family:inherit;}
   .details-head{cursor:pointer;margin:0;}
   .ba-more{background:none;border:none;color:var(--primary);font-weight:600;font-size:12.5px;cursor:pointer;padding:4px 2px;font-family:'Inter',sans-serif;}
   .ba-cat{margin-bottom:12px;}
@@ -1058,40 +1057,6 @@ wireAddBar('choreAddForm', 'choreInput', 'choreAddBtn', (val)=>{
   push(choresRef, { tekst: val, elke, volgende: fmtDate(new Date()) }).catch(err=>{ console.error(err); alert('Bewaren lukte niet: de databaseregels laten vaste taken nog niet toe.'); });
 });
 
-// ---------- in je eigen agenda zetten (.ics) ----------
-function icsEscape(t){ return String(t||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n'); }
-function icsFor(ev){
-  const d = ev.date.replace(/-/g,'');
-  const stamp = new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'');
-  let when;
-  if(ev.time && /^\d{2}:\d{2}$/.test(ev.time)){
-    const [h,m] = ev.time.split(':').map(Number);
-    const end = new Date(ev.date+'T00:00:00'); end.setHours(h+1, m);
-    const pad = (n)=>String(n).padStart(2,'0');
-    // zwevende lokale tijd: de iPhone gebruikt gewoon de Belgische tijd van het toestel
-    when = `DTSTART:${d}T${pad(h)}${pad(m)}00\r\nDTEND:${fmtDate(end).replace(/-/g,'')}T${pad(end.getHours())}${pad(end.getMinutes())}00`;
-  } else {
-    when = `DTSTART;VALUE=DATE:${d}\r\nDTEND;VALUE=DATE:${addDays(ev.date,1).replace(/-/g,'')}`;
-  }
-  const who = ev.person && ev.person!=='Wij' ? ` (${ev.person})` : '';
-  return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Gezinshub//NL','CALSCALE:GREGORIAN','BEGIN:VEVENT',
-    `UID:${ev.id}@gezinshub`, `DTSTAMP:${stamp}`, when, `SUMMARY:${icsEscape(ev.title+who)}`,
-    ev.notes ? `DESCRIPTION:${icsEscape(ev.notes)}` : null, 'END:VEVENT','END:VCALENDAR'].filter(Boolean).join('\r\n');
-}
-function openIcs(ev){
-  const ics = icsFor(ev);
-  const a = document.createElement('a');
-  if(/iPhone|iPad|iPod/.test(navigator.userAgent)){
-    // iOS opent een agenda-bestand rechtstreeks in Agenda ("Voeg toe")
-    a.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics); a.target = '_blank';
-  } else {
-    a.href = URL.createObjectURL(new Blob([ics], {type:'text/calendar'}));
-    a.download = (ev.title||'afspraak').replace(/[^\w\- ]+/g,'').trim().slice(0,40) + '.ics';
-    setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
-  }
-  document.body.appendChild(a); a.click(); a.remove();
-}
-
 // ---------- back-up ----------
 const BACKUP_PATHS = ['calendarEvents','budgetEntries','budgetGoals','contracts','shoppingList','sharedTodo','claudeAnalyse','todos','vasteTaken','lijstVast','meta'];
 async function makeBackup(){
@@ -1304,9 +1269,6 @@ function renderDayEvents(){
   items.forEach(ev=>{
     const wrap = document.createElement('div'); wrap.innerHTML = agendaItemHtml(ev);
     const row = wrap.firstElementChild;
-    const ics = document.createElement('button'); ics.type='button'; ics.className='ics-btn'; ics.textContent='📲 Agenda'; ics.title='In je eigen agenda zetten';
-    ics.addEventListener('click', ()=>openIcs(ev));
-    row.appendChild(ics);
     const btn = document.createElement('button'); btn.className='del-btn'; btn.textContent='✕'; btn.title='Verwijderen';
     btn.addEventListener('click', ()=>{
       if(!ev.seriesId && !confirm(`"${ev.title}" verwijderen?`)) return;
