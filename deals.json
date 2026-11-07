@@ -1,13 +1,13 @@
 {
- "datum": "2026-11-06",
+ "datum": "2026-11-07",
  "deals": [
-  {"titel": "Gratis Kunstendag voor Kinderen in Puurs 15/11",
-   "tekst": "Zondag 15/11 van 14:00 tot 18:00 is er in cc Binder een gratis creatieve namiddag voor alle leeftijden, waar je vrij kunt aansluiten. Bibliotheekvrijwilligers lezen doorlopend prentenboeken voor, en dat is gratis vanaf 1 jaar, dus ook iets voor een peuter. Let op: de voorstelling Vos en Haas (13:30) is apart betalend en pas vanaf 3 jaar, die hoef je niet te nemen.",
-   "waar": "cc Binder, Forum 9, Puurs", "geldigTot": "2026-11-15",
-   "link": "https://www.puurs-sint-amands.be/activiteiten/kunstendag-voor-kinderen-buiten-de-lijnen"},
-  {"titel": "Okay: meepakkers 1+1 gratis tot 17/11",
-   "tekst": "Tot en met 17/11 krijg je bij de Okay op meepakkers evenveel stuks gratis als je er koopt (1+1, 2+2 of 3+3). Jullie gaan er toch vaak, dus kijk naar het meepakker-logo in de rekken en in de folder, en neem het alleen als het iets is dat je sowieso gebruikt. Welke producten erbij zijn, staat in de folder.",
-   "waar": "Okay Blaasveld", "geldigTot": "2026-11-17",
-   "link": "https://www.okay.be/nl/promos/meepakkers"}
+  {"titel": "Vredesfeest in Fort Liezele: gratis op 11/11",
+   "tekst": "Woensdag 11/11 is er van 13:00 tot 17:00 een gratis namiddag voor alle leeftijden in het park van Fort Liezele, met springkastelen, een klimmuur en een reuze knikkerbaan. De bibliotheek leest ook gratis voor vanaf 2 jaar, dus dat kan ook voor een peuter. Enkel het museum is betalend, en dat hoef je niet te doen.",
+   "waar": "Park Fort Liezele, Fortbaan 2, Liezele", "geldigTot": "2026-11-11",
+   "link": "https://www.puurs-sint-amands.be/activiteiten/vredesfeest-2026"},
+  {"titel": "Sint in Bornem: gratis namiddag op 28/11",
+   "tekst": "Zaterdag 28/11 komt de Sint van 13:30 tot 17:00 naar de Abdij van Bornem, met spelletjes, een pietendiploma en verhalen. Deelname is gratis, dus een Sinterklaasuitstap zonder kosten. De film van 11:00 in cc Ter Dilft is apart en met tickets, die hoef je niet te nemen.",
+   "waar": "Abdij van Bornem, Kloosterstraat 71", "geldigTot": "2026-11-28",
+   "link": "https://www.bornem.be/sint"}
  ]
 }
