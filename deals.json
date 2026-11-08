@@ -1,13 +1,13 @@
 {
- "datum": "2026-11-07",
+ "datum": "2026-11-08",
  "deals": [
+  {"titel": "Gratis boom of winterheide van Willebroek",
+   "tekst": "Inwoners van Willebroek (ook Blaasveld) kunnen gratis één boom voor de tuin of een winterheide voor terras of balkon aanvragen. Inschrijven via het online formulier van maandag 9/11 tot en met 19/11, zolang de voorraad strekt; ophalen op zaterdag 5/12. Wacht niet te lang, want het aanbod is beperkt.",
+   "waar": "Gemeente Willebroek (online formulier)", "geldigTot": "2026-11-19",
+   "link": "https://www.willebroek.be/nl/gratis-boom-of-plant"},
   {"titel": "Vredesfeest in Fort Liezele: gratis op 11/11",
    "tekst": "Woensdag 11/11 is er van 13:00 tot 17:00 een gratis namiddag voor alle leeftijden in het park van Fort Liezele, met springkastelen, een klimmuur en een reuze knikkerbaan. De bibliotheek leest ook gratis voor vanaf 2 jaar, dus dat kan ook voor een peuter. Enkel het museum is betalend, en dat hoef je niet te doen.",
    "waar": "Park Fort Liezele, Fortbaan 2, Liezele", "geldigTot": "2026-11-11",
-   "link": "https://www.puurs-sint-amands.be/activiteiten/vredesfeest-2026"},
-  {"titel": "Sint in Bornem: gratis namiddag op 28/11",
-   "tekst": "Zaterdag 28/11 komt de Sint van 13:30 tot 17:00 naar de Abdij van Bornem, met spelletjes, een pietendiploma en verhalen. Deelname is gratis, dus een Sinterklaasuitstap zonder kosten. De film van 11:00 in cc Ter Dilft is apart en met tickets, die hoef je niet te nemen.",
-   "waar": "Abdij van Bornem, Kloosterstraat 71", "geldigTot": "2026-11-28",
-   "link": "https://www.bornem.be/sint"}
+   "link": "https://www.puurs-sint-amands.be/activiteiten/vredesfeest-2026"}
  ]
 }
