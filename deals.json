@@ -1,13 +1,13 @@
 {
- "datum": "2026-11-08",
+ "datum": "2026-11-09",
  "deals": [
-  {"titel": "Gratis boom of winterheide van Willebroek",
-   "tekst": "Inwoners van Willebroek (ook Blaasveld) kunnen gratis één boom voor de tuin of een winterheide voor terras of balkon aanvragen. Inschrijven via het online formulier van maandag 9/11 tot en met 19/11, zolang de voorraad strekt; ophalen op zaterdag 5/12. Wacht niet te lang, want het aanbod is beperkt.",
+  {"titel": "Gratis boom of winterheide: nu inschrijven",
+   "tekst": "Inwoners van Willebroek (ook Blaasveld) kunnen gratis één boom voor de tuin of een winterheide voor terras of balkon aanvragen. Het online formulier is open van vandaag tot en met 19/11, zolang de voorraad strekt. Ophalen doe je op zaterdag 5/12.",
    "waar": "Gemeente Willebroek (online formulier)", "geldigTot": "2026-11-19",
    "link": "https://www.willebroek.be/nl/gratis-boom-of-plant"},
-  {"titel": "Vredesfeest in Fort Liezele: gratis op 11/11",
-   "tekst": "Woensdag 11/11 is er van 13:00 tot 17:00 een gratis namiddag voor alle leeftijden in het park van Fort Liezele, met springkastelen, een klimmuur en een reuze knikkerbaan. De bibliotheek leest ook gratis voor vanaf 2 jaar, dus dat kan ook voor een peuter. Enkel het museum is betalend, en dat hoef je niet te doen.",
-   "waar": "Park Fort Liezele, Fortbaan 2, Liezele", "geldigTot": "2026-11-11",
-   "link": "https://www.puurs-sint-amands.be/activiteiten/vredesfeest-2026"}
+  {"titel": "Gratis intrede Sinterklaas in Puurs op 14/11",
+   "tekst": "Zaterdag 14/11 komt de Sint om 14:00 aan bij het station van Puurs, met een optocht naar het Dorpshart. Daar begroet hij de kinderen en krijgen ze een cadeautje; tot 17:00 is er animatie. Gratis; de gemeente mikt op 3- tot 5-jarigen, maar meekijken met een peuter kan.",
+   "waar": "Dorpshart, Puurs", "geldigTot": "2026-11-14",
+   "link": "https://www.puurs-sint-amands.be/activiteiten/feestelijke-intrede-sinterklaas-op-dorpshart"}
  ]
 }
