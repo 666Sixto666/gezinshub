@@ -77,6 +77,11 @@
   .ag-title{font-weight:600;font-size:14.5px;line-height:1.3;}
   .ag-sub{font-size:11.5px;color:var(--muted);margin-top:3px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
   .p-pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;color:#fff;}
+  .ag-item.afval{background:transparent;border:1px dashed var(--border);padding:7px 12px;}
+  .ag-item.afval .ag-time{font-size:17px;}
+  .ag-item.afval .ag-title{font-size:13.5px;}
+  .afval-pill{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:9px;color:#fff;}
+  .grid .day .bin{position:absolute;top:3px;right:4px;font-size:9px;line-height:1;}
   .ag-day-head{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:12px 2px 6px;}
   .ag-day-head:first-child{margin-top:0;}
   .ag-day-head.is-today{color:var(--primary);}
@@ -1131,7 +1136,7 @@ function vacHomeLine(todayIso){
   return `<div class="vac-line">🏖️ ${days===1?'Morgen':'Over '+days+' dagen'}: <strong>${escapeHtml(next.naam)}</strong> · ${vacRange(next)}</div>`;
 }
 // ---------- calendar ----------
-function renderLegend(){ document.getElementById('legend').innerHTML = PERSONS.map(p=>`<div class="chip"><span class="sw" style="background:${p.color}"></span>${p.key}</div>`).join('') + `<div class="chip"><span class="sw" style="background:#C9D8EE;border-radius:3px;"></span>Schoolvrij</div>`; }
+function renderLegend(){ document.getElementById('legend').innerHTML = PERSONS.map(p=>`<div class="chip"><span class="sw" style="background:${p.color}"></span>${p.key}</div>`).join('') + `<div class="chip"><span class="sw" style="background:#C9D8EE;border-radius:3px;"></span>Schoolvrij</div><div class="chip">🗑 Afval</div>`; }
 function renderEvPersonSelect(){
   const wrap = document.getElementById('evPersonSelect'); wrap.innerHTML='';
   PERSONS.forEach(p=>{
@@ -1221,7 +1226,17 @@ function renderTodayOverview(){
   el.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click', (e)=>{ e.preventDefault(); if(a.dataset.go!=='settings') lastMoneyPanel = a.dataset.go; showPanel(a.dataset.go); }));
 }
 // ---------- agenda-weergave (Vandaag + Kalender) ----------
+// afvalophaling: geen persoon, eigen kleur per soort, en de herinnering om het de avond ervoor buiten te zetten
+const AFVAL_KLEUR = {'PMD':'#3E7CC0', 'GFT':'#4F9A4A', 'Restafval':'#6B7280', 'Papier en karton':'#A07845'};
+function isAfval(ev){ return ev.seriesId==='afval' || /^🗑/.test(ev.title||''); }
+function afvalSoort(ev){ return String(ev.title||'').replace(/^🗑️?\s*/,''); }
+function afvalKleur(soort){ return AFVAL_KLEUR[soort] || '#8A8F8C'; }
+function afvalPill(soort){ return `<span class="afval-pill" style="background:${afvalKleur(soort)}">${escapeHtml(soort)}</span>`; }
 function agendaItemHtml(ev){
+  if(isAfval(ev)){
+    const soort = afvalSoort(ev);
+    return `<div class="ag-item afval"><div class="ag-time">🗑️</div><span class="ag-bar" style="background:${afvalKleur(soort)}"></span><div class="ag-main"><div class="ag-title">${afvalPill(soort)} ophaling</div><div class="ag-sub"><span>Avond ervoor buitenzetten · ophaling vanaf 6u</span></div></div></div>`;
+  }
   const p = ev.person||'Wij';
   const time = ev.time ? `<div class="ag-time">${ev.time}</div>` : `<div class="ag-time allday">hele dag</div>`;
   return `<div class="ag-item">${time}<span class="ag-bar" style="background:${personColor(p)}"></span><div class="ag-main"><div class="ag-title">${ev.seriesId && ev.seriesId!=='afval'?'🔁 ':''}${escapeHtml(ev.title)}</div><div class="ag-sub"><span class="p-pill" style="background:${personColor(p)}">${p}</span>${ev.notes?`<span>${escapeHtml(ev.notes)}</span>`:''}</div></div></div>`;
@@ -1239,7 +1254,7 @@ function renderHome(){
   const later = [];
   for(let k=2; k<=7; k++){ const d = addDays(todayIso, k); eventsOn(d).forEach(ev=>later.push({d, ev})); }
   if(later.length){
-    html += `<div class="ag-day-head">Later deze week</div>` + later.slice(0,5).map(({d, ev})=>`<div class="today-line"><span style="color:var(--muted);font-weight:600;min-width:52px;display:inline-block;">${new Date(d+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'short', day:'numeric'})}</span> <span class="p-pill" style="background:${personColor(ev.person||'Wij')};font-size:10px;padding:1px 6px;">${ev.person||'Wij'}</span> ${escapeHtml(ev.title)}${ev.time?` <span style="color:var(--muted);">${ev.time}</span>`:''}</div>`).join('') + (later.length>5?`<div class="today-empty" style="margin-top:4px;">+ ${later.length-5} meer in de kalender</div>`:'');
+    html += `<div class="ag-day-head">Later deze week</div>` + later.slice(0,5).map(({d, ev})=>`<div class="today-line"><span style="color:var(--muted);font-weight:600;min-width:52px;display:inline-block;">${new Date(d+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'short', day:'numeric'})}</span> ${isAfval(ev) ? `🗑️ ${afvalPill(afvalSoort(ev))}` : `<span class="p-pill" style="background:${personColor(ev.person||'Wij')};font-size:10px;padding:1px 6px;">${ev.person||'Wij'}</span> ${escapeHtml(ev.title)}${ev.time?` <span style="color:var(--muted);">${ev.time}</span>`:''}`}</div>`).join('') + (later.length>5?`<div class="today-empty" style="margin-top:4px;">+ ${later.length-5} meer in de kalender</div>`:'');
   }
   document.getElementById('homeAgenda').innerHTML = html;
   // Samen: meteen afvinkbaar
@@ -1270,7 +1285,9 @@ function renderCalendar(){
     if(dateStr===selectedDate) el.classList.add('selected');
     const sv = schoolvrijOp(dateStr); if(sv){ el.classList.add('vac'); el.title = sv.naam; }
     el.textContent = d;
-    const dayEvs = calEvents.filter(e=>e.date===dateStr);
+    const allEvs = calEvents.filter(e=>e.date===dateStr);
+    if(allEvs.some(isAfval)){ const b = document.createElement('span'); b.className='bin'; b.textContent='🗑'; el.appendChild(b); }
+    const dayEvs = allEvs.filter(e=>!isAfval(e));
     if(dayEvs.length>0){
       const dotsWrap = document.createElement('div'); dotsWrap.className='dots';
       [...new Set(dayEvs.map(e=>e.person||'Wij'))].slice(0,4).forEach(p=>{
