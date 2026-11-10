@@ -389,6 +389,46 @@
   .ba-trend .tlbl{font-size:11px;color:var(--muted);font-weight:600;text-transform:capitalize;}
   .ba-trend .tnet{font-size:10px;font-weight:700;min-height:12px;}
   .ba-trend .tnet.pos{color:var(--primary);} .ba-trend .tnet.neg{color:var(--danger);}
+
+  /* ---------- v9: opfrissing ---------- */
+  :root{ --bg:#F3F1EA; --border:#E9E5DB; --radius:18px;
+    --shadow:0 1px 2px rgba(35,48,43,.04), 0 8px 22px rgba(31,92,86,.07); }
+  header.top{padding:calc(14px + env(safe-area-inset-top)) 20px 10px;}
+  .brand{font-size:19px;}
+  main{padding:0 14px calc(100px + env(safe-area-inset-bottom));}
+  .card{padding:16px 16px 14px;margin-bottom:12px;border-color:var(--border);}
+  .card h3{font-size:16px;text-transform:none;letter-spacing:-.01em;color:var(--ink);font-weight:700;margin-bottom:10px;}
+  .card h3 .sub{font-size:11.5px;font-weight:500;line-height:1.4;}
+  .ag-item{border-radius:14px;padding:10px 12px;}
+  .ag-day-head{font-size:11.5px;letter-spacing:.06em;}
+  .home-alert{border-radius:16px;box-shadow:var(--shadow);}
+  .btn{border-radius:12px;}
+  input, select, textarea{border-radius:12px;}
+  .todo-item, .shop-item{border-radius:14px;}
+  .seg{border-radius:14px;}
+  .seg button{border-radius:11px;}
+  nav.tabs{border-top:none;box-shadow:0 -1px 0 var(--border), 0 -8px 24px rgba(31,92,86,.06);}
+  nav.tabs button{border-radius:14px;transition:background .15s ease, color .15s ease;}
+  nav.tabs button.active .ic{transform:translateY(-1px) scale(1.06);}
+  nav.tabs .ic{transition:transform .15s ease;}
+  .home-section-label{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:20px 6px 8px;}
+  /* Vandaag: kop met de week in één oogopslag */
+  .home-hero{background:linear-gradient(140deg,#1F5C56 0%,#2B776D 60%,#3C8A7C 100%);color:#fff;border-radius:22px;padding:18px 16px 14px;margin:2px 0 12px;box-shadow:0 10px 26px rgba(31,92,86,.25);}
+  .home-hero .hi{font-size:13px;opacity:.85;font-weight:500;}
+  .home-hero .d{font-family:'Space Grotesk',system-ui,sans-serif;font-size:25px;font-weight:700;letter-spacing:-.02em;margin-top:2px;}
+  .home-hero .d::first-letter{text-transform:uppercase;}
+  .home-hero .s{font-size:13px;opacity:.92;margin-top:4px;line-height:1.45;}
+  .week-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:14px;}
+  .week-strip button{background:rgba(255,255,255,.13);border:none;border-radius:13px;color:#fff;padding:7px 0 7px;font:600 10.5px 'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;min-width:0;}
+  .week-strip button .n{font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;font-weight:700;line-height:1.1;}
+  .week-strip button .w{text-transform:uppercase;opacity:.85;letter-spacing:.03em;}
+  .week-strip button .dots{display:flex;gap:2px;height:6px;align-items:center;}
+  .week-strip button .dots i{width:5px;height:5px;border-radius:50%;display:block;box-shadow:0 0 0 1px rgba(255,255,255,.7);}
+  .week-strip button .dots b{font-size:8px;line-height:6px;}
+  .week-strip button.vac{box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.45);}
+  .week-strip button.today{background:#fff;color:var(--primary);}
+  .week-strip button.today .dots i{box-shadow:none;}
+  .money-card .mc-big{font-size:30px;}
 </style>
 </head>
 <body>
@@ -417,30 +457,36 @@
   </nav>
   <main>
     <section id="panel-home" class="panel active">
-      <div class="page-head"><div class="d" id="homeDate"></div><div class="s" id="homeSub"></div></div>
-      <div id="homeAlert"></div>
-      <div class="card money-card" id="homeMoneyCard" style="display:none;"><div id="homeMoney"></div></div>
-      <div class="card" id="homeNewCard" style="display:none;">
-        <h3>🆕 Nieuw sinds je vorige bezoek</h3>
-        <div id="homeNew"></div>
+      <div class="home-hero">
+        <div class="hi" id="homeHi"></div>
+        <div class="d" id="homeDate"></div>
+        <div class="s" id="homeSub"></div>
+        <div class="week-strip" id="homeWeek"></div>
       </div>
+      <div id="homeAlert"></div>
       <div class="card">
         <h3>📅 Agenda</h3>
         <div id="homeAgenda"></div>
       </div>
+      <div class="card" id="homeNewCard" style="display:none;">
+        <h3>🆕 Nieuw sinds je vorige bezoek</h3>
+        <div id="homeNew"></div>
+      </div>
+      <div class="card kid-card" id="homeKidCard" style="display:none;"><div id="homeKid"></div></div>
       <div class="card">
-        <h3>🤝 Samen<span class="sub">Max 4 tegelijk — rond er één af voor je een nieuwe toevoegt.</span></h3>
+        <h3>🤝 Samen<span class="sub">Max 4 tegelijk. Rond er één af voor je een nieuwe toevoegt.</span></h3>
         <div id="homeShared"></div>
       </div>
       <div class="card" id="homeChoresCard" style="display:none;">
         <h3>🔁 Vaste taken<span class="sub">Nu aan de beurt. Afvinken = gedaan, ze komen vanzelf terug.</span></h3>
         <div id="homeChores"></div>
       </div>
+      <div class="home-section-label">Geld</div>
+      <div class="card money-card" id="homeMoneyCard" style="display:none;"><div id="homeMoney"></div></div>
       <div class="card" id="homeGeldCard" style="display:none;">
         <h3>💶 Binnenkort</h3>
         <div id="todayOverview"></div>
       </div>
-      <div class="card kid-card" id="homeKidCard" style="display:none;"><div id="homeKid"></div></div>
       <div class="card" id="dealCard" style="display:none;">
         <h3>🏷️ Deal van de dag<span class="sub" id="dealSub"></span></h3>
         <div id="dealBody"></div>
@@ -1421,7 +1467,31 @@ function renderHome(){
   const now = new Date(), todayIso = fmtDate(now), tomorrowIso = addDays(todayIso, 1);
   dateEl.textContent = now.toLocaleDateString('nl-BE',{weekday:'long', day:'numeric', month:'long'});
   const tToday = eventsOn(todayIso), tTomorrow = eventsOn(tomorrowIso);
-  document.getElementById('homeSub').textContent = tToday.length ? `${tToday.length} afspra${tToday.length>1?'ken':'ak'} vandaag` : 'Geen afspraken vandaag';
+  const uur = now.getHours();
+  document.getElementById('homeHi').textContent = uur < 6 ? 'Goeienacht' : uur < 12 ? 'Goeiemorgen' : uur < 18 ? 'Goeiemiddag' : 'Goeieavond';
+  const echt = (l)=>l.filter(e=>!isAfval(e));
+  const nT = echt(tToday).length, nM = echt(tTomorrow).length;
+  let weekN = 0; for(let k=0;k<7;k++) weekN += echt(eventsOn(addDays(todayIso,k))).length;
+  const sub = [nT ? `${nT} afspra${nT>1?'ken':'ak'} vandaag` : 'Vandaag niets gepland',
+               nM ? `morgen ${nM}` : '',
+               weekN ? `${weekN} deze week` : ''].filter(Boolean);
+  document.getElementById('homeSub').textContent = sub.join(' · ');
+  // weekstrook: 7 dagen vanaf vandaag, stipjes per persoon, tik = die dag in de kalender
+  const wk = document.getElementById('homeWeek');
+  if(wk){
+    let wh = '';
+    for(let k=0;k<7;k++){
+      const d = addDays(todayIso, k), dt = new Date(d+'T00:00:00'), evs = eventsOn(d);
+      const pers = [...new Set(echt(evs).map(e=>e.person||'Wij'))].slice(0,3);
+      const dots = pers.map(p=>`<i style="background:${personColor(p)}"></i>`).join('') + (evs.some(isAfval) ? '<b>🗑</b>' : '');
+      wh += `<button type="button" data-d="${d}" class="${k===0?'today':''}${schoolvrijOp(d)?' vac':''}"><span class="w">${k===0?'vand.':dt.toLocaleDateString('nl-BE',{weekday:'short'}).replace('.','')}</span><span class="n">${dt.getDate()}</span><span class="dots">${dots}</span></button>`;
+    }
+    wk.innerHTML = wh;
+    wk.querySelectorAll('button').forEach(btn=>btn.addEventListener('click', ()=>{
+      const d = btn.dataset.d; selectedDate = d; viewYear = +d.slice(0,4); viewMonth = +d.slice(5,7)-1;
+      showPanel('cal'); renderCalendar(); renderDayEvents();
+    }));
+  }
   let html = vacHomeLine(todayIso) + `<div class="ag-day-head is-today">Vandaag</div>` + (tToday.length ? tToday.map(agendaItemHtml).join('') : `<div class="today-empty">Niets gepland.</div>`);
   html += `<div class="ag-day-head">Morgen · ${new Date(tomorrowIso+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'long', day:'numeric', month:'short'})}</div>` + (tTomorrow.length ? tTomorrow.map(agendaItemHtml).join('') : `<div class="today-empty">Niets gepland.</div>`);
   // de rest van de week, compact
