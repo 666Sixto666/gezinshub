@@ -1,13 +1,13 @@
 {
- "datum": "2026-11-09",
+ "datum": "2026-11-10",
  "deals": [
-  {"titel": "Gratis boom of winterheide: nu inschrijven",
-   "tekst": "Inwoners van Willebroek (ook Blaasveld) kunnen gratis één boom voor de tuin of een winterheide voor terras of balkon aanvragen. Het online formulier is open van vandaag tot en met 19/11, zolang de voorraad strekt. Ophalen doe je op zaterdag 5/12.",
+  {"titel": "Gratis Sint-namiddag in Abdij van Bornem",
+   "tekst": "Zaterdag 28/11 van 13.30 tot 17 uur zijn de Sint en zijn pieten in de Abdij van Bornem (Kloosterstraat 71): opdrachtjes, een pietendiploma en verhalen. Deelname is gratis en er staat geen inschrijving vermeld. De gemeente richt zich op Bornemse kinderen, dus kijk de pagina even na.",
+   "waar": "Abdij van Bornem", "geldigTot": "2026-11-28",
+   "link": "https://www.bornem.be/sint"},
+  {"titel": "Gratis boom of winterheide: nog tot 19/11",
+   "tekst": "Inwoners van Willebroek (ook Blaasveld) vragen online gratis één boom voor de tuin of een winterheide voor terras of balkon aan, zolang de voorraad strekt; het krentenboompje is al op. Ophalen kan alleen op zaterdag 5/12.",
    "waar": "Gemeente Willebroek (online formulier)", "geldigTot": "2026-11-19",
-   "link": "https://www.willebroek.be/nl/gratis-boom-of-plant"},
-  {"titel": "Gratis intrede Sinterklaas in Puurs op 14/11",
-   "tekst": "Zaterdag 14/11 komt de Sint om 14:00 aan bij het station van Puurs, met een optocht naar het Dorpshart. Daar begroet hij de kinderen en krijgen ze een cadeautje; tot 17:00 is er animatie. Gratis; de gemeente mikt op 3- tot 5-jarigen, maar meekijken met een peuter kan.",
-   "waar": "Dorpshart, Puurs", "geldigTot": "2026-11-14",
-   "link": "https://www.puurs-sint-amands.be/activiteiten/feestelijke-intrede-sinterklaas-op-dorpshart"}
+   "link": "https://www.willebroek.be/nl/gratis-boom-of-plant"}
  ]
 }
