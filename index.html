@@ -3,8 +3,10 @@
 <head>
 <script>
 (function(){
-  if(!location.search.includes('_r=')){
-    location.replace(location.pathname + '?_r=' + Date.now());
+  // altijd de nieuwste versie: een beginschermicoon bewaart soms een oude ?_r=..., die zou anders nooit vernieuwen
+  var m = location.search.match(/_r=(\d+)/);
+  if(!m || Date.now() - Number(m[1]) > 60000){
+    location.replace(location.pathname + '?_r=' + Date.now() + location.hash);
   }
 })();
 </script>
