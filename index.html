@@ -344,6 +344,13 @@
   .mc-row:last-child{border-bottom:none;} .mc-row .w{flex:1;} .mc-row .dt{min-width:46px;color:var(--muted);font-weight:600;} .mc-row.past{opacity:.55;}
   .mc-row .in{color:var(--primary);font-weight:600;}
   .goal-bar{height:8px;border-radius:6px;background:var(--bg);overflow:hidden;margin-top:6px;} .goal-bar span{display:block;height:100%;background:var(--primary);border-radius:6px;}
+  .kid-card .kid-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;}
+  .kid-card .kid-t{font-weight:700;font-size:15px;margin:6px 0 3px;}
+  .kid-card .kid-x{font-size:13px;line-height:1.5;}
+  .kid-card .kid-tip{font-size:13px;line-height:1.45;margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--primary-light);}
+  .kid-card .kid-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px;font-size:11.5px;color:var(--muted);}
+  .pq-link{color:var(--primary);font-weight:600;font-size:12px;text-decoration:none;white-space:nowrap;}
+  .pq-nr{flex-shrink:0;min-width:20px;font-weight:700;color:var(--muted);font-size:12.5px;text-align:right;}
   .home-alert{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:12px;background:var(--accent-light);border:1px solid #F0D6A8;font-size:14px;font-weight:600;margin-bottom:14px;}
   .new-line{font-size:13px;padding:3px 0;}
   .new-line .k{color:var(--muted);font-weight:600;margin-right:4px;}
@@ -421,14 +428,6 @@
         <h3>📅 Agenda</h3>
         <div id="homeAgenda"></div>
       </div>
-      <div class="card" id="homeClaudeCard" style="display:none;">
-        <h3>💬 Stand van zaken<span class="sub" id="homeClaudeSub"></span></h3>
-        <div id="homeClaude"></div>
-      </div>
-      <div class="card">
-        <h3>💶 Geld</h3>
-        <div id="todayOverview"></div>
-      </div>
       <div class="card">
         <h3>🤝 Samen<span class="sub">Max 4 tegelijk — rond er één af voor je een nieuwe toevoegt.</span></h3>
         <div id="homeShared"></div>
@@ -437,6 +436,11 @@
         <h3>🔁 Vaste taken<span class="sub">Nu aan de beurt. Afvinken = gedaan, ze komen vanzelf terug.</span></h3>
         <div id="homeChores"></div>
       </div>
+      <div class="card" id="homeGeldCard" style="display:none;">
+        <h3>💶 Binnenkort</h3>
+        <div id="todayOverview"></div>
+      </div>
+      <div class="card kid-card" id="homeKidCard" style="display:none;"><div id="homeKid"></div></div>
       <div class="card" id="dealCard" style="display:none;">
         <h3>🏷️ Deal van de dag<span class="sub" id="dealSub"></span></h3>
         <div id="dealBody"></div>
@@ -551,6 +555,16 @@
             <div style="cursor:pointer;font-size:12.5px;color:var(--muted);font-weight:600;" class="tip-toggle" id="todoDoneToggle" data-target="todoDoneList">▸ Voltooid (0)</div>
             <div id="todoDoneList" style="display:none;margin-top:6px;"></div>
             <button class="btn outline" id="todoClearDoneBtn" type="button" style="margin-top:8px;display:none;font-size:12px;padding:8px 12px;">Wis voltooide taken</button>
+          </div>
+        </div>
+        <div class="card" id="printCard" style="display:none;">
+          <h3>🖨️ 3D-printwachtrij<span class="sub">Enkel voor Tom. Bovenaan = volgende print. Sleep aan ⋮⋮ of tik ⤒ om te verschuiven, vink af als hij geprint is.</span></h3>
+          <form class="add-bar" id="printAddForm" autocomplete="off"><input type="text" id="printInput" placeholder="Wat wil je printen? Een link mag ook." enterkeyhint="done"><button id="printAddBtn" class="plus" type="submit" aria-label="Aan de wachtrij toevoegen" disabled>+</button></form>
+          <div id="printList"></div>
+          <div id="printDoneWrap" style="display:none;margin-top:10px;">
+            <div style="cursor:pointer;font-size:12.5px;color:var(--muted);font-weight:600;" id="printDoneToggle">▸ Geprint (0)</div>
+            <div id="printDoneList" style="display:none;margin-top:6px;"></div>
+            <button class="btn outline" id="printClearDoneBtn" type="button" style="margin-top:8px;display:none;font-size:12px;padding:8px 12px;">Wis geprinte</button>
           </div>
         </div>
       </div>
@@ -674,6 +688,9 @@ const sharedTodoRef = ref(db, hhPath + '/sharedTodo');
 const claudeAnalyseRef = ref(db, hhPath + '/claudeAnalyse');
 const choresRef = ref(db, hhPath + '/vasteTaken');      // terugkerende huishoudtaken {tekst, elke (dagen), volgende}
 const shopFavRef = ref(db, hhPath + '/lijstVast');      // vaste items voor de boodschappenlijst {tekst}
+// 3D-printwachtrij: persoonlijk, enkel voor Tom (todos/Tom/print) {tekst, order, done, geprint}
+const PRINT_OWNER = 'Tom';
+let printRef = null, printUnsub = null;
 const metaRef = ref(db, hhPath + '/meta');              // {laatsteBackup}   // analyse + tips die Claude meestuurt in het gegevensbestand
 
 const CATEGORIES = ['Wonen','Energie & water','Telecom & media','Boodschappen','Eten & drinken buitenshuis','Auto & vervoer','Kinderen','Verzekering','Gezondheid','Huis & tuin','Huisdieren','Vrije tijd & vakantie','Juridisch & administratie','Online shopping','Streaming','Bankkosten','Sparen','Overig'];
@@ -701,6 +718,7 @@ let shoppingItems = [];
 let sharedTodoItems = [];
 let claudeAnalyse = null;
 let chores = [], choresDenied = false;
+let printItems = [], printDenied = false;
 let shopFavs = [], shopFavDenied = false;
 let meta = {};
 let openDateEditFor = null;
@@ -785,7 +803,7 @@ function attachListeners(){
   onValue(contractsRef, snap=>{ contracts = snapToArray(snap.val()); renderContracts(); renderBudget(); renderTodayOverview(); markLive(); });
   onValue(shoppingListRef, snap=>{ shoppingItems = snapToArray(snap.val()); renderShoppingList(); renderNavBadges(); renderNew(); markLive(); });
   onValue(sharedTodoRef, snap=>{ sharedTodoItems = snapToArray(snap.val()); renderSharedTodo(); renderHome(); markLive(); });
-  onValue(claudeAnalyseRef, snap=>{ claudeAnalyse = snap.val() || null; renderClaudeAnalyse(); renderHomeMoney(); renderNew(); markLive(); }, ()=>{ /* nog geen leesrecht op dit pad: kaart blijft verborgen */ });
+  onValue(claudeAnalyseRef, snap=>{ claudeAnalyse = snap.val() || null; renderClaudeAnalyse(); renderHomeMoney(); renderKid(); renderNew(); markLive(); }, ()=>{ /* nog geen leesrecht op dit pad: kaart blijft verborgen */ });
   // nieuwe paden (v7): als de databaseregels ze (nog) niet toelaten, blijft de app gewoon werken zonder die functie
   onValue(choresRef, snap=>{ chores = snapToArray(snap.val()); choresDenied = false; renderChores(); }, ()=>{ choresDenied = true; renderChores(); });
   onValue(shopFavRef, snap=>{ shopFavs = snapToArray(snap.val()); shopFavDenied = false; renderShoppingList(); }, ()=>{ shopFavDenied = true; renderShoppingList(); });
@@ -797,7 +815,7 @@ function attachListeners(){
 document.addEventListener('visibilitychange', ()=>{
   if(document.visibilityState==='hidden'){ writeSeen(Date.now()); return; }
   if(document.visibilityState!=='visible' || !auth.currentUser) return;
-  prevSeen = readSeen(); renderHome(); renderTodayOverview(); renderHomeMoney(); renderNew(); renderChores();
+  prevSeen = readSeen(); renderHome(); renderTodayOverview(); renderHomeMoney(); renderKid(); renderNew(); renderChores();
   if(Date.now()-lastDealsLoad > 60*60*1000){ lastDealsLoad = Date.now(); loadDeals(); }
 });
 
@@ -860,8 +878,8 @@ function claudePointHtml(p){
 function renderClaudeAnalyse(){
   const a = claudeAnalyse;
   if(lsGet('gezinshub-budDetails')===null) setBudDetails(!(a && a.kop));
-  const card = document.getElementById('claudeCard'), homeCard = document.getElementById('homeClaudeCard');
-  if(!a || !a.kop){ card.style.display='none'; homeCard.style.display='none'; return; }
+  const card = document.getElementById('claudeCard');
+  if(!a || !a.kop){ card.style.display='none'; return; }
   const punten = Array.isArray(a.punten) ? a.punten : Object.values(a.punten||{});
   const meta = `Door Claude op ${fmtDayMonth(a.datum)} · gegevens t.e.m. ${fmtDayMonth(a.gegevensTot||a.datum)}${typeof a.saldo==='number'?` · saldo toen ${fmtMoney(a.saldo)}`:''}`;
   const head = `<div class="ba-ins ${a.niveau||'info'}" style="margin-bottom:10px;"><span class="ic">${a.niveau==='bad'?'🔴':a.niveau==='warn'?'🟠':'🟢'}</span><div><div class="t" style="font-size:15px;">${escapeHtml(a.kop)}</div>${a.samenvatting?`<div class="d">${escapeHtml(a.samenvatting)}</div>`:''}</div></div>`;
@@ -872,13 +890,6 @@ function renderClaudeAnalyse(){
     + (rest.length ? `<div id="claudeMore" style="display:none;">${rest.map(claudePointHtml).join('')}</div><button type="button" class="ba-more" id="claudeMoreBtn">Toon nog ${rest.length} punt${rest.length>1?'en':''}</button>` : '');
   const mb = document.getElementById('claudeMoreBtn');
   if(mb) mb.addEventListener('click', ()=>{ const el=document.getElementById('claudeMore'); const open=el.style.display!=='none'; el.style.display=open?'none':'block'; mb.textContent = open?`Toon nog ${rest.length} punt${rest.length>1?'en':''}`:'Minder tonen'; });
-  // Vandaag: kop + de punten met een concrete actie
-  homeCard.style.display='block';
-  document.getElementById('homeClaudeSub').textContent = meta;
-  const acts = punten.filter(p=>p.actie).slice(0,3);
-  document.getElementById('homeClaude').innerHTML = head + acts.map(p=>`<div class="today-line">👉 <strong>${escapeHtml(p.titel||'')}</strong>${p.titel?': ':''}${escapeHtml(p.actie)}</div>`).join('')
-    + `<a href="#" class="ba-more" id="homeClaudeGo" style="display:inline-block;margin-top:6px;text-decoration:none;">Volledige analyse in Geld ›</a>`;
-  document.getElementById('homeClaudeGo').addEventListener('click', (e)=>{ e.preventDefault(); lastMoneyPanel='bud'; showPanel('bud'); });
 }
 
 // ---------- deal van de dag ----------
@@ -954,13 +965,20 @@ function asList(v){ return Array.isArray(v) ? v : Object.values(v||{}); }
 function renderHomeMoney(){
   const card = document.getElementById('homeMoneyCard'); if(!card) return;
   const a = claudeAnalyse, p = a && a.prognose;
-  if(!p || typeof p.saldo!=='number'){ card.style.display='none'; return; }
-  const todayIso = fmtDate(new Date());
   const el = document.getElementById('homeMoney');
+  const go = `<a href="#" class="ba-more" id="homeMoneyGo" style="display:inline-block;margin-top:2px;text-decoration:none;">Volledige analyse in Geld ›</a>`;
+  const wireGo = ()=>{ const g = document.getElementById('homeMoneyGo'); if(g) g.addEventListener('click', (e)=>{ e.preventDefault(); lastMoneyPanel='bud'; showPanel('bud'); }); };
+  if(!p || typeof p.saldo!=='number'){
+    if(!a || !a.kop){ card.style.display='none'; return; }
+    card.style.display = 'block';
+    el.innerHTML = `<div class="mc-label">Stand van zaken</div><div class="today-line" style="margin-top:6px;font-weight:600;">${escapeHtml(a.kop)}</div>${go}`;
+    wireGo(); return;
+  }
+  const todayIso = fmtDate(new Date());
   card.style.display = 'block';
   if(p.tot && p.tot < todayIso){
-    el.innerHTML = `<div class="mc-label">Tot de volgende bijdragen</div><div class="today-line" style="margin-top:6px;">De vorige schatting liep tot ${fmtDayMonth(p.tot)}. Bezorg Claude een nieuwe KBC-export voor een nieuwe.</div>`;
-    return;
+    el.innerHTML = `<div class="mc-label">Tot de volgende bijdragen</div><div class="today-line" style="margin-top:6px;">De vorige schatting liep tot ${fmtDayMonth(p.tot)}. Bezorg Claude een nieuwe KBC-export voor een nieuwe.</div>${go}`;
+    wireGo(); return;
   }
   const uit = asList(p.uit).filter(x=>x && x.bedrag>0), inn = asList(p.in).filter(x=>x && x.bedrag>0);
   const sumU = uit.reduce((s,x)=>s+x.bedrag,0), sumI = inn.reduce((s,x)=>s+x.bedrag,0);
@@ -990,6 +1008,8 @@ function renderHomeMoney(){
     const past = r.datum && r.datum < todayIso;
     return `<div class="mc-row${past?' past':''}"><span class="dt">${r.datum?new Date(r.datum+'T00:00:00').toLocaleDateString('nl-BE',{day:'numeric', month:'numeric'}):'rest'}</span><span class="w">${escapeHtml(r.wat||'')}${past?' <span style="font-size:11px;">(wellicht al betaald)</span>':''}</span><span class="${r.s>0?'in':''}">${r.s>0?'+':'−'}${fmtEur0(r.bedrag)}</span></div>`;
   }).join('');
+  // de eerste concrete actie uit de analyse (de rest staat onder Geld)
+  const act = asList(a.punten).find(x=>x && x.actie && (x.niveau==='bad' || x.niveau==='warn'));
   let goal = '';
   const sd = a.spaardoel;
   if(sd && sd.doel>0){
@@ -1000,12 +1020,78 @@ function renderHomeMoney(){
     <div class="mc-big ${level}">${vrij<0?'−':''}${fmtEur0(Math.abs(vrij))}</div>
     <div class="mc-calc">Saldo ${fmtEur0(p.saldo)} op ${fmtDayMonth(p.saldoDatum||a.gegevensTot||a.datum)} − nog te betalen ${fmtEur0(sumU)}${sumI?` + nog te ontvangen ${fmtEur0(sumI)}`:''}. Schatting van Claude.</div>
     ${hint}
-    <button type="button" class="ba-more" id="mcToggle" style="margin-top:6px;">Toon wat er nog komt ▾</button>
+    ${act?`<div class="today-line" style="margin-top:8px;">👉 ${escapeHtml(act.actie)}</div>`:''}
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px;margin-top:6px;"><button type="button" class="ba-more" id="mcToggle">Toon wat er nog komt ▾</button>${go}</div>
     <div id="mcRows" style="display:none;margin-top:4px;">${rowHtml}</div>${goal}`;
+  wireGo();
   document.getElementById('mcToggle').addEventListener('click', (e)=>{
     const r = document.getElementById('mcRows'); const open = r.style.display!=='none';
     r.style.display = open ? 'none' : 'block'; e.target.textContent = open ? 'Toon wat er nog komt ▾' : 'Verberg ▴';
   });
+}
+
+
+// ---------- kind: een weetje per dag, passend bij de leeftijd ----------
+// Naam en geboortedatum staan niet in deze (openbare) code: Claude zet ze als analyse.kind = {naam, geboren} in het gegevensbestand.
+// v/t = van/tot leeftijd in maanden (t niet inbegrepen). Algemene, onderbouwde richtlijnen; elk kind volgt zijn eigen tempo.
+const WEETJES = [
+ {v:24,t:36,k:'Woordenschat in een stroomversnelling',x:'Tussen 2 en 3 jaar groeit de woordenschat snel. Rond 2,5 jaar zeggen de meeste kinderen een vijftigtal woorden en maken ze zinnetjes van twee woorden met een doe-woord, zoals "hond loopt".',tip:'Herhaal wat hij zegt en voeg één woord toe: "Auto!" wordt "Ja, een rode auto."',b:'CDC-mijlpalen (30 maanden)'},
+ {v:24,t:42,k:'"Nee!" hoort erbij',x:'Zelf willen kiezen is een normale stap naar zelfstandigheid. Nee zeggen is oefenen met een eigen wil, geen ongehoorzaamheid.',tip:'Geef een keuze tussen twee dingen die allebei goed zijn: "De blauwe of de groene beker?"',b:'Kind en Gezin; AAP (HealthyChildren.org)'},
+ {v:24,t:48,k:'Driftbuien: de rem is nog in aanbouw',x:'Het deel van de hersenen dat emoties afremt (de prefrontale cortex) rijpt nog jarenlang. Een driftbui is dus geen onwil, maar een overspoeld brein.',tip:'Blijf rustig in de buurt, zeg kort wat je ziet ("Je bent boos, je wou nog spelen") en troost na de bui. Uitleggen werkt pas als hij weer rustig is.',b:'Harvard Center on the Developing Child'},
+ {v:24,t:36,k:'Slaap: 11 tot 14 uur per dag',x:'Voor peuters tot 3 jaar is 11 tot 14 uur slaap per 24 uur aanbevolen, dutjes meegeteld.',tip:'Een vast avondritueel in dezelfde volgorde (bad, boekje, liedje, licht uit) helpt het lichaam om naar slaap te schakelen.',b:'WHO-richtlijn 2019; AASM'},
+ {v:36,t:60,k:'Slaap: 10 tot 13 uur, het dutje verdwijnt',x:'Van 3 tot 5 jaar is 10 tot 13 uur slaap per 24 uur aanbevolen. Het middagdutje verdwijnt meestal ergens tussen 3 en 5 jaar.',tip:'Valt het dutje weg, hou dan toch een rustmoment met een boekje of rustige muziek.',b:'WHO-richtlijn 2019; AASM'},
+ {v:24,t:60,k:'Schermtijd: minder is beter',x:'De WHO raadt voor 2- tot 4-jarigen hoogstens 1 uur schermtijd per dag aan, en minder is beter. Samen kijken en erover praten maakt er meer een leermoment van.',tip:'Geen schermen aan tafel en in het laatste uur voor het slapengaan.',b:'WHO-richtlijn 2019; AAP'},
+ {v:24,t:60,k:'Drie uur bewegen per dag',x:'Kinderen van 1 tot 4 jaar hebben elke dag minstens 180 minuten beweging nodig, verspreid over de dag. Vanaf 3 jaar mag minstens een uur daarvan flink inspannend zijn.',tip:'Laat hem zoveel mogelijk zelf stappen, trappen klimmen en buiten ravotten, ook bij regen.',b:'WHO-richtlijn 2019'},
+ {v:24,t:60,k:'Voorlezen met vragen',x:'Bij dialogisch voorlezen praat het kind mee: wat zie je, wat gebeurt er nu? Dat stimuleert de taal meer dan alleen voorlezen.',tip:'Vraag "Wat doet de beer?" in plaats van "Is dat een beer?", en bouw verder op zijn antwoord.',b:'Onderzoek Whitehurst e.a.; Kind en Gezin'},
+ {v:24,t:48,k:'Hetzelfde boekje, alweer',x:'Steeds hetzelfde boekje willen is geen verveling maar leren: kinderen leren nieuwe woorden beter uit een paar boekjes die vaak terugkomen dan uit telkens andere.',tip:'Stop af en toe vlak voor een bekend woord en laat hem aanvullen.',b:'Onderzoek Horst e.a. (2011)'},
+ {v:24,t:36,k:'Doen alsof',x:'Rond 2,5 jaar begint het fantasiespel: een blokje wordt eten voor de knuffel, een doos wordt een auto. Zo oefent hij taal, plannen en zich inleven.',tip:'Speel mee en volg zijn verhaal, in plaats van het spel te leiden.',b:'CDC-mijlpalen (30 maanden)'},
+ {v:24,t:48,k:'Zindelijk worden is geen wedstrijd',x:'De meeste kinderen worden overdag zindelijk tussen 2 en 3,5 jaar. Tekens dat hij er klaar voor is: langer droog blijven, laten merken dat de luier vol is, interesse in het toilet.',tip:'Begin in een rustige periode, zonder druk of straf. Een terugval bij een verandering (school, ziekte) is normaal.',b:'Kind en Gezin; AAP'},
+ {v:36,t:60,k:'\'s Nachts droog komt later',x:'Overdag zindelijk en \'s nachts droog zijn twee verschillende stappen. Bedplassen tot 5 jaar is normaal: blaas en hormonen moeten nog rijpen.',tip:'Een nachtluier mag gerust nog. Straffen of \'s nachts wekken helpt niet.',b:'Kind en Gezin; NICE'},
+ {v:24,t:72,k:'Nieuw eten: 8 tot 15 keer proeven',x:'Tussen 2 en 6 jaar wantrouwen veel kinderen nieuw eten. Vaak moet een kind iets 8 tot 15 keer proeven voor hij het lust.',tip:'Leg een klein beetje van het nieuwe naast iets wat hij graag eet, zonder dwang. Zelf smakelijk meeëten werkt het best.',b:'Gezond Leven; onderzoek Birch e.a.'},
+ {v:24,t:72,k:'Jij bepaalt wat, hij bepaalt hoeveel',x:'Peuters voelen zelf goed aan hoeveel ze nodig hebben. Ouders kiezen wat en wanneer er gegeten wordt, het kind kiest hoeveel.',tip:'Geen bord leeg moeten eten en geen dessert als beloning: zo blijft hij luisteren naar zijn eigen honger.',b:'Ellyn Satter; Gezond Leven'},
+ {v:24,t:72,k:'Vitamine D tot 6 jaar',x:'Kind en Gezin raadt aan om kinderen tot 6 jaar elke dag vitamine D te geven, het hele jaar door. In onze streken maakt de huid zeker in de winter te weinig aan.',tip:'Koppel het aan een vast moment, bijvoorbeeld bij het ontbijt.',b:'Kind en Gezin'},
+ {v:24,t:72,k:'Water als dorstlesser',x:'Fruitsap en frisdrank bevatten veel suiker en zijn slecht voor de tanden. Meer dan een halve liter melk per dag kan de eetlust en de opname van ijzer verminderen.',tip:'Zet altijd een beker water binnen handbereik.',b:'Gezond Leven; Kind en Gezin'},
+ {v:24,t:96,k:'Tanden: een ouder poetst na',x:'Pas rond 7 à 8 jaar heeft een kind de handigheid om zelf goed te poetsen. Tot dan poetst een ouder na, twee keer per dag, met een fluoridetandpasta voor kinderen.',tip:'Laat hem eerst zelf poetsen en poets daarna kort na. De avondbeurt is de belangrijkste.',b:'Gezonde Mond (Gezond Leven)'},
+ {v:24,t:48,k:'Zelf aankleden',x:'Rond 3 jaar trekken veel kinderen al zelf losse kleren aan, zoals een broek met elastiek of een jas. Knopen en ritsen komen later.',tip:'Leg de kleren klaar in de juiste volgorde en reken op wat extra tijd. Zelf doen loont meer dan snel klaar zijn.',b:'CDC-mijlpalen (3 jaar)'},
+ {v:24,t:42,k:'Springen met twee voeten',x:'Rond 2,5 jaar springen de meeste kinderen met beide voeten tegelijk van de grond. Daarna volgen klimmen, op één been staan en trappen op met afwisselende voeten.',tip:'Een stoeprand, een laag muurtje of een hinkelpad is gratis motoriektraining.',b:'CDC-mijlpalen'},
+ {v:24,t:60,k:'Gevoelens een naam geven',x:'Kinderen die woorden hebben voor wat ze voelen, leren hun emoties beter regelen. Wie "boos" kan zeggen, hoeft minder te slaan of te gooien.',tip:'Benoem gevoelens in het dagelijks leven, ook die van jezelf: "Ik ben moe, ik ga even zitten."',b:'Harvard Center on the Developing Child'},
+ {v:24,t:42,k:'Naast elkaar spelen',x:'Tot ongeveer 3 jaar spelen kinderen vooral naast elkaar, elk met hun eigen spel. Samenspelen en delen leren ze geleidelijk. Ruzie om speelgoed is op deze leeftijd normaal.',tip:'Gebruik "eerst jij, dan hij" of een zandloper, in plaats van te verwachten dat hij spontaan deelt.',b:'Kind en Gezin; AAP'},
+ {v:24,t:72,k:'Prijs de moeite, niet het talent',x:'Peuters die vooral lof krijgen voor hun inzet ("Je hebt lang geprobeerd!") zetten jaren later meer door bij moeilijke opdrachten.',tip:'Zeg wat je hem ziet doen: "Je hebt alle blokken zelf opgestapeld."',b:'Onderzoek Gunderson e.a. (2013); Dweck'},
+ {v:24,t:60,k:'Kleine helpers',x:'Al vanaf ±18 maanden helpen kinderen spontaan als ze zien dat iemand iets niet lukt. Echt meehelpen in huis versterkt het gevoel "ik kan iets".',tip:'Geef een echte taak: sokken sorteren, de lepels op tafel leggen, de planten water geven.',b:'Onderzoek Warneken & Tomasello'},
+ {v:30,t:54,k:'Het waarom-tijdperk',x:'Rond 3 jaar stellen kinderen vragen met wie, wat, waar en waarom. Dat is nieuwsgierigheid naar oorzaak en gevolg, geen tegendraadsheid.',tip:'Draai het af en toe om: "Wat denk jij?" Zo oefent hij zelf redeneren.',b:'CDC-mijlpalen (3 jaar)'},
+ {v:24,t:60,k:'Routines geven houvast',x:'Een voorspelbare dag (eten, slapen, halen en brengen) geeft jonge kinderen een gevoel van veiligheid. Daardoor kunnen ze beter om met veranderingen.',tip:'Kondig overgangen aan: "Nog twee keer glijden, dan gaan we naar huis."',b:'Kind en Gezin; Zero to Three'},
+ {v:24,t:60,k:'Minder speelgoed, langer spelen',x:'Met minder speelgoed tegelijk spelen peuters langer en creatiever met elk stuk.',tip:'Zet een deel van het speelgoed weg en wissel om de paar weken.',b:'Onderzoek Dauch e.a. (2018)'},
+ {v:28,t:36,k:'Wennen aan de kleuterschool',x:'De eerste weken op school zijn kleuters vaak moe en soms huileriger of driftiger thuis. Wennen duurt bij veel kinderen enkele weken, en na een vakantie kan het even opnieuw moeilijk zijn.',tip:'Neem kort en duidelijk afscheid, ook als hij huilt: stil wegsluipen maakt onzeker. Gebruik de wenmomenten van de school en hou de avonden rustig.',b:'Kind en Gezin; Klasse'},
+ {v:24,t:48,k:'Groeien gaat nu trager',x:'Na de snelle groei van de eerste twee jaar groeit een peuter trager, ongeveer 7 tot 9 cm per jaar. Daardoor eet hij soms minder dan als baby, en dat is normaal.',tip:'Kijk naar zijn energie en de groeicurve bij Kind en Gezin, niet naar één bord.',b:'Kind en Gezin; WHO-groeicurven'},
+ {v:36,t:48,k:'Echte gesprekjes',x:'Rond 3 jaar voeren de meeste kinderen een kort gesprek met minstens twee keer heen en weer, en zeggen ze hun voornaam als je erom vraagt.',tip:'Stel open vragen over zijn dag: "Wat was het grappigste vandaag?"',b:'CDC-mijlpalen (3 jaar)'},
+ {v:36,t:60,k:'Bang voor monsters',x:'Tussen 3 en 5 jaar is de fantasie zo levendig dat angst voor monsters, het donker of geluiden \'s nachts normaal is.',tip:'Neem de angst serieus zonder hem te bevestigen. Een nachtlampje of een knuffel als "bewaker" helpt.',b:'AAP (HealthyChildren.org)'},
+ {v:42,t:60,k:'Zinnen van vier woorden en meer',x:'Rond 4 jaar maken de meeste kinderen zinnen van vier woorden of meer, vertellen ze wat er daarna in een verhaal gebeurt en noemen ze een paar kleuren.',tip:'Laat hem een bekend verhaal zelf navertellen aan de hand van de prenten.',b:'CDC-mijlpalen (4 jaar)'},
+];
+function leeftijdMaanden(geboren, nu){
+  const g = new Date(geboren+'T00:00:00');
+  return (nu.getFullYear()-g.getFullYear())*12 + (nu.getMonth()-g.getMonth()) - (nu.getDate()<g.getDate() ? 1 : 0);
+}
+function leeftijdTekst(m){
+  if(m < 24) return m + ' maanden';
+  const j = Math.floor(m/12), r = m%12;
+  return j + ' jaar' + (r ? ' en ' + r + (r===1 ? ' maand' : ' maanden') : '');
+}
+let kidOffset = 0;
+function renderKid(){
+  const card = document.getElementById('homeKidCard'); if(!card) return;
+  const k = claudeAnalyse && claudeAnalyse.kind;
+  if(!k || !k.geboren || !/^\d{4}-\d{2}-\d{2}$/.test(k.geboren)){ card.style.display='none'; return; }
+  const nu = new Date(), m = leeftijdMaanden(k.geboren, nu);
+  const pool = WEETJES.filter(w=>m>=w.v && m<w.t);
+  if(!pool.length){ card.style.display='none'; return; }
+  const dag = Math.floor((nu - nu.getTimezoneOffset()*60000) / 86400000);
+  const w = pool[((dag*7 + kidOffset) % pool.length + pool.length) % pool.length];
+  card.style.display='block';
+  document.getElementById('homeKid').innerHTML = `<div class="kid-head"><span>🧒 ${escapeHtml(k.naam||'')} · ${leeftijdTekst(m)}</span><span style="text-transform:none;font-weight:600;">weetje van de dag</span></div>
+    <div class="kid-t">${escapeHtml(w.k)}</div><div class="kid-x">${escapeHtml(w.x)}</div>
+    <div class="kid-tip">💡 ${escapeHtml(w.tip)}</div>
+    <div class="kid-foot"><span>Bron: ${escapeHtml(w.b)}</span><button type="button" class="ba-more" id="kidNext">Nog een ›</button></div>`;
+  document.getElementById('kidNext').addEventListener('click', ()=>{ kidOffset++; renderKid(); });
 }
 
 // ---------- afvalophaling: morgen buitenzetten ----------
@@ -1063,6 +1149,76 @@ function renderChores(){
 wireAddBar('choreAddForm', 'choreInput', 'choreAddBtn', (val)=>{
   const elke = parseInt(document.getElementById('choreEvery').value, 10) || 7;
   push(choresRef, { tekst: val, elke, volgende: fmtDate(new Date()) }).catch(err=>{ console.error(err); alert('Bewaren lukte niet: de databaseregels laten vaste taken nog niet toe.'); });
+});
+
+
+// ---------- 3D-printwachtrij (gedeeld, zoals alles in de app) ----------
+function sortedPrint(){ return [...printItems].sort((a,b)=>(a.order??0)-(b.order??0) || (pushTime(a.id)-pushTime(b.id))); }
+function savePrintOrder(ids){ ids.forEach((id,i)=>update(ref(db, hhPath+'/todos/'+PRINT_OWNER+'/print/'+id), {order: i*1000})); }
+function printTekstHtml(t){
+  const m = String(t||'').match(/https?:\/\/[^\s]+/);
+  if(!m) return escapeHtml(t);
+  const rest = String(t).replace(m[0], '').trim();
+  let host = 'link'; try{ host = new URL(m[0]).hostname.replace(/^www\./,''); }catch(e){}
+  const safe = /^https:\/\//.test(m[0]);
+  return (rest ? escapeHtml(rest) + ' ' : '') + (safe ? `<a class="pq-link" href="${escapeHtml(m[0])}" target="_blank" rel="noopener">🔗 ${escapeHtml(host)}</a>` : escapeHtml(m[0]));
+}
+function printRow(it, nr, list){
+  const row = document.createElement('div'); row.className='todo-item'+(it.done?' done':''); row.dataset.id = it.id;
+  const main = document.createElement('div'); main.className='main-row';
+  if(!it.done){
+    const h = document.createElement('div'); h.className='drag-handle'; h.textContent='⋮⋮'; h.title='Sleep om te verschuiven';
+    h.addEventListener('pointerdown', (e)=>startListDrag(e, row, 'print', document.getElementById('printList'), savePrintOrder, renderPrint));
+    main.appendChild(h);
+    const n = document.createElement('div'); n.className='pq-nr'; n.textContent = nr + '.'; main.appendChild(n);
+  }
+  const cb = document.createElement('input'); cb.type='checkbox'; cb.checked=!!it.done;
+  cb.addEventListener('change', ()=>{ update(ref(db, hhPath+'/todos/'+PRINT_OWNER+'/print/'+it.id), cb.checked ? {done:true, geprint: fmtDate(new Date())} : {done:false, geprint:null}); });
+  const txt = document.createElement('div'); txt.className='txt'; txt.innerHTML = printTekstHtml(it.tekst)
+    + (it.done && it.geprint ? ` <span style="color:var(--muted);font-size:11.5px;">· ${new Date(it.geprint+'T00:00:00').toLocaleDateString('nl-BE',{day:'numeric', month:'short'})}</span>` : '');
+  main.appendChild(cb); main.appendChild(txt);
+  if(!it.done && nr > 1){
+    const top = document.createElement('button'); top.type='button'; top.className='del-btn'; top.textContent='⤒'; top.title='Naar boven (volgende print)';
+    top.addEventListener('click', ()=>{ const act = sortedPrint().filter(x=>!x.done); update(ref(db, hhPath+'/todos/'+PRINT_OWNER+'/print/'+it.id), {order: Math.min(...act.map(x=>x.order??0)) - 1000}); });
+    main.appendChild(top);
+  }
+  const del = document.createElement('button'); del.className='del-btn'; del.textContent='✕'; del.title='Verwijderen';
+  del.addEventListener('click', ()=>{ if(it.done || confirm(`"${String(it.tekst).slice(0,60)}" uit de wachtrij halen?`)) remove(ref(db, hhPath+'/todos/'+PRINT_OWNER+'/print/'+it.id)); });
+  main.appendChild(del);
+  row.appendChild(main); list.appendChild(row);
+}
+function renderPrint(){
+  const list = document.getElementById('printList'); if(!list) return;
+  if(drags.print){ drags.print.pending = true; return; }
+  const form = document.getElementById('printAddForm');
+  if(printDenied){
+    form.style.display='none'; document.getElementById('printDoneWrap').style.display='none';
+    list.innerHTML = '<div class="empty-state">Nog niet beschikbaar: de databaseregels moeten dit eerst toelaten.</div>'; return;
+  }
+  form.style.display='flex';
+  const items = sortedPrint(), act = items.filter(x=>!x.done), done = items.filter(x=>x.done).sort((a,b)=>(b.geprint||'').localeCompare(a.geprint||''));
+  list.innerHTML = act.length ? '' : '<div class="empty-state">De wachtrij is leeg. Typ hierboven wat je wilt printen.</div>';
+  act.forEach((it,i)=>printRow(it, i+1, list));
+  const wrap = document.getElementById('printDoneWrap'), dl = document.getElementById('printDoneList'), tg = document.getElementById('printDoneToggle');
+  wrap.style.display = done.length ? 'block' : 'none';
+  const open = dl.style.display !== 'none';
+  tg.textContent = (open?'▾':'▸') + ` Geprint (${done.length})`;
+  dl.innerHTML = ''; done.forEach(it=>printRow(it, 0, dl));
+  document.getElementById('printClearDoneBtn').style.display = open && done.length ? 'inline-block' : 'none';
+}
+document.getElementById('printDoneToggle').addEventListener('click', ()=>{
+  const dl = document.getElementById('printDoneList'); dl.style.display = dl.style.display==='none' ? 'block' : 'none'; renderPrint();
+});
+document.getElementById('printClearDoneBtn').addEventListener('click', ()=>{
+  const done = printItems.filter(x=>x.done); if(!done.length) return;
+  if(!confirm(`${done.length} geprinte item(s) definitief wissen?`)) return;
+  done.forEach(x=>remove(ref(db, hhPath+'/todos/'+PRINT_OWNER+'/print/'+x.id)));
+});
+wireAddBar('printAddForm', 'printInput', 'printAddBtn', (val)=>{
+  const act = printItems.filter(x=>!x.done);
+  const order = act.length ? Math.max(...act.map(x=>x.order??0)) + 1000 : 0;   // nieuw = achteraan in de rij
+  if(!printRef) return false;
+  push(printRef, { tekst: val, order, done:false }).catch(err=>{ console.error(err); alert('Bewaren lukte niet: de databaseregels laten de printwachtrij nog niet toe.'); });
 });
 
 // ---------- back-up ----------
@@ -1168,18 +1324,16 @@ function renderTodayOverview(){
     ? FIXED_INCOMES.map(fi=>({naam:fi.naam, diffDays:incomeDiff, isIncome:true}))
     : [];
   const upcoming = [...upcomingCosts, ...upcomingIncomes].sort((a,b)=>a.diffDays-b.diffDays);
-  html += `<div class="today-section"><div class="today-section-head">Komende 3 dagen</div>`;
-  if(upcoming.length===0){
-    html += `<div class="today-empty">Niets verwacht.</div>`;
-  } else {
+  if(upcoming.length){
+    html += `<div class="today-section"><div class="today-section-head">Komende 3 dagen</div>`;
     upcoming.forEach(x=>{
       const when = x.diffDays===0 ? 'vandaag' : `over ${x.diffDays}d`;
       const sign = x.isIncome ? '+' : '-';
       const color = x.isIncome ? 'var(--primary)' : 'var(--ink)';
       html += `<div class="today-line"><span style="color:${color};font-weight:600;">${sign}</span> ${escapeHtml(x.naam)} <span style="color:var(--muted);">(${when})</span></div>`;
     });
+    html += `</div>`;
   }
-  html += `</div>`;
 
   // ---- jaarlijkse kost op komst (enkel binnen 1-2 maanden) ----
   const yearlyUpcoming = contracts.filter(c=>c.jaarlijks && c.vervalDag && c.vervalMaand).map(c=>{
@@ -1223,6 +1377,7 @@ function renderTodayOverview(){
     html += `<div class="today-line" style="margin-top:4px;">💾 ${lb?`Laatste back-up op ${fmtDayMonth(lb)}`:'Nog geen back-up gemaakt'} — <a href="#" data-go="settings" style="color:var(--primary);font-weight:600;">maak er een ›</a></div>`;
   }
   el.innerHTML = html;
+  const gc = document.getElementById('homeGeldCard'); if(gc) gc.style.display = html ? 'block' : 'none';
   el.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click', (e)=>{ e.preventDefault(); if(a.dataset.go!=='settings') lastMoneyPanel = a.dataset.go; showPanel(a.dataset.go); }));
 }
 // ---------- agenda-weergave (Vandaag + Kalender) ----------
@@ -2308,6 +2463,11 @@ function setupTodoRefs(){
   if(todosRef) return;
   todosRef = ref(db, hhPath + '/todos/' + owner + '/items');
   todosUnsub = onValue(todosRef, snap=>{ todoItems = snapToArray(snap.val()); renderTodos(); });
+  if(owner===PRINT_OWNER && !printRef){
+    printRef = ref(db, hhPath + '/todos/' + owner + '/print');
+    printUnsub = onValue(printRef, snap=>{ printItems = snapToArray(snap.val()); printDenied = false; renderPrint(); }, ()=>{ printDenied = true; renderPrint(); });
+  }
+  const pc = document.getElementById('printCard'); if(pc) pc.style.display = owner===PRINT_OWNER ? 'block' : 'none';
 }
 wireAddBar('todoAddForm', 'todoInput', 'todoAddBtn', (val)=>{
   if(!todosRef) return false;
@@ -2376,11 +2536,11 @@ function saveTodoOrder(ids){
   ids.forEach((id,i)=>update(ref(db, hhPath+'/todos/'+owner+'/items/'+id), {order: i*1000}));
 }
 // slepen aan de greep (werkt met vinger en muis): de rij schuift live mee, bij loslaten wordt de volgorde bewaard
-let todoDrag = null;
-function startTodoDrag(e, row){
+const drags = {};
+function startTodoDrag(e, row){ startListDrag(e, row, 'todo', document.getElementById('todoList'), saveTodoOrder, renderTodos); }
+function startListDrag(e, row, key, list, save, rerender){
   e.preventDefault();
-  const list = document.getElementById('todoList');
-  todoDrag = { row, list, pending:false, moved:false };
+  const todoDrag = drags[key] = { row, list, pending:false, moved:false };
   row.classList.add('dragging'); document.body.classList.add('is-dragging');
   const move = (ev)=>{
     const y = ev.clientY;
@@ -2393,15 +2553,15 @@ function startTodoDrag(e, row){
   const end = ()=>{
     document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', end); document.removeEventListener('pointercancel', end);
     row.classList.remove('dragging'); document.body.classList.remove('is-dragging');
-    const d = todoDrag; todoDrag = null;
-    if(d.moved) saveTodoOrder([...list.querySelectorAll('.todo-item')].map(r=>r.dataset.id));
-    else if(d.pending) renderTodos();
+    const d = todoDrag; delete drags[key];
+    if(d.moved) save([...list.querySelectorAll('.todo-item')].map(r=>r.dataset.id));
+    else if(d.pending) rerender();
   };
   document.addEventListener('pointermove', move); document.addEventListener('pointerup', end); document.addEventListener('pointercancel', end);
 }
 function renderTodos(){
   const list = document.getElementById('todoList');
-  if(todoDrag){ todoDrag.pending = true; return; }   // niet hertekenen tijdens het slepen
+  if(drags.todo){ drags.todo.pending = true; return; }   // niet hertekenen tijdens het slepen
   const items = sortedTodos();
   const active = items.filter(t=>!t.done);
   const doneItems = items.filter(t=>t.done);
