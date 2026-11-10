@@ -593,6 +593,12 @@
       </div>
     </section>
     <section id="panel-todo" class="panel">
+      <div class="card">
+        <h3>🤝 Samen<span class="sub">Max 4 tegelijk — bewust beperkt. Rond er één af voor je een nieuwe toevoegt.</span></h3>
+        <form class="add-bar" id="sharedTodoAddRow" autocomplete="off"><input type="text" id="sharedTodoInput" placeholder="Nieuwe gedeelde taak" enterkeyhint="done"><button id="sharedTodoAddBtn" class="plus" type="submit" aria-label="Gedeelde taak toevoegen" disabled>+</button></form>
+        <div id="sharedTodoFullMsg" style="display:none;font-size:12px;color:var(--muted);margin-bottom:8px;">Vol (4/4) — rond er eerst één af.</div>
+        <div id="sharedTodoList"></div>
+      </div>
       <div class="card" id="ownerCard" style="display:none;"><h3>Voor wie is dit toestel?</h3><div class="owner-pick" id="ownerPick"></div></div>
       <div id="todoMain" style="display:none;">
         <div class="card">
@@ -615,12 +621,6 @@
             <button class="btn outline" id="printClearDoneBtn" type="button" style="margin-top:8px;display:none;font-size:12px;padding:8px 12px;">Wis geprinte</button>
           </div>
         </div>
-      </div>
-      <div class="card">
-        <h3>🤝 Samen<span class="sub">Max 4 tegelijk — bewust beperkt. Rond er één af voor je een nieuwe toevoegt.</span></h3>
-        <form class="add-bar" id="sharedTodoAddRow" autocomplete="off"><input type="text" id="sharedTodoInput" placeholder="Nieuwe gedeelde taak" enterkeyhint="done"><button id="sharedTodoAddBtn" class="plus" type="submit" aria-label="Gedeelde taak toevoegen" disabled>+</button></form>
-        <div id="sharedTodoFullMsg" style="display:none;font-size:12px;color:var(--muted);margin-bottom:8px;">Vol (4/4) — rond er eerst één af.</div>
-        <div id="sharedTodoList"></div>
       </div>
       <div class="card">
         <h3>🔁 Vaste taken<span class="sub">Terugkerend huishoudwerk voor jullie allebei. Het verschijnt op Vandaag wanneer het aan de beurt is.</span></h3>
