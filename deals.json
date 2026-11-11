@@ -1,13 +1,13 @@
 {
- "datum": "2026-11-10",
+ "datum": "2026-11-11",
  "deals": [
-  {"titel": "Gratis Sint-namiddag in Abdij van Bornem",
-   "tekst": "Zaterdag 28/11 van 13.30 tot 17 uur zijn de Sint en zijn pieten in de Abdij van Bornem (Kloosterstraat 71): opdrachtjes, een pietendiploma en verhalen. Deelname is gratis en er staat geen inschrijving vermeld. De gemeente richt zich op Bornemse kinderen, dus kijk de pagina even na.",
-   "waar": "Abdij van Bornem", "geldigTot": "2026-11-28",
-   "link": "https://www.bornem.be/sint"},
-  {"titel": "Gratis boom of winterheide: nog tot 19/11",
-   "tekst": "Inwoners van Willebroek (ook Blaasveld) vragen online gratis één boom voor de tuin of een winterheide voor terras of balkon aan, zolang de voorraad strekt; het krentenboompje is al op. Ophalen kan alleen op zaterdag 5/12.",
-   "waar": "Gemeente Willebroek (online formulier)", "geldigTot": "2026-11-19",
-   "link": "https://www.willebroek.be/nl/gratis-boom-of-plant"}
+  {"titel": "Gratis intrede van de Sint in Puurs (za 14/11)",
+   "tekst": "Zaterdag 14/11 komen de Sint en zijn pieten om 14 uur aan in het station van Puurs en stappen ze in stoet naar het Dorpshart (tot 17 uur). De Sint begroet elk kind en heeft een klein cadeautje. Gratis, er staat geen inschrijving vermeld; de gemeente richt zich op 3 tot 5 jaar.",
+   "waar": "Dorpshart, Puurs", "geldigTot": "2026-11-14",
+   "link": "https://www.puurs-sint-amands.be/activiteiten/feestelijke-intrede-sinterklaas-op-dorpshart"},
+  {"titel": "Gratis voorlezen voor 1-6 jaar (zo 29/11)",
+   "tekst": "Tijdens de Voorleesweek leest de bib van Puurs zondag 29/11 van 10 tot 12 uur korte verhaaltjes voor aan de allerkleinsten (1 tot 6 jaar). Gratis; je blijft voor één verhaaltje of langer, ideaal voor een peuter.",
+   "waar": "Hoofdbibliotheek Puurs, Hondsmarkt 2", "geldigTot": "2026-11-29",
+   "link": "https://www.puurs-sint-amands.be/activiteiten/voorleesweek-2026"}
  ]
 }
