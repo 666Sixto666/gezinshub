@@ -60,8 +60,8 @@
   /* invoerbalk: tekstveld en ronde +-knop op één lijn */
   .add-bar{display:flex;gap:8px;align-items:center;margin-bottom:12px;}
   .add-bar input{flex:1;min-width:0;padding:12px 14px;border-radius:12px;font-size:15px;background:var(--surface);}
-  .add-bar .plus{flex-shrink:0;width:46px;height:46px;border-radius:50%;border:none;background:var(--primary);color:#fff;font-size:26px;line-height:1;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(31,92,86,.25);transition:transform .12s ease, opacity .12s ease;}
-  .add-bar .plus:active{transform:scale(.92);}
+  .add-bar .plus, .sub-add .plus{flex-shrink:0;width:46px;height:46px;border-radius:50%;border:none;background:var(--primary);color:#fff;font-size:26px;line-height:1;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(31,92,86,.25);transition:transform .12s ease, opacity .12s ease;}
+  .add-bar .plus:active, .sub-add .plus:active{transform:scale(.92);}
   .add-bar .plus:disabled{opacity:.35;box-shadow:none;}
   .added-flash{animation:flash 1s ease;}
   @keyframes flash{0%{background:var(--primary-light);}100%{background:var(--surface);}}
@@ -431,6 +431,66 @@
   .week-strip button.today{background:#fff;color:var(--primary);}
   .week-strip button.today .dots i{box-shadow:none;}
   .money-card .mc-big{font-size:30px;}
+
+  /* ---------- v10: taken met deelpunten, bewerken, koppelingen ---------- */
+  .drag-handle{width:30px;font-size:18px;margin:-8px 0 -8px -8px;}
+  .todo-item .txt{cursor:pointer;min-width:0;overflow-wrap:anywhere;}
+  .todo-item.open{border-color:#CFE0DB;box-shadow:0 0 0 3px var(--primary-light);}
+  .task-badges{display:flex;gap:4px;align-items:center;flex-shrink:0;}
+  .mini-chip{font-size:11px;font-weight:600;color:var(--muted);background:var(--bg);border-radius:10px;padding:2px 7px;white-space:nowrap;}
+  .mini-chip.ok{background:var(--primary-light);color:var(--primary);}
+  .mini-chip.late{background:var(--danger-light);color:var(--danger);}
+  .task-more{width:100%;margin-top:6px;padding-top:10px;border-top:1px dashed var(--border);display:flex;flex-direction:column;gap:8px;}
+  .task-more .edit-txt{font-size:14px;padding:9px 11px;background:var(--bg);}
+  .task-more .lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:2px 2px -2px;}
+  .sub-list{display:flex;flex-direction:column;gap:5px;}
+  .sub-item{display:flex;align-items:center;gap:8px;padding:5px 6px 5px 0;background:var(--bg);border-radius:11px;}
+  .sub-item .drag-handle{width:26px;font-size:15px;margin:-5px 0 -5px 0;}
+  .sub-item .txt{flex:1;font-size:13.5px;cursor:pointer;min-width:0;overflow-wrap:anywhere;}
+  .sub-item.done .txt{text-decoration:line-through;color:var(--muted);}
+  .sub-item.dragging{position:relative;z-index:5;box-shadow:0 8px 18px rgba(31,92,86,.2);background:var(--surface);}
+  .todo-item .sub-item input[type=checkbox]{width:19px;height:19px;}
+  .sub-add{display:flex;gap:6px;align-items:center;}
+  .sub-add input{flex:1;min-width:0;padding:8px 11px;font-size:13.5px;background:var(--surface);}
+  .sub-add .plus{width:36px;height:36px;font-size:21px;}
+  .task-actions{display:flex;gap:6px;flex-wrap:wrap;}
+  .task-actions button{flex:1 1 auto;min-width:96px;padding:10px;font:600 12.5px 'Inter',sans-serif;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--ink);cursor:pointer;}
+  .task-actions button.danger{color:var(--danger);}
+  .task-actions button.primary{background:var(--primary);color:#fff;border-color:var(--primary);}
+  .sched-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .sched-row input, .sched-row select{flex:1 1 120px;padding:9px 10px;font-size:13px;}
+  .home-sub-head{display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:14px 2px 6px;}
+  .home-sub-head:first-child{margin-top:0;}
+  .home-sub-head a{text-transform:none;letter-spacing:0;font-size:12px;color:var(--primary);text-decoration:none;font-weight:600;}
+  .ag-item.tap, .today-line.tap{cursor:pointer;}
+  .ag-item.tap:active, .today-line.tap:active{opacity:.7;}
+  .ag-chev{align-self:center;color:#B9BFBB;font-size:16px;flex-shrink:0;}
+  /* geld: plan van de maand */
+  .plan-row{margin-bottom:11px;}
+  .plan-row:last-child{margin-bottom:0;}
+  .plan-row .pr-head{display:flex;justify-content:space-between;gap:8px;font-size:13px;margin-bottom:5px;}
+  .plan-row .pr-name{font-weight:600;}
+  .plan-row .pr-amt{color:var(--muted);white-space:nowrap;}
+  .plan-row .pr-amt strong{color:var(--ink);}
+  .plan-row .pr-st{font-size:11px;font-weight:700;margin-top:3px;}
+  .plan-row .pr-st.good{color:var(--primary);} .plan-row .pr-st.warn{color:#B9771B;} .plan-row .pr-st.bad{color:var(--danger);}
+  /* zoeken in registraties */
+  .search-sum{font-size:13px;margin:10px 2px 8px;line-height:1.5;}
+  .search-sum strong{font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;}
+  .entry-item .s{overflow-wrap:anywhere;}
+  /* contracten: koppeling met de bankgegevens */
+  .c-pay{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45;}
+  .c-pay strong{color:var(--ink);}
+  .c-alert{margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--accent-light);color:#7A5A1E;font-size:12.5px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
+  .c-alert button{border:none;background:#fff;color:#7A5A1E;border-radius:8px;padding:7px 10px;font:600 12px 'Inter',sans-serif;cursor:pointer;}
+  .sug-row{display:flex;align-items:center;gap:8px;padding:9px 10px;background:var(--bg);border-radius:12px;margin-bottom:6px;font-size:13px;}
+  .sug-row .n{flex:1;min-width:0;} .sug-row .n small{display:block;color:var(--muted);font-size:11.5px;}
+  .sug-row button{border:none;border-radius:9px;padding:8px 10px;font:600 12px 'Inter',sans-serif;cursor:pointer;background:var(--primary);color:#fff;}
+  .sug-row button.x{background:transparent;color:var(--muted);padding:8px 6px;}
+  /* melding onderaan (fouten en bevestigingen) */
+  #toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;z-index:60;max-width:min(92vw,480px);background:var(--ink);color:#fff;font-size:13px;line-height:1.4;padding:10px 14px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.2);transition:opacity .2s ease, transform .2s ease;}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  #toast.err{background:var(--danger);}
 </style>
 </head>
 <body>
@@ -475,13 +535,9 @@
         <div id="homeNew"></div>
       </div>
       <div class="card kid-card" id="homeKidCard" style="display:none;"><div id="homeKid"></div></div>
-      <div class="card">
-        <h3>🤝 Samen<span class="sub">Max 4 tegelijk. Rond er één af voor je een nieuwe toevoegt.</span></h3>
-        <div id="homeShared"></div>
-      </div>
-      <div class="card" id="homeChoresCard" style="display:none;">
-        <h3>🔁 Vaste taken<span class="sub">Nu aan de beurt. Afvinken = gedaan, ze komen vanzelf terug.</span></h3>
-        <div id="homeChores"></div>
+      <div class="card" id="homeTodoCard">
+        <h3>✅ Te doen<span class="sub">Vink af wat klaar is. Tik op een taak om ze te openen in Taken.</span></h3>
+        <div id="homeTodo"></div>
       </div>
       <div class="home-section-label">Geld</div>
       <div class="card money-card" id="homeMoneyCard" style="display:none;"><div id="homeMoney"></div></div>
@@ -509,6 +565,7 @@
       <div class="card">
         <h3>🔒 Account</h3>
         <button class="btn outline" id="logoutLink" type="button" style="width:100%;">Uitloggen</button>
+        <div id="appVersie" style="font-size:11.5px;color:var(--muted);margin-top:10px;text-align:center;"></div>
       </div>
     </section>
     <section id="panel-cal" class="panel">
@@ -522,12 +579,13 @@
         <button class="btn" id="newEvToggle" type="button" style="width:100%;margin-top:6px;">＋ Afspraak toevoegen</button>
       </div>
       <div class="card" id="newEvCard" style="display:none;">
-        <h3>➕ Nieuwe afspraak<span class="sub" id="newEvDateLabel"></span></h3>
+        <h3 id="newEvHead">➕ Nieuwe afspraak<span class="sub" id="newEvDateLabel"></span></h3>
         <form class="inline" id="eventForm">
-          <input type="text" id="evTitle" placeholder="Titel (bv. Tandarts Sien)" required>
-          <div class="row2"><input type="time" id="evTime"><input type="text" id="evNotes" placeholder="Notitie (optioneel)"></div>
+          <input type="text" id="evTitle" placeholder="Titel (bv. Tandarts Remon)" required>
+          <div class="row2"><input type="date" id="evDate" required aria-label="Datum"><input type="time" id="evTime" aria-label="Uur (leeg = hele dag)"></div>
+          <input type="text" id="evNotes" placeholder="Notitie (optioneel)">
           <div class="person-select" id="evPersonSelect"></div>
-          <div class="row2">
+          <div class="row2" id="evRepeatRow">
             <select id="evRepeat">
               <option value="none">Geen herhaling</option>
               <option value="weekly">Elke week</option>
@@ -536,9 +594,10 @@
             </select>
             <input type="number" id="evRepeatCount" min="1" max="52" value="8" style="display:none;">
           </div>
-          <div class="row2"><button type="button" class="btn outline" id="newEvCancel">Annuleren</button><button type="submit" class="btn">Toevoegen</button></div>
+          <div class="row2"><button type="button" class="btn outline" id="newEvCancel">Annuleren</button><button type="submit" class="btn" id="evSubmit">Toevoegen</button></div>
+          <button type="button" class="btn ghost" id="evDelete" style="display:none;color:var(--danger);">Verwijderen</button>
         </form>
-        <div class="photo-upload">
+        <div class="photo-upload" id="photoUploadBox">
           <p>Of scan een foto/kaartje (bv. afspraakkaartje, weekkalender) — wij lezen 'm automatisch uit. Bij een weekkalender-foto: kies eerst de maandag van die week hieronder.</p>
           <input type="date" id="photoWeekStart">
           <div style="margin-top:10px;"><input type="file" id="photoInput" accept="image/*"><button class="btn ghost" id="photoBtn" type="button">📷 Foto kiezen</button></div>
@@ -565,6 +624,11 @@
       <div class="card" id="claudeCard" style="display:none;">
         <h3>💬 Analyse van Claude<span class="sub" id="claudeSub"></span></h3>
         <div id="claudeBody"></div>
+      </div>
+      <div class="card" id="searchCard">
+        <h3>🔎 Zoeken in de uitgaven<span class="sub">Bv. frituur, Okay, Proximus. Telt alles op wat in de bankgegevens staat.</span></h3>
+        <input type="search" id="searchInput" placeholder="Winkel, omschrijving of categorie" autocomplete="off" enterkeyhint="search">
+        <div id="searchResult"></div>
       </div>
       <div class="card" id="budDetailsCard">
         <h3 class="details-head" id="budDetailsToggle"><span id="budDetailsArrow">▸</span> 📊 Details per maand<span class="sub">De automatische cijfers: per categorie, vaste betalingen, gewoontes, trends. Handmatig iets registreren kan hier ook.</span></h3>
@@ -594,7 +658,7 @@
     </section>
     <section id="panel-todo" class="panel">
       <div class="card">
-        <h3>🤝 Samen<span class="sub">Max 4 tegelijk — bewust beperkt. Rond er één af voor je een nieuwe toevoegt.</span></h3>
+        <h3>🤝 Samen<span class="sub">Max 4 tegelijk, bewust beperkt. Tik op een taak voor deelpunten, plannen of bewerken. Sleep aan ⋮⋮ voor de volgorde.</span></h3>
         <form class="add-bar" id="sharedTodoAddRow" autocomplete="off"><input type="text" id="sharedTodoInput" placeholder="Nieuwe gedeelde taak" enterkeyhint="done"><button id="sharedTodoAddBtn" class="plus" type="submit" aria-label="Gedeelde taak toevoegen" disabled>+</button></form>
         <div id="sharedTodoFullMsg" style="display:none;font-size:12px;color:var(--muted);margin-bottom:8px;">Vol (4/4) — rond er eerst één af.</div>
         <div id="sharedTodoList"></div>
@@ -623,7 +687,7 @@
         </div>
       </div>
       <div class="card">
-        <h3>🔁 Vaste taken<span class="sub">Terugkerend huishoudwerk voor jullie allebei. Het verschijnt op Vandaag wanneer het aan de beurt is.</span></h3>
+        <h3>🔁 Vaste taken<span class="sub">Terugkerend huishoudwerk voor jullie allebei. Het verschijnt op Vandaag wanneer het aan de beurt is. Tik op een taak om ze aan te passen.</span></h3>
         <form class="add-bar" id="choreAddForm" autocomplete="off"><input type="text" id="choreInput" placeholder="Nieuwe vaste taak" enterkeyhint="done"><select id="choreEvery" class="every" aria-label="Hoe vaak"><option value="7">elke week</option><option value="14">om de 2 weken</option><option value="30">elke maand</option><option value="1">elke dag</option><option value="91">elk kwartaal</option></select><button id="choreAddBtn" class="plus" type="submit" aria-label="Vaste taak toevoegen" disabled>+</button></form>
         <div id="choreList"></div>
       </div>
@@ -654,6 +718,10 @@
           <div class="tip-row-head" data-target="tipWoning">▸ Woningverzekering</div>
           <div id="tipWoning" class="tip-row-body" style="display:none;">1. Premies stijgen vaak automatisch mee met de ABEX-index (bouwkostenindex) — een jaarlijkse stijging is normaal, geen reden tot paniek, maar wel goed om te weten<br>2. Herbekijk het verzekerd kapitaal na verbouwingen — te laag verzekerd kapitaal kan bij schade tot een proportionele (lagere) uitkering leiden<br>3. Vergelijk niet enkel op prijs: check dekking voor natuurrampen, diefstal en glasbraak, die sterk kunnen verschillen tussen verzekeraars</div>
         </div>
+      </div>
+      <div class="card" id="conSugCard" style="display:none;">
+        <h3>🔁 Vaste betalingen zonder contract<span class="sub">Gevonden in de bankgegevens: komt elke maand terug, maar staat nog niet in de lijst. Eén tik zet het erbij.</span></h3>
+        <div id="conSugList"></div>
       </div>
       <div class="card">
         <h3>Overzicht<span class="sub">Rood = tijd om te vergelijken. Oranje = binnen 30 dagen. 'Vergelijk nu' opent de officiële, onafhankelijke vergelijker (CREG voor energie, BIPT/bestetarief.be voor telecom, Wikifin voor verzekeringen en hypotheek) — geen commerciële site.</span></h3>
@@ -696,6 +764,7 @@
     </section>
   </main>
 </div>
+<div id="toast" role="status" aria-live="polite"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
@@ -788,7 +857,25 @@ function fmtMoney(n){ return '€' + (Math.round(n*100)/100).toLocaleString('nl-
 function personColor(p){ const f = PERSONS.find(x=>x.key===p); return f ? f.color : 'var(--p-wij)'; }
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
 function mondayOf(dateStr){ const d=new Date(dateStr+'T00:00:00'); const day=d.getDay(); const diff=day===0?-6:1-day; d.setDate(d.getDate()+diff); return fmtDate(d); }
-function snapToArray(val){ return val ? Object.keys(val).map(k=>({id:k, ...val[k]})) : []; }
+function snapToArray(val){ return val ? Object.keys(val).filter(k=>val[k] && typeof val[k]==='object').map(k=>({id:k, ...val[k]})) : []; }
+function vandaagIso(){ return fmtDate(new Date()); }
+
+// ---------- versie en meldingen ----------
+// De versie staat onder Instellingen: zo is op de iPhone meteen te zien of de nieuwste versie geladen is.
+const APP_VERSIE = 'v10 · 14 november 2026';
+document.getElementById('appVersie').textContent = 'Gezinshub ' + APP_VERSIE;
+let toastTimer = null;
+function toast(msg, isErr){
+  const el = document.getElementById('toast'); if(!el) return;
+  el.textContent = msg; el.classList.toggle('err', !!isErr); el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>el.classList.remove('show'), isErr ? 6000 : 2500);
+}
+// niets mag stil mislukken: een fout of een geweigerde schrijfactie wordt kort onderaan gemeld
+window.addEventListener('error', (e)=>{ if(e && e.message) toast('Er liep iets mis: ' + e.message, true); });
+window.addEventListener('unhandledrejection', (e)=>{
+  const m = (e.reason && (e.reason.message || e.reason.code)) || String(e.reason||'');
+  toast(/PERMISSION|permission/.test(m) ? 'Bewaren lukte niet: geen toestemming in de database.' : 'Bewaren of laden lukte niet: ' + m, true);
+});
 function markLive(){
   document.getElementById('connDot').classList.add('live');
   document.getElementById('syncLabel').textContent = 'Live · ' + new Date().toLocaleTimeString('nl-BE',{hour:'2-digit',minute:'2-digit'});
@@ -847,7 +934,7 @@ if(logoutLinkEl){
 
 function attachListeners(){
   onValue(eventsRef, snap=>{ calEvents = snapToArray(snap.val()); renderLegend(); renderCalendar(); renderDayEvents(); renderHome(); markLive(); });
-  onValue(budgetEntriesRef, snap=>{ budgetData.entries = snapToArray(snap.val()); renderBudget(); renderTodayOverview(); markLive(); });
+  onValue(budgetEntriesRef, snap=>{ budgetData.entries = snapToArray(snap.val()); renderBudget(); renderClaudeAnalyse(); renderHomeMoney(); renderContracts(); renderSearch(); renderTodayOverview(); markLive(); });
   onValue(contractsRef, snap=>{ contracts = snapToArray(snap.val()); renderContracts(); renderBudget(); renderTodayOverview(); markLive(); });
   onValue(shoppingListRef, snap=>{ shoppingItems = snapToArray(snap.val()); renderShoppingList(); renderNavBadges(); renderNew(); markLive(); });
   onValue(sharedTodoRef, snap=>{ sharedTodoItems = snapToArray(snap.val()); renderSharedTodo(); renderHome(); markLive(); });
@@ -855,7 +942,7 @@ function attachListeners(){
   // nieuwe paden (v7): als de databaseregels ze (nog) niet toelaten, blijft de app gewoon werken zonder die functie
   onValue(choresRef, snap=>{ chores = snapToArray(snap.val()); choresDenied = false; renderChores(); }, ()=>{ choresDenied = true; renderChores(); });
   onValue(shopFavRef, snap=>{ shopFavs = snapToArray(snap.val()); shopFavDenied = false; renderShoppingList(); }, ()=>{ shopFavDenied = true; renderShoppingList(); });
-  onValue(metaRef, snap=>{ meta = snap.val() || {}; renderTodayOverview(); }, ()=>{});
+  onValue(metaRef, snap=>{ meta = snap.val() || {}; renderTodayOverview(); renderConSug(); }, ()=>{});
   renderTodoOwnerGate();
   loadDeals(); lastDealsLoad = Date.now();
 }
@@ -874,7 +961,7 @@ function showPanel(name){
   document.getElementById('panel-'+name).classList.add('active');
   const navName = name==='con' ? 'bud' : name;
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===navName));
-  if(name==='cal'){ document.getElementById('photoWeekStart').value = mondayOf(fmtDate(new Date())); }
+  if(name==='cal'){ document.getElementById('photoWeekStart').value = mondayOf(fmtDate(new Date())); if(editingEv) setNewEvOpen(false); }
   if(name==='settings'){ renderSettings(); }
   window.scrollTo(0,0);
 }
@@ -923,6 +1010,38 @@ function flashFirst(listId){
 function claudePointHtml(p){
   return `<div class="ba-ins ${['bad','warn','good','info'].includes(p.niveau)?p.niveau:'info'}"><span class="ic">${escapeHtml(p.icoon||'💡')}</span><div>${p.titel?`<div class="t">${escapeHtml(p.titel)}</div>`:''}${p.tekst?`<div class="d">${escapeHtml(p.tekst)}</div>`:''}${p.actie?`<div class="act">👉 ${escapeHtml(p.actie)}</div>`:''}</div></div>`;
 }
+// ---------- plan van de maand ----------
+// Claude zet analyse.plan = {maand:'JJJJ-MM', items:[{wat, budget, categorie?, zoek?, vast?}]} in het gegevensbestand.
+// De app telt zelf wat er die maand al uitging (categorie en/of een woord in de omschrijving). Het streepje = waar je
+// volgens het schema zou moeten zitten op de laatste dag met gegevens. vast = één factuur per maand: geen schema.
+function planStand(){
+  const a = claudeAnalyse, pl = a && a.plan;
+  if(!pl || !/^\d{4}-\d{2}$/.test(pl.maand||'')) return null;
+  const items = asList(pl.items).filter(x=>x && x.wat && x.budget>0);
+  if(!items.length) return null;
+  const [y, m] = pl.maand.split('-').map(Number);
+  const dim = new Date(y, m, 0).getDate();
+  const lastData = budgetData.entries.map(e=>e.date).filter(d=>d && d.startsWith(pl.maand)).sort().pop();
+  const tot = lastData ? +lastData.slice(8,10) : 0;
+  const frac = Math.min(1, tot/dim);
+  const rows = items.map(x=>{
+    const k = String(x.zoek||'').toLowerCase();
+    const spent = budgetData.entries.filter(e=>e.type==='expense' && e.date && e.date.startsWith(pl.maand)
+      && (!x.categorie || e.category===x.categorie) && (!k || (e.note||'').toLowerCase().includes(k))).reduce((t,e)=>t+e.amount, 0);
+    const level = spent > x.budget + 0.5 ? 'bad' : (!x.vast && spent > x.budget*frac*1.1 + 5) ? 'warn' : 'good';
+    return {...x, spent, level};
+  });
+  return {maand: pl.maand, naam: MONTHS[m-1], rows, tot, frac, lastData};
+}
+function planHtml(st){
+  return st.rows.map(r=>{
+    const pct = Math.min(100, r.spent/r.budget*100);
+    const stTxt = r.level==='bad' ? `${fmtEur0(r.spent - r.budget)} erover` : r.level==='warn' ? `sneller dan gepland · nog ${fmtEur0(r.budget - r.spent)}` : r.vast ? 'binnen het budget' : `op schema · nog ${fmtEur0(r.budget - r.spent)}`;
+    return `<div class="plan-row"><div class="pr-head"><span class="pr-name">${escapeHtml(r.wat)}</span><span class="pr-amt"><strong>${fmtEur0(r.spent)}</strong> van ${fmtEur0(r.budget)}</span></div>
+      <div class="ba-track"><div class="ba-fill${r.level==='good'?'':' '+r.level}" style="width:${pct}%"></div>${r.vast||!st.frac?'':`<span class="ba-mark" style="left:${(st.frac*100).toFixed(1)}%"></span>`}</div>
+      <div class="pr-st ${r.level}">${stTxt}</div></div>`;
+  }).join('');
+}
 function renderClaudeAnalyse(){
   const a = claudeAnalyse;
   if(lsGet('gezinshub-budDetails')===null) setBudDetails(!(a && a.kop));
@@ -934,7 +1053,10 @@ function renderClaudeAnalyse(){
   card.style.display='block';
   document.getElementById('claudeSub').textContent = meta;
   const first = punten.slice(0,4), rest = punten.slice(4);
-  document.getElementById('claudeBody').innerHTML = head + first.map(claudePointHtml).join('')
+  const st = planStand();
+  const plan = st ? `<div class="ba-ins info" style="display:block;background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--primary);margin-bottom:10px;">
+      <div class="t" style="margin-bottom:8px;">🧭 Plan voor ${st.naam}<span style="display:block;font-weight:500;font-size:11.5px;color:var(--muted);margin-top:2px;">${st.lastData ? `Uitgaven t.e.m. ${fmtDayMonth(st.lastData)}. Het streepje toont waar je volgens het plan nu zou zitten.` : 'Nog geen uitgaven in die maand.'}</span></div>${planHtml(st)}</div>` : '';
+  document.getElementById('claudeBody').innerHTML = head + plan + first.map(claudePointHtml).join('')
     + (rest.length ? `<div id="claudeMore" style="display:none;">${rest.map(claudePointHtml).join('')}</div><button type="button" class="ba-more" id="claudeMoreBtn">Toon nog ${rest.length} punt${rest.length>1?'en':''}</button>` : '');
   const mb = document.getElementById('claudeMoreBtn');
   if(mb) mb.addEventListener('click', ()=>{ const el=document.getElementById('claudeMore'); const open=el.style.display!=='none'; el.style.display=open?'none':'block'; mb.textContent = open?`Toon nog ${rest.length} punt${rest.length>1?'en':''}`:'Minder tonen'; });
@@ -1010,6 +1132,11 @@ function renderNew(){
 // Claude zet in het gegevensbestand: analyse.prognose = {tot, saldo, saldoDatum, uit:[{datum,wat,bedrag}], in:[...], buffer}
 // en optioneel analyse.spaardoel = {naam, doel, huidig}. De app rekent niets bij: het blijft Claudes schatting.
 function asList(v){ return Array.isArray(v) ? v : Object.values(v||{}); }
+function planLine(){
+  const st = planStand(); if(!st || st.maand !== fmtDate(new Date()).slice(0,7)) return '';
+  const good = st.rows.filter(r=>r.level==='good').length, over = st.rows.filter(r=>r.level==='bad');
+  return `<div class="today-line tap" data-go-plan="1" style="margin-top:6px;">🧭 Plan ${st.naam}: <strong>${good} van ${st.rows.length}</strong> op schema${over.length?` · erover: ${over.map(r=>escapeHtml(r.wat.toLowerCase())).join(', ')}`:''} <span style="color:var(--primary);font-weight:600;">›</span></div>`;
+}
 function renderHomeMoney(){
   const card = document.getElementById('homeMoneyCard'); if(!card) return;
   const a = claudeAnalyse, p = a && a.prognose;
@@ -1069,9 +1196,11 @@ function renderHomeMoney(){
     <div class="mc-calc">Saldo ${fmtEur0(p.saldo)} op ${fmtDayMonth(p.saldoDatum||a.gegevensTot||a.datum)} − nog te betalen ${fmtEur0(sumU)}${sumI?` + nog te ontvangen ${fmtEur0(sumI)}`:''}. Schatting van Claude.</div>
     ${hint}
     ${act?`<div class="today-line" style="margin-top:8px;">👉 ${escapeHtml(act.actie)}</div>`:''}
+    ${planLine()}
     <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px;margin-top:6px;"><button type="button" class="ba-more" id="mcToggle">Toon wat er nog komt ▾</button>${go}</div>
     <div id="mcRows" style="display:none;margin-top:4px;">${rowHtml}</div>${goal}`;
   wireGo();
+  const pg = el.querySelector('[data-go-plan]'); if(pg) pg.addEventListener('click', ()=>{ lastMoneyPanel='bud'; showPanel('bud'); });
   document.getElementById('mcToggle').addEventListener('click', (e)=>{
     const r = document.getElementById('mcRows'); const open = r.style.display!=='none';
     r.style.display = open ? 'none' : 'block'; e.target.textContent = open ? 'Toon wat er nog komt ▾' : 'Verberg ▴';
@@ -1170,52 +1299,72 @@ function renderHomeAlert(){
 }
 
 // ---------- vaste taken (terugkerend huishoudwerk) ----------
+// {tekst, elke (dagen), volgende, laatst}. Afvinken = gedaan: de volgende datum schuift op. Tik op de tekst = aanpassen.
 const EVERY_LABEL = {1:'elke dag', 7:'elke week', 14:'om de 2 weken', 30:'elke maand', 91:'elk kwartaal'};
-function choreDue(c){ return !c.volgende || c.volgende <= fmtDate(new Date()); }
+const openChores = new Set();
+function choreDue(c){ return !c.volgende || c.volgende <= vandaagIso(); }
+function choreRef(c){ return ref(db, hhPath+'/vasteTaken/'+c.id); }
 function choreDone(c, row){
-  const todayIso = fmtDate(new Date());
+  const todayIso = vandaagIso();
   if(row){ row.classList.add('done'); }
-  setTimeout(()=>update(ref(db, hhPath+'/vasteTaken/'+c.id), { volgende: addDays(todayIso, c.elke||7), laatst: todayIso }), row?350:0);
+  setTimeout(()=>update(choreRef(c), { volgende: addDays(todayIso, c.elke||7), laatst: todayIso }), row?350:0);
 }
-function choreRow(c, withMeta){
-  const row = document.createElement('div'); row.className='shop-item';
-  const cb = document.createElement('input'); cb.type='checkbox';
+function choreMeta(c){
   const due = choreDue(c);
+  return `<div class="chore-meta${due?' due':''}">${EVERY_LABEL[c.elke]||('om de '+c.elke+' dagen')} · ${due?'nu aan de beurt':'volgende: '+new Date(c.volgende+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'short', day:'numeric', month:'short'})}${c.laatst?' · laatst '+fmtShort(c.laatst):''}</div>`;
+}
+function choreRow(c, withMeta, compact){
+  const isOpen = !compact && openChores.has(c.id);
+  const row = document.createElement('div'); row.className='todo-item'+(isOpen?' open':''); row.dataset.id = c.id;
+  const main = document.createElement('div'); main.className='main-row';
+  const cb = document.createElement('input'); cb.type='checkbox'; cb.setAttribute('aria-label','Gedaan');
   cb.addEventListener('change', ()=>{ if(cb.checked) choreDone(c, row); });
-  const txt = document.createElement('div'); txt.className='txt'; txt.style.cursor='pointer';
-  txt.innerHTML = escapeHtml(c.tekst) + (withMeta ? `<div class="chore-meta${due?' due':''}">${EVERY_LABEL[c.elke]||('om de '+c.elke+' dagen')} · ${due?'nu aan de beurt':'volgende: '+new Date(c.volgende+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'short', day:'numeric', month:'short'})}${c.laatst?' · laatst '+new Date(c.laatst+'T00:00:00').toLocaleDateString('nl-BE',{day:'numeric', month:'short'}):''}</div>` : '');
-  txt.addEventListener('click', ()=>{ cb.checked = true; choreDone(c, row); });
-  row.appendChild(cb); row.appendChild(txt);
+  const txt = document.createElement('div'); txt.className='txt';
+  txt.innerHTML = escapeHtml(c.tekst) + (withMeta ? choreMeta(c) : '');
+  txt.addEventListener('click', ()=>{
+    if(compact){ openChores.add(c.id); showPanel('todo'); renderChores(); scrollToRow('choreList', c.id); return; }
+    openChores.has(c.id) ? openChores.delete(c.id) : openChores.add(c.id); renderChores();
+  });
+  main.append(cb, txt); row.appendChild(main);
+  if(isOpen) row.appendChild(choreDetails(c));
   return row;
+}
+function choreDetails(c){
+  const box = document.createElement('div'); box.className='task-more';
+  box.innerHTML = `<input type="text" class="edit-txt" data-f="tekst" aria-label="Naam van de vaste taak">
+    <div class="sched-row"><select data-f="elke" aria-label="Hoe vaak">${Object.entries(EVERY_LABEL).map(([d,l])=>`<option value="${d}">${l}</option>`).join('')}</select>
+    <input type="date" data-f="volgende" aria-label="Volgende keer"></div>
+    <div class="task-actions"><button type="button" data-act="skip">⏭ Deze keer overslaan</button><button type="button" class="danger" data-act="del">Verwijderen</button></div>`;
+  const naam = box.querySelector('[data-f="tekst"]'), elke = box.querySelector('[data-f="elke"]'), volg = box.querySelector('[data-f="volgende"]');
+  naam.value = c.tekst || '';
+  if(!EVERY_LABEL[c.elke]) elke.insertAdjacentHTML('beforeend', `<option value="${c.elke}">om de ${c.elke} dagen</option>`);
+  elke.value = String(c.elke||7);
+  volg.value = c.volgende || vandaagIso();
+  naam.addEventListener('change', ()=>{ const v = naam.value.trim(); if(v && v!==c.tekst) update(choreRef(c), {tekst:v}); else naam.value = c.tekst; });
+  naam.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); naam.blur(); } });
+  elke.addEventListener('change', ()=>update(choreRef(c), {elke: parseInt(elke.value,10)||7}));
+  volg.addEventListener('change', ()=>{ if(/^\d{4}-\d{2}-\d{2}$/.test(volg.value)) update(choreRef(c), {volgende: volg.value}); });
+  box.querySelector('[data-act="skip"]').addEventListener('click', ()=>{ update(choreRef(c), {volgende: addDays(vandaagIso(), c.elke||7)}); toast('Overgeslagen tot ' + fmtDayMonth(addDays(vandaagIso(), c.elke||7))); });
+  box.querySelector('[data-act="del"]').addEventListener('click', ()=>{ if(confirm(`"${c.tekst}" niet meer opvolgen?`)){ openChores.delete(c.id); remove(choreRef(c)); } });
+  return box;
 }
 function renderChores(){
   const list = document.getElementById('choreList'); if(!list) return;
   const form = document.getElementById('choreAddForm');
-  const homeCard = document.getElementById('homeChoresCard'), home = document.getElementById('homeChores');
   if(choresDenied){
     form.style.display='none';
     list.innerHTML = '<div class="empty-state">Nog niet beschikbaar: de databaseregels moeten dit eerst toelaten.</div>';
-    homeCard.style.display='none'; return;
+    renderHomeTodo(); return;
   }
   form.style.display='flex';
   const sorted = [...chores].sort((a,b)=>(a.volgende||'').localeCompare(b.volgende||''));
   if(!sorted.length) list.innerHTML = '<div class="empty-state">Nog geen vaste taken. Bv. bedden verversen (om de 2 weken), filter vaatwasser (elke maand).</div>';
-  else {
-    list.innerHTML = '';
-    sorted.forEach(c=>{
-      const row = choreRow(c, true);
-      const del = document.createElement('button'); del.className='del-btn'; del.textContent='✕'; del.title='Verwijderen';
-      del.addEventListener('click', ()=>{ if(confirm(`"${c.tekst}" niet meer opvolgen?`)) remove(ref(db, hhPath+'/vasteTaken/'+c.id)); });
-      row.appendChild(del); list.appendChild(row);
-    });
-  }
-  const due = sorted.filter(choreDue);
-  homeCard.style.display = due.length ? 'block' : 'none';
-  home.innerHTML = ''; due.forEach(c=>home.appendChild(choreRow(c, false)));
+  else { list.innerHTML = ''; sorted.forEach(c=>list.appendChild(choreRow(c, true, false))); }
+  renderHomeTodo();
 }
 wireAddBar('choreAddForm', 'choreInput', 'choreAddBtn', (val)=>{
   const elke = parseInt(document.getElementById('choreEvery').value, 10) || 7;
-  push(choresRef, { tekst: val, elke, volgende: fmtDate(new Date()) }).catch(err=>{ console.error(err); alert('Bewaren lukte niet: de databaseregels laten vaste taken nog niet toe.'); });
+  push(choresRef, { tekst: val, elke, volgende: vandaagIso() }).catch(err=>{ console.warn(err); toast('Bewaren lukte niet: de databaseregels laten vaste taken nog niet toe.', true); });
 });
 
 
@@ -1235,7 +1384,7 @@ function printRow(it, nr, list){
   const main = document.createElement('div'); main.className='main-row';
   if(!it.done){
     const h = document.createElement('div'); h.className='drag-handle'; h.textContent='⋮⋮'; h.title='Sleep om te verschuiven';
-    h.addEventListener('pointerdown', (e)=>startListDrag(e, row, 'print', document.getElementById('printList'), savePrintOrder, renderPrint));
+    h.addEventListener('pointerdown', (e)=>startListDrag(e, row, list, '.todo-item', savePrintOrder, renderPrint));
     main.appendChild(h);
     const n = document.createElement('div'); n.className='pq-nr'; n.textContent = nr + '.'; main.appendChild(n);
   }
@@ -1256,7 +1405,7 @@ function printRow(it, nr, list){
 }
 function renderPrint(){
   const list = document.getElementById('printList'); if(!list) return;
-  if(drags.print){ drags.print.pending = true; return; }
+  if(dragBusy(renderPrint)) return;
   const form = document.getElementById('printAddForm');
   if(printDenied){
     form.style.display='none'; document.getElementById('printDoneWrap').style.display='none';
@@ -1381,9 +1530,9 @@ function renderTodayOverview(){
 
   // ---- budget (kosten/bijdragen komende 3 dagen) ----
   const upcomingCosts = contracts.filter(c=>c.dagVanMaand && c.prijs).map(c=>{
-    let next = new Date(today.getFullYear(), today.getMonth(), c.dagVanMaand);
+    const next = new Date(today.getFullYear(), today.getMonth() + (c.dagVanMaand < today.getDate() ? 1 : 0), c.dagVanMaand);
     const diffDays = Math.round((next - today) / 86400000);
-    return {naam:c.naam, diffDays, isIncome:false};
+    return {naam:c.naam, diffDays, isIncome:false, bedrag: c.variabel ? null : c.prijs};
   }).filter(x=>x.diffDays>=0 && x.diffDays<=3);
   const incomeDate = lastDayMinus2(today.getFullYear(), today.getMonth());
   const incomeDiff = Math.round((incomeDate - today) / 86400000);
@@ -1397,7 +1546,7 @@ function renderTodayOverview(){
       const when = x.diffDays===0 ? 'vandaag' : `over ${x.diffDays}d`;
       const sign = x.isIncome ? '+' : '-';
       const color = x.isIncome ? 'var(--primary)' : 'var(--ink)';
-      html += `<div class="today-line"><span style="color:${color};font-weight:600;">${sign}</span> ${escapeHtml(x.naam)} <span style="color:var(--muted);">(${when})</span></div>`;
+      html += `<div class="today-line"><span style="color:${color};font-weight:600;">${sign}</span> ${escapeHtml(x.naam)}${x.bedrag?` <strong>${fmtEur0(x.bedrag)}</strong>`:''} <span style="color:var(--muted);">(${when})</span></div>`;
     });
     html += `</div>`;
   }
@@ -1454,15 +1603,22 @@ function isAfval(ev){ return ev.seriesId==='afval' || /^🗑/.test(ev.title||'')
 function afvalSoort(ev){ return String(ev.title||'').replace(/^🗑️?\s*/,''); }
 function afvalKleur(soort){ return AFVAL_KLEUR[soort] || '#8A8F8C'; }
 function afvalPill(soort){ return `<span class="afval-pill" style="background:${afvalKleur(soort)}">${escapeHtml(soort)}</span>`; }
-function agendaItemHtml(ev){
+// goTo = op Vandaag: tik = die dag openen in de kalender
+function agendaItemHtml(ev, goTo){
+  const tap = goTo ? ` tap" data-d="${ev.date}` : '';
   if(isAfval(ev)){
     const soort = afvalSoort(ev);
-    return `<div class="ag-item afval"><div class="ag-time">🗑️</div><span class="ag-bar" style="background:${afvalKleur(soort)}"></span><div class="ag-main"><div class="ag-title">${afvalPill(soort)} ophaling</div><div class="ag-sub"><span>Avond ervoor buitenzetten · ophaling vanaf 6u</span></div></div></div>`;
+    return `<div class="ag-item afval${tap}"><div class="ag-time">🗑️</div><span class="ag-bar" style="background:${afvalKleur(soort)}"></span><div class="ag-main"><div class="ag-title">${afvalPill(soort)} ophaling</div><div class="ag-sub"><span>Avond ervoor buitenzetten · ophaling vanaf 6u</span></div></div></div>`;
   }
   const p = ev.person||'Wij';
   const time = ev.time ? `<div class="ag-time">${ev.time}</div>` : `<div class="ag-time allday">hele dag</div>`;
-  return `<div class="ag-item">${time}<span class="ag-bar" style="background:${personColor(p)}"></span><div class="ag-main"><div class="ag-title">${ev.seriesId && ev.seriesId!=='afval'?'🔁 ':''}${escapeHtml(ev.title)}</div><div class="ag-sub"><span class="p-pill" style="background:${personColor(p)}">${p}</span>${ev.notes?`<span>${escapeHtml(ev.notes)}</span>`:''}</div></div></div>`;
+  return `<div class="ag-item${tap}">${time}<span class="ag-bar" style="background:${personColor(p)}"></span><div class="ag-main"><div class="ag-title">${ev.seriesId && ev.seriesId!=='afval'?'🔁 ':''}${ev.taak?'✅ ':''}${escapeHtml(ev.title)}</div><div class="ag-sub"><span class="p-pill" style="background:${personColor(p)}">${escapeHtml(p)}</span>${ev.notes?`<span>${escapeHtml(ev.notes)}</span>`:''}</div></div>${goTo?'<span class="ag-chev">›</span>':''}</div>`;
 }
+function openDay(d){
+  selectedDate = d; viewYear = +d.slice(0,4); viewMonth = +d.slice(5,7)-1;
+  showPanel('cal'); renderCalendar(); renderDayEvents();
+}
+document.getElementById('homeAgenda').addEventListener('click', (e)=>{ const t = e.target.closest('[data-d]'); if(t) openDay(t.dataset.d); });
 function eventsOn(dateStr){ return calEvents.filter(e=>e.date===dateStr).sort((a,b)=>(a.time||'').localeCompare(b.time||'')); }
 function renderHome(){
   const dateEl = document.getElementById('homeDate'); if(!dateEl) return;
@@ -1489,28 +1645,18 @@ function renderHome(){
       wh += `<button type="button" data-d="${d}" class="${k===0?'today':''}${schoolvrijOp(d)?' vac':''}"><span class="w">${k===0?'vand.':dt.toLocaleDateString('nl-BE',{weekday:'short'}).replace('.','')}</span><span class="n">${dt.getDate()}</span><span class="dots">${dots}</span></button>`;
     }
     wk.innerHTML = wh;
-    wk.querySelectorAll('button').forEach(btn=>btn.addEventListener('click', ()=>{
-      const d = btn.dataset.d; selectedDate = d; viewYear = +d.slice(0,4); viewMonth = +d.slice(5,7)-1;
-      showPanel('cal'); renderCalendar(); renderDayEvents();
-    }));
+    wk.querySelectorAll('button').forEach(btn=>btn.addEventListener('click', ()=>openDay(btn.dataset.d)));
   }
-  let html = vacHomeLine(todayIso) + `<div class="ag-day-head is-today">Vandaag</div>` + (tToday.length ? tToday.map(agendaItemHtml).join('') : `<div class="today-empty">Niets gepland.</div>`);
-  html += `<div class="ag-day-head">Morgen · ${new Date(tomorrowIso+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'long', day:'numeric', month:'short'})}</div>` + (tTomorrow.length ? tTomorrow.map(agendaItemHtml).join('') : `<div class="today-empty">Niets gepland.</div>`);
+  let html = vacHomeLine(todayIso) + `<div class="ag-day-head is-today">Vandaag</div>` + (tToday.length ? tToday.map(ev=>agendaItemHtml(ev, true)).join('') : `<div class="today-empty">Niets gepland.</div>`);
+  html += `<div class="ag-day-head">Morgen · ${new Date(tomorrowIso+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'long', day:'numeric', month:'short'})}</div>` + (tTomorrow.length ? tTomorrow.map(ev=>agendaItemHtml(ev, true)).join('') : `<div class="today-empty">Niets gepland.</div>`);
   // de rest van de week, compact
   const later = [];
   for(let k=2; k<=7; k++){ const d = addDays(todayIso, k); eventsOn(d).forEach(ev=>later.push({d, ev})); }
   if(later.length){
-    html += `<div class="ag-day-head">Later deze week</div>` + later.slice(0,5).map(({d, ev})=>`<div class="today-line"><span style="color:var(--muted);font-weight:600;min-width:52px;display:inline-block;">${new Date(d+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'short', day:'numeric'})}</span> ${isAfval(ev) ? `🗑️ ${afvalPill(afvalSoort(ev))}` : `<span class="p-pill" style="background:${personColor(ev.person||'Wij')};font-size:10px;padding:1px 6px;">${ev.person||'Wij'}</span> ${escapeHtml(ev.title)}${ev.time?` <span style="color:var(--muted);">${ev.time}</span>`:''}`}</div>`).join('') + (later.length>5?`<div class="today-empty" style="margin-top:4px;">+ ${later.length-5} meer in de kalender</div>`:'');
+    html += `<div class="ag-day-head">Later deze week</div>` + later.slice(0,5).map(({d, ev})=>`<div class="today-line tap" data-d="${d}"><span style="color:var(--muted);font-weight:600;min-width:52px;display:inline-block;">${new Date(d+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'short', day:'numeric'})}</span> ${isAfval(ev) ? `🗑️ ${afvalPill(afvalSoort(ev))}` : `<span class="p-pill" style="background:${personColor(ev.person||'Wij')};font-size:10px;padding:1px 6px;">${ev.person||'Wij'}</span> ${escapeHtml(ev.title)}${ev.time?` <span style="color:var(--muted);">${ev.time}</span>`:''}`}</div>`).join('') + (later.length>5?`<div class="today-empty tap" data-d="${later[5].d}" style="margin-top:4px;cursor:pointer;">+ ${later.length-5} meer in de kalender ›</div>`:'');
   }
   document.getElementById('homeAgenda').innerHTML = html;
-  // Samen: meteen afvinkbaar
-  const sh = document.getElementById('homeShared');
-  if(sharedTodoItems.length===0){ sh.innerHTML = '<div class="today-empty">Geen gedeelde taken open. Toevoegen kan in Taken.</div>'; }
-  else {
-    sh.innerHTML = '';
-    sharedTodoItems.forEach(i=>sh.appendChild(sharedTodoRow(i)));
-  }
-  renderHomeAlert(); renderNew();
+  renderHomeTodo(); renderHomeAlert(); renderNew();
 }
 function renderCalendar(){
   document.getElementById('monthLabel').textContent = MONTHS[viewMonth] + ' ' + viewYear;
@@ -1554,7 +1700,7 @@ function renderDayEvents(){
   const todayIso = fmtDate(new Date());
   const rel = selectedDate===todayIso ? 'Vandaag · ' : selectedDate===addDays(todayIso,1) ? 'Morgen · ' : '';
   document.getElementById('selDayLabel').textContent = rel + dayLabel;
-  document.getElementById('newEvDateLabel').textContent = 'Op ' + dayLabel + ' — tik in de kalender op een andere dag om te wijzigen.';
+  if(!editingEv) document.getElementById('evDate').value = selectedDate;
   document.getElementById('newEvToggle').textContent = '＋ Afspraak op ' + d.toLocaleDateString('nl-BE',{weekday:'short', day:'numeric', month:'short'});
   const list = document.getElementById('dayEventsList');
   const items = eventsOn(selectedDate);
@@ -1565,40 +1711,58 @@ function renderDayEvents(){
   items.forEach(ev=>{
     const wrap = document.createElement('div'); wrap.innerHTML = agendaItemHtml(ev);
     const row = wrap.firstElementChild;
+    if(!isAfval(ev)){ row.classList.add('tap'); row.title = 'Tik om te bewerken'; row.addEventListener('click', ()=>setNewEvOpen(true, ev)); }
     const btn = document.createElement('button'); btn.className='del-btn'; btn.textContent='✕'; btn.title='Verwijderen';
-    btn.addEventListener('click', ()=>{
-      if(!ev.seriesId && !confirm(`"${ev.title}" verwijderen?`)) return;
-      if(ev.seriesId){
-        const deleteAll = confirm('Dit is onderdeel van een herhalende afspraak.\n\nOK = deze en alle toekomstige verwijderen\nAnnuleren = enkel deze ene datum verwijderen');
-        if(deleteAll){
-          calEvents.filter(x=>x.seriesId===ev.seriesId && x.date>=ev.date).forEach(x=>{ remove(ref(db, hhPath+'/calendarEvents/'+x.id)); });
-        } else {
-          remove(ref(db, hhPath+'/calendarEvents/'+ev.id));
-        }
-      } else {
-        remove(ref(db, hhPath+'/calendarEvents/'+ev.id));
-      }
-    });
+    btn.addEventListener('click', (e)=>{ e.stopPropagation(); deleteEvent(ev); });
     row.appendChild(btn); list.appendChild(row);
   });
+}
+// afspraak verwijderen; komt ze uit een taak, dan verdwijnt ook de planning bij die taak
+function deleteEvent(ev){
+  if(!ev.seriesId || ev.seriesId==='afval'){
+    if(!confirm(`"${ev.title}" verwijderen?`)) return false;
+    remove(ref(db, hhPath+'/calendarEvents/'+ev.id));
+  } else {
+    const deleteAll = confirm('Dit is onderdeel van een herhalende afspraak.\n\nOK = deze en alle volgende verwijderen\nAnnuleren = enkel deze ene datum verwijderen');
+    if(deleteAll) calEvents.filter(x=>x.seriesId===ev.seriesId && x.date>=ev.date).forEach(x=>remove(ref(db, hhPath+'/calendarEvents/'+x.id)));
+    else remove(ref(db, hhPath+'/calendarEvents/'+ev.id));
+  }
+  if(ev.taak) get(ref(db, hhPath+'/'+ev.taak)).then(sn=>{ if(sn.exists()) update(ref(db, hhPath+'/'+ev.taak), {scheduledDate:null, eventId:null}); }).catch(()=>{});
+  return true;
 }
 document.getElementById('evRepeat').addEventListener('change', (e)=>{
   document.getElementById('evRepeatCount').style.display = e.target.value==='none' ? 'none' : 'block';
 });
+let editingEv = null;
 document.getElementById('eventForm').addEventListener('submit', (e)=>{
   e.preventDefault();
   const title = document.getElementById('evTitle').value.trim();
   if(!title) return;
   const time = document.getElementById('evTime').value;
   const notes = document.getElementById('evNotes').value.trim();
+  const date = document.getElementById('evDate').value || selectedDate;
   const repeat = document.getElementById('evRepeat').value;
   const base = { title, time, notes, person: selectedPerson };
-  if(repeat==='none'){
-    pushMine(eventsRef, { ...base, date: selectedDate });
+  if(editingEv){
+    const ev = editingEv;
+    update(ref(db, hhPath+'/calendarEvents/'+ev.id), { ...base, date });
+    // een reeks: titel, uur, persoon en notitie ook voor de volgende afspraken van de reeks?
+    if(ev.seriesId && ev.seriesId!=='afval' && (title!==ev.title || time!==(ev.time||'') || notes!==(ev.notes||'') || selectedPerson!==(ev.person||'Wij'))){
+      const later = calEvents.filter(x=>x.seriesId===ev.seriesId && x.date>ev.date);
+      if(later.length && confirm(`Ook de ${later.length} volgende afspraken van deze reeks aanpassen?`)) later.forEach(x=>update(ref(db, hhPath+'/calendarEvents/'+x.id), base));
+    }
+    // afspraak uit een taak: de taak volgt mee (datum en titel)
+    if(ev.taak && (date!==ev.date || title!==ev.title)){
+      const isMine = ev.taak.startsWith('todos/');
+      get(ref(db, hhPath+'/'+ev.taak)).then(sn=>{ if(sn.exists()) update(ref(db, hhPath+'/'+ev.taak), {scheduledDate: date, ...(title!==ev.title ? (isMine ? {text:title} : {tekst:title}) : {})}); }).catch(()=>{});
+    }
+    toast('Afspraak bewaard');
+  } else if(repeat==='none'){
+    pushMine(eventsRef, { ...base, date });
   } else {
     const count = Math.min(52, Math.max(1, parseInt(document.getElementById('evRepeatCount').value) || 1));
     const seriesId = Date.now()+'-'+Math.random().toString(36).slice(2,7);
-    const startDate = new Date(selectedDate+'T00:00:00');
+    const startDate = new Date(date+'T00:00:00');
     for(let i=0; i<count; i++){
       const d = new Date(startDate);
       if(repeat==='weekly') d.setDate(d.getDate() + 7*i);
@@ -1607,17 +1771,38 @@ document.getElementById('eventForm').addEventListener('submit', (e)=>{
       pushMine(eventsRef, { ...base, date: fmtDate(d), seriesId });
     }
   }
-  e.target.reset();
-  document.getElementById('evRepeatCount').style.display='none';
+  // de kalender springt naar de dag van de (nieuwe of verplaatste) afspraak
+  selectedDate = date; viewYear = +date.slice(0,4); viewMonth = +date.slice(5,7)-1;
   setNewEvOpen(false);
+  renderCalendar(); renderDayEvents();
 });
-function setNewEvOpen(open){
+// één formulier voor een nieuwe afspraak en om een bestaande te bewerken
+function setNewEvOpen(open, ev){
+  const form = document.getElementById('eventForm');
+  form.reset(); document.getElementById('evRepeatCount').style.display='none';
+  editingEv = open && ev ? ev : null;
+  const edit = !!editingEv;
+  document.getElementById('newEvHead').firstChild.textContent = edit ? '✎ Afspraak bewerken' : '➕ Nieuwe afspraak';
+  document.getElementById('newEvDateLabel').textContent = edit ? (ev.seriesId && ev.seriesId!=='afval' ? 'Deel van een herhalende reeks.' : '') + (ev.taak ? ' Komt uit een taak: die verschuift mee.' : '') : 'Vul in en tik op Toevoegen.';
+  document.getElementById('evSubmit').textContent = edit ? 'Opslaan' : 'Toevoegen';
+  document.getElementById('evRepeatRow').style.display = edit ? 'none' : 'flex';
+  document.getElementById('photoUploadBox').style.display = edit ? 'none' : 'block';
+  document.getElementById('evDelete').style.display = edit ? 'block' : 'none';
+  document.getElementById('evDate').value = edit ? ev.date : selectedDate;
+  if(edit){
+    document.getElementById('evTitle').value = ev.title || '';
+    document.getElementById('evTime').value = ev.time || '';
+    document.getElementById('evNotes').value = ev.notes || '';
+    selectedPerson = ev.person || 'Wij';
+  } else selectedPerson = 'Wij';
+  renderEvPersonSelect();
   document.getElementById('newEvCard').style.display = open ? 'block' : 'none';
   document.getElementById('newEvToggle').style.display = open ? 'none' : 'block';
-  if(open){ document.getElementById('newEvCard').scrollIntoView({behavior:'smooth', block:'start'}); setTimeout(()=>document.getElementById('evTitle').focus(), 250); }
+  if(open){ document.getElementById('newEvCard').scrollIntoView({behavior:'smooth', block:'start'}); if(!edit) setTimeout(()=>document.getElementById('evTitle').focus(), 250); }
 }
 document.getElementById('newEvToggle').addEventListener('click', ()=>setNewEvOpen(true));
-document.getElementById('newEvCancel').addEventListener('click', ()=>{ document.getElementById('eventForm').reset(); document.getElementById('evRepeatCount').style.display='none'; setNewEvOpen(false); });
+document.getElementById('newEvCancel').addEventListener('click', ()=>setNewEvOpen(false));
+document.getElementById('evDelete').addEventListener('click', ()=>{ if(editingEv && deleteEvent(editingEv)) setNewEvOpen(false); });
 
 // ---------- photo import ----------
 document.getElementById('photoWeekStart').value = mondayOf(fmtDate(new Date()));
@@ -2450,6 +2635,26 @@ function renderAnalysisHtml(a){
   return html;
 }
 
+// ---------- zoeken in de uitgaven ----------
+function renderSearch(){
+  const inp = document.getElementById('searchInput'), out = document.getElementById('searchResult'); if(!inp || !out) return;
+  const q = inp.value.trim().toLowerCase();
+  if(q.length < 2){ out.innerHTML = ''; return; }
+  const hits = budgetData.entries.filter(e=>e.type==='expense' && e.date && (((e.note||'')+' '+(e.memo||'')).toLowerCase().includes(q) || (e.category||'').toLowerCase().includes(q)))
+    .sort((a,b)=>b.date.localeCompare(a.date));
+  if(!hits.length){ out.innerHTML = '<div class="today-empty" style="margin-top:10px;">Niets gevonden in de bankgegevens.</div>'; return; }
+  const total = sumAmt(hits), first = hits[hits.length-1].date, latest = budgetData.entries.map(e=>e.date).filter(Boolean).sort().pop();
+  const yr = String(new Date().getFullYear()), yHits = hits.filter(e=>e.date.startsWith(yr));
+  const nMonths = Math.max(1, (+latest.slice(0,4) - +first.slice(0,4))*12 + (+latest.slice(5,7) - +first.slice(5,7)) + 1);
+  const pm = {}; hits.forEach(e=>{ const k = e.date.slice(0,7); pm[k] = (pm[k]||0) + e.amount; });
+  const recent = []; for(let i=0;i<6;i++){ const d = new Date(+latest.slice(0,4), +latest.slice(5,7)-1-i, 1); const k = ymKey(d.getFullYear(), d.getMonth()); recent.push(`<span class="ba-chip">${MONTHS[d.getMonth()].slice(0,3)} ${pm[k]?fmtEur0(pm[k]):'–'}</span>`); }
+  out.innerHTML = `<div class="search-sum"><strong>${fmtMoney(total)}</strong> in ${hits.length} betaling${hits.length>1?'en':''} sinds ${fmtDayMonth(first)} ${first.slice(0,4)}<br>
+      Dit jaar: <strong style="font-size:14px;">${fmtMoney(sumAmt(yHits))}</strong> (${yHits.length}×) · gemiddeld ${fmtEur0(total/nMonths)} per maand</div>
+    <div class="ba-chips" style="margin:0 0 10px;">${recent.join('')}</div>`
+    + hits.slice(0, 25).map(e=>`<div class="entry-item"><div class="meta"><span class="t">${escapeHtml(e.note||e.category)}</span><span class="s">${fmtDateNL(e.date)} · ${escapeHtml(e.category)}</span></div><span style="color:var(--danger);font-weight:700;white-space:nowrap;">−${fmtMoney(e.amount)}</span></div>`).join('')
+    + (hits.length > 25 ? `<div class="today-empty">+ ${hits.length-25} oudere</div>` : '');
+}
+document.getElementById('searchInput').addEventListener('input', renderSearch);
 function renderUploadStrip(){
   const strip = document.getElementById('uploadStrip');
   const txt = document.getElementById('uploadStripTxt');
@@ -2519,7 +2724,7 @@ function renderBudget(){
     row.innerHTML = `<div class="meta"><span class="t">${escapeHtml(en.category)}</span><span class="s">${en.date}${en.note?' · '+escapeHtml(en.note):''}${en.eenmalig?' · eenmalig':''}</span>${en.memo?`<span class="s" style="opacity:.75;">${escapeHtml(en.memo)}</span>`:''}</div>
       <div style="display:flex;align-items:center;gap:8px;"><span style="color:${color};font-weight:700;">${sign}${fmtMoney(en.amount)}</span></div>`;
     const btn = document.createElement('button'); btn.className='del-btn'; btn.textContent='✕';
-    btn.addEventListener('click', ()=>{ remove(ref(db, hhPath+'/budgetEntries/'+en.id)); });
+    btn.addEventListener('click', ()=>{ if(confirm(`Registratie "${en.note||en.category}" (${fmtMoney(en.amount)} op ${fmtDateNL(en.date)}) verwijderen?`)) remove(ref(db, hhPath+'/budgetEntries/'+en.id)); });
     row.querySelector('div:last-child').appendChild(btn);
     entriesList.appendChild(row);
   });
@@ -2545,7 +2750,7 @@ function renderTodoOwnerGate(){
     });
   } else {
     ownerCard.style.display='none'; main.style.display='block';
-    document.getElementById('ownerLabel').textContent = 'Enkel zichtbaar voor ' + owner + ' · tik op een taak om af te vinken, sleep aan ⋮⋮ om de volgorde te wijzigen';
+    document.getElementById('ownerLabel').textContent = 'Enkel zichtbaar voor ' + owner + '. Tik op een taak voor deelpunten, plannen of bewerken. Sleep aan ⋮⋮ voor de volgorde.';
     setupTodoRefs();
   }
 }
@@ -2576,42 +2781,190 @@ document.getElementById('todoClearDoneBtn').addEventListener('click', ()=>{
   doneNow.forEach(t=>{ remove(ref(db, hhPath+'/todos/'+owner+'/items/'+t.id)); });
 });
 
-function renderTodoRow(td, list){
-    const row = document.createElement('div'); row.className='todo-item'+(td.done?' done':''); row.dataset.id = td.id;
-    const main = document.createElement('div'); main.className='main-row';
-    if(!td.done){
-      const h = document.createElement('div'); h.className='drag-handle'; h.textContent='⋮⋮'; h.title='Sleep om de volgorde te wijzigen';
-      h.addEventListener('pointerdown', (e)=>startTodoDrag(e, row));
-      main.appendChild(h);
+// ---------- taken: één opbouw voor Mijn taken en Samen ----------
+// Mijn taken: todos/<eigenaar>/items/<id> {text, done, order, created, scheduledDate, eventId, sub}
+// Samen:      sharedTodo/<id>             {tekst, order, scheduledDate, eventId, sub}   (afvinken = klaar = weg)
+// Deelpunten: <taak>/sub/<id> {tekst, done, order}.
+// Kalender:   'Op de kalender' maakt één afspraak met taak = pad van de taak. Opnieuw plannen verschuift die afspraak,
+//             afvinken of verwijderen haalt een toekomstige afspraak weg, en wie de afspraak wist, wist ook de planning.
+const openTasks = new Set();
+let keepFocusSub = null;
+function taskPath(kind, id){ return (kind==='mine' ? 'todos/'+owner+'/items/' : 'sharedTodo/') + id; }
+function taskRef(kind, id){ return ref(db, hhPath+'/'+taskPath(kind, id)); }
+function taskText(t){ return String((t.text ?? t.tekst) || ''); }
+function fmtShort(iso){ return new Date(iso+'T00:00:00').toLocaleDateString('nl-BE',{day:'numeric', month:'short'}); }
+function byOrder(a,b){
+  const ao = typeof a.order==='number', bo = typeof b.order==='number';
+  if(ao && bo && a.order!==b.order) return a.order - b.order;
+  if(ao !== bo) return ao ? -1 : 1;
+  return pushTime(a.id) - pushTime(b.id);
+}
+function subsOf(t){ return snapToArray(t.sub).sort(byOrder); }
+function sortedShared(){ return [...sharedTodoItems].sort(byOrder); }
+function saveOrder(refs){ refs.forEach((r,i)=>update(r, {order: i*1000})); }
+function rerenderKind(kind){ if(kind==='mine') renderTodos(); else renderSharedTodo(); }
+function eventOf(t){ return t.eventId ? calEvents.find(e=>e.id===t.eventId) || null : null; }
+function scrollToRow(listId, id){
+  setTimeout(()=>{ const el = document.querySelector(`#${listId} [data-id="${id}"]`); if(el) el.scrollIntoView({block:'center', behavior:'smooth'}); }, 80);
+}
+function openTaskInTaken(kind, id){
+  openTasks.add(id); showPanel('todo'); rerenderKind(kind);
+  scrollToRow(kind==='mine' ? 'todoList' : 'sharedTodoList', id);
+}
+
+// ---- kalender ----
+async function planTask(t, kind, date, person){
+  const path = taskPath(kind, t.id);
+  let ev = eventOf(t);
+  // taken die vóór v10 gepland werden, hebben geen eventId: zoek de afspraak op titel en datum
+  if(!ev && t.scheduledDate) ev = calEvents.find(e=>e.date===t.scheduledDate && e.title===taskText(t) && !e.seriesId) || null;
+  if(ev){
+    await update(ref(db, hhPath+'/calendarEvents/'+ev.id), {date, person, title: taskText(t), taak: path});
+    await update(taskRef(kind, t.id), {scheduledDate: date, eventId: ev.id});
+  } else {
+    const p = pushMine(eventsRef, {date, title: taskText(t), time:'', notes: kind==='mine' ? 'Uit de takenlijst' : 'Samen-taak', person, taak: path});
+    await update(taskRef(kind, t.id), {scheduledDate: date, eventId: p.key});
+  }
+  toast('Op de kalender: ' + fmtDayMonth(date));
+}
+function unplanTask(t, kind){
+  const ev = eventOf(t); if(ev) remove(ref(db, hhPath+'/calendarEvents/'+ev.id));
+  update(taskRef(kind, t.id), {scheduledDate:null, eventId:null});
+}
+function dropFutureEvent(t){
+  const ev = eventOf(t); if(ev && ev.date >= vandaagIso()) remove(ref(db, hhPath+'/calendarEvents/'+ev.id));
+}
+function setTaskDone(t, kind, done, row){
+  if(kind==='samen'){
+    if(!done) return;
+    if(row) row.classList.add('done');
+    setTimeout(()=>{ openTasks.delete(t.id); dropFutureEvent(t); remove(taskRef('samen', t.id)); }, row ? 450 : 0);
+    return;
+  }
+  update(taskRef('mine', t.id), {done});
+  if(done) dropFutureEvent(t);
+  else if(t.scheduledDate && t.scheduledDate >= vandaagIso() && !eventOf(t)) planTask({...t, eventId:null, scheduledDate:null}, 'mine', t.scheduledDate, PERSONS.some(p=>p.key===owner) ? owner : 'Wij');
+}
+function deleteTask(t, kind){
+  openTasks.delete(t.id); dropFutureEvent(t); remove(taskRef(kind, t.id));
+}
+
+// ---- één rij ----
+// compact = op Vandaag: afvinken kan, tik op de tekst opent de taak in Taken
+function taskRow(t, kind, list, compact){
+  const isOpen = !compact && openTasks.has(t.id);
+  const row = document.createElement('div');
+  row.className = 'todo-item' + (t.done?' done':'') + (isOpen?' open':''); row.dataset.id = t.id;
+  const main = document.createElement('div'); main.className='main-row';
+  if(!compact && !t.done){
+    const h = document.createElement('div'); h.className='drag-handle'; h.textContent='⋮⋮'; h.title='Sleep om de volgorde te wijzigen';
+    h.addEventListener('pointerdown', (e)=>startListDrag(e, row, list, '.todo-item', ids=>saveOrder(ids.map(id=>taskRef(kind, id))), kind==='mine' ? renderTodos : renderSharedTodo));
+    main.appendChild(h);
+  }
+  const cb = document.createElement('input'); cb.type='checkbox'; cb.checked = !!t.done; cb.setAttribute('aria-label','Afvinken');
+  cb.addEventListener('change', ()=>setTaskDone(t, kind, cb.checked, row));
+  const txt = document.createElement('div'); txt.className='txt'; txt.textContent = taskText(t);
+  txt.addEventListener('click', ()=>{
+    if(compact){ openTaskInTaken(kind, t.id); return; }
+    if(openTasks.has(t.id)){ openTasks.delete(t.id); if(openSchedFor===t.id) openSchedFor = null; } else openTasks.add(t.id);
+    rerenderKind(kind);
+  });
+  const badges = document.createElement('div'); badges.className='task-badges';
+  const subs = subsOf(t);
+  if(subs.length){ const n = subs.filter(s=>s.done).length; badges.insertAdjacentHTML('beforeend', `<span class="mini-chip${n===subs.length?' ok':''}" title="Deelpunten klaar">☑ ${n}/${subs.length}</span>`); }
+  if(t.scheduledDate && !t.done){
+    const today = vandaagIso(), late = t.scheduledDate < today;
+    badges.insertAdjacentHTML('beforeend', `<span class="mini-chip ${late?'late':'ok'}">📅 ${t.scheduledDate===today?'vandaag':fmtShort(t.scheduledDate)}</span>`);
+  }
+  main.append(cb, txt, badges);
+  row.appendChild(main);
+  if(isOpen) row.appendChild(taskDetails(t, kind));
+  list.appendChild(row);
+  return row;
+}
+function taskDetails(t, kind){
+  const box = document.createElement('div'); box.className='task-more';
+  // tekst aanpassen (ook de gekoppelde afspraak krijgt de nieuwe titel)
+  const inp = document.createElement('input'); inp.type='text'; inp.className='edit-txt'; inp.value = taskText(t); inp.setAttribute('aria-label','Tekst van de taak');
+  inp.addEventListener('change', ()=>{
+    const v = inp.value.trim();
+    if(!v || v===taskText(t)){ inp.value = taskText(t); return; }
+    update(taskRef(kind, t.id), kind==='mine' ? {text:v} : {tekst:v});
+    const ev = eventOf(t); if(ev) update(ref(db, hhPath+'/calendarEvents/'+ev.id), {title:v});
+  });
+  inp.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); inp.blur(); } });
+  box.appendChild(inp);
+  // deelpunten
+  const subs = subsOf(t);
+  const lbl = document.createElement('div'); lbl.className='lbl';
+  lbl.textContent = subs.length ? `Deelpunten · ${subs.filter(s=>s.done).length} van ${subs.length} klaar` : 'Deelpunten';
+  box.appendChild(lbl);
+  const sl = document.createElement('div'); sl.className='sub-list';
+  subs.forEach(s=>subRow(t, kind, s, sl));
+  box.appendChild(sl);
+  const form = document.createElement('form'); form.className='sub-add'; form.setAttribute('autocomplete','off');
+  form.innerHTML = `<input type="text" placeholder="Deelpunt toevoegen" enterkeyhint="done" aria-label="Nieuw deelpunt"><button class="plus" type="submit" aria-label="Deelpunt toevoegen">+</button>`;
+  form.addEventListener('submit', e=>{
+    e.preventDefault();
+    const i2 = form.querySelector('input'), v = i2.value.trim(); if(!v) return;
+    const order = subs.length ? Math.max(...subs.map(s=>s.order??0)) + 1000 : 0;
+    keepFocusSub = t.id; i2.value = '';
+    push(ref(db, hhPath+'/'+taskPath(kind, t.id)+'/sub'), {tekst:v, done:false, order});
+  });
+  box.appendChild(form);
+  // plannen en verwijderen
+  const acts = document.createElement('div'); acts.className='task-actions';
+  const planBtn = document.createElement('button'); planBtn.type='button';
+  planBtn.textContent = t.scheduledDate ? `📅 ${fmtShort(t.scheduledDate)} · verplaatsen` : '📅 Op de kalender';
+  planBtn.addEventListener('click', ()=>{ openSchedFor = openSchedFor===t.id ? null : t.id; rerenderKind(kind); });
+  const delBtn = document.createElement('button'); delBtn.type='button'; delBtn.className='danger'; delBtn.textContent='Verwijderen';
+  delBtn.addEventListener('click', ()=>{ if(confirm(`"${taskText(t).slice(0,60)}" verwijderen?`)) deleteTask(t, kind); });
+  acts.append(planBtn, delBtn);
+  box.appendChild(acts);
+  if(openSchedFor===t.id){
+    const sr = document.createElement('div'); sr.className='sched-row';
+    const dateInp = document.createElement('input'); dateInp.type='date'; dateInp.value = t.scheduledDate || vandaagIso(); dateInp.setAttribute('aria-label','Datum');
+    const persSel = document.createElement('select'); persSel.setAttribute('aria-label','Voor wie');
+    const ev = eventOf(t);
+    const defP = ev ? (ev.person||'Wij') : (kind==='mine' && PERSONS.some(p=>p.key===owner) ? owner : 'Wij');
+    PERSONS.forEach(p=>{ const o=document.createElement('option'); o.value=p.key; o.textContent=p.key; if(p.key===defP) o.selected=true; persSel.appendChild(o); });
+    sr.append(dateInp, persSel);
+    const okBtn = document.createElement('button'); okBtn.type='button'; okBtn.className='btn'; okBtn.style.flex='1 1 100%';
+    okBtn.textContent = t.scheduledDate ? 'Verplaatsen' : 'Zet op de kalender';
+    okBtn.addEventListener('click', ()=>{
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(dateInp.value)){ toast('Kies eerst een datum.', true); return; }
+      openSchedFor = null;
+      planTask(t, kind, dateInp.value, persSel.value).then(()=>rerenderKind(kind));
+    });
+    sr.appendChild(okBtn);
+    if(t.scheduledDate){
+      const offBtn = document.createElement('button'); offBtn.type='button'; offBtn.className='btn outline'; offBtn.style.flex='1 1 100%';
+      offBtn.textContent = 'Van de kalender halen';
+      offBtn.addEventListener('click', ()=>{ openSchedFor = null; unplanTask(t, kind); });
+      sr.appendChild(offBtn);
     }
-    const cb = document.createElement('input'); cb.type='checkbox'; cb.checked=!!td.done;
-    cb.addEventListener('change', ()=>{ update(ref(db, hhPath+'/todos/'+owner+'/items/'+td.id), {done:cb.checked}); });
-    const txt = document.createElement('div'); txt.className='txt'; txt.textContent = td.text; txt.style.cursor='pointer';
-    txt.addEventListener('click', ()=>{ update(ref(db, hhPath+'/todos/'+owner+'/items/'+td.id), {done:!td.done}); });
-    const calBtn = document.createElement('button'); calBtn.type='button'; calBtn.className='plan-chip'+(td.scheduledDate?' linked':'');
-    calBtn.title = td.scheduledDate ? ('Op kalender: '+td.scheduledDate) : 'Zet op kalender';
-    calBtn.textContent = td.scheduledDate ? '📅 ' + new Date(td.scheduledDate+'T00:00:00').toLocaleDateString('nl-BE',{day:'numeric', month:'short'}) : '📅 Plan';
-    calBtn.addEventListener('click', ()=>{ openSchedFor = openSchedFor===td.id ? null : td.id; renderTodos(); });
-    if(td.done) calBtn.style.display='none';
-    const del = document.createElement('button'); del.className='del-btn'; del.textContent='✕'; del.title='Verwijderen';
-    del.addEventListener('click', ()=>{ remove(ref(db, hhPath+'/todos/'+owner+'/items/'+td.id)); });
-    main.appendChild(cb); main.appendChild(txt); main.appendChild(calBtn); main.appendChild(del);
-    row.appendChild(main);
-    if(openSchedFor===td.id){
-      const sf = document.createElement('div'); sf.className='sched-form';
-      const dateInp = document.createElement('input'); dateInp.type='date'; dateInp.value = td.scheduledDate || fmtDate(new Date());
-      const persSel = document.createElement('select');
-      PERSONS.forEach(p=>{ const o=document.createElement('option'); o.value=p.key; o.textContent=p.key; if(p.key===owner) o.selected=true; persSel.appendChild(o); });
-      const okBtn = document.createElement('button'); okBtn.className='btn'; okBtn.type='button'; okBtn.textContent='Zet op kalender'; okBtn.style.flex='1';
-      okBtn.addEventListener('click', ()=>{
-        pushMine(eventsRef, { date:dateInp.value, title:td.text, time:'', notes:'Vanuit To Do', person:persSel.value });
-        update(ref(db, hhPath+'/todos/'+owner+'/items/'+td.id), {scheduledDate:dateInp.value});
-        openSchedFor = null; renderTodos();
-      });
-      sf.appendChild(dateInp); sf.appendChild(persSel); sf.appendChild(okBtn);
-      row.appendChild(sf);
-    }
-    list.appendChild(row);
+    box.appendChild(sr);
+  }
+  return box;
+}
+function subRow(t, kind, s, list){
+  const base = hhPath+'/'+taskPath(kind, t.id)+'/sub/';
+  const row = document.createElement('div'); row.className='sub-item'+(s.done?' done':''); row.dataset.id = s.id;
+  const h = document.createElement('div'); h.className='drag-handle'; h.textContent='⋮⋮'; h.title='Sleep om de volgorde te wijzigen';
+  h.addEventListener('pointerdown', (e)=>startListDrag(e, row, list, '.sub-item', ids=>saveOrder(ids.map(id=>ref(db, base+id))), kind==='mine' ? renderTodos : renderSharedTodo));
+  const cb = document.createElement('input'); cb.type='checkbox'; cb.checked = !!s.done; cb.setAttribute('aria-label','Deelpunt afvinken');
+  cb.addEventListener('change', ()=>update(ref(db, base+s.id), {done: cb.checked}));
+  const txt = document.createElement('div'); txt.className='txt'; txt.textContent = s.tekst || '';
+  txt.addEventListener('click', ()=>update(ref(db, base+s.id), {done: !s.done}));
+  const del = document.createElement('button'); del.type='button'; del.className='del-btn'; del.textContent='✕'; del.title='Deelpunt verwijderen';
+  del.addEventListener('click', ()=>remove(ref(db, base+s.id)));
+  row.append(h, cb, txt, del);
+  list.appendChild(row);
+}
+function restoreSubFocus(){
+  if(!keepFocusSub) return;
+  const inp = document.querySelector(`.todo-item[data-id="${keepFocusSub}"] .sub-add input`);
+  if(inp){ inp.focus(); keepFocusSub = null; }
 }
 
 // volgorde: eigen volgorde ('order', na slepen) eerst; taken zonder volgorde: nieuwste bovenaan
@@ -2623,45 +2976,49 @@ function sortedTodos(){
     return ((b.created||0)-(a.created||0)) || (b._i-a._i);
   });
 }
-function saveTodoOrder(ids){
-  ids.forEach((id,i)=>update(ref(db, hhPath+'/todos/'+owner+'/items/'+id), {order: i*1000}));
-}
-// slepen aan de greep (werkt met vinger en muis): de rij schuift live mee, bij loslaten wordt de volgorde bewaard
-const drags = {};
-function startTodoDrag(e, row){ startListDrag(e, row, 'todo', document.getElementById('todoList'), saveTodoOrder, renderTodos); }
-function startListDrag(e, row, key, list, save, rerender){
-  e.preventDefault();
-  const todoDrag = drags[key] = { row, list, pending:false, moved:false };
+function saveTodoOrder(ids){ saveOrder(ids.map(id=>taskRef('mine', id))); }
+
+// slepen aan de greep (vinger en muis): de rij schuift live mee, bij loslaten wordt de volgorde bewaard.
+// Tijdens het slepen wordt niets hertekend; wat intussen binnenkwam, volgt meteen daarna.
+let dragNow = null;
+function dragBusy(fn){ if(dragNow){ dragNow.pending.add(fn); return true; } return false; }
+function startListDrag(e, row, list, itemSel, save, rerender){
+  if(e.button > 0 || dragNow) return;
+  e.preventDefault(); e.stopPropagation();
+  const d = dragNow = { pending: new Set(), moved:false };
+  const items = ()=>[...list.children].filter(o=>o.matches(itemSel));
   row.classList.add('dragging'); document.body.classList.add('is-dragging');
   const move = (ev)=>{
     const y = ev.clientY;
-    const others = [...list.querySelectorAll('.todo-item:not(.dragging)')];
-    const after = others.find(o=>{ const r = o.getBoundingClientRect(); return y < r.top + r.height/2; });
-    if(after){ if(row.nextElementSibling !== after){ list.insertBefore(row, after); todoDrag.moved = true; } }
-    else if(list.lastElementChild !== row){ list.appendChild(row); todoDrag.moved = true; }
+    const after = items().filter(o=>o!==row).find(o=>{ const r = o.getBoundingClientRect(); return y < r.top + r.height/2; });
+    if(after){ if(row.nextElementSibling !== after){ list.insertBefore(row, after); d.moved = true; } }
+    else { const all = items(), last = all[all.length-1]; if(last !== row){ last.after(row); d.moved = true; } }
     if(y < 70) window.scrollBy(0, -10); else if(y > window.innerHeight - 110) window.scrollBy(0, 10);
   };
+  const noScroll = (ev)=>{ if(ev.cancelable) ev.preventDefault(); };
   const end = ()=>{
     document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', end); document.removeEventListener('pointercancel', end);
+    document.removeEventListener('touchmove', noScroll);
     row.classList.remove('dragging'); document.body.classList.remove('is-dragging');
-    const d = todoDrag; delete drags[key];
-    if(d.moved) save([...list.querySelectorAll('.todo-item')].map(r=>r.dataset.id));
-    else if(d.pending) rerender();
+    dragNow = null;
+    if(d.moved){ save(items().map(r=>r.dataset.id)); d.pending.delete(rerender); }
+    d.pending.forEach(fn=>fn());
   };
   document.addEventListener('pointermove', move); document.addEventListener('pointerup', end); document.addEventListener('pointercancel', end);
+  document.addEventListener('touchmove', noScroll, {passive:false});
 }
 function renderTodos(){
   const list = document.getElementById('todoList');
-  if(drags.todo){ drags.todo.pending = true; return; }   // niet hertekenen tijdens het slepen
+  if(dragBusy(renderTodos)) return;
   const items = sortedTodos();
   const active = items.filter(t=>!t.done);
   const doneItems = items.filter(t=>t.done);
   renderNavBadges();
   list.innerHTML='';
   if(active.length===0){
-    list.innerHTML = '<div class="empty-state">' + (doneItems.length>0 ? 'Niets meer te doen — mooi zo! 🎉' : 'Nog geen taken. Typ hierboven en tik op +.') + '</div>';
+    list.innerHTML = '<div class="empty-state">' + (doneItems.length>0 ? 'Niets meer te doen. Mooi zo! 🎉' : 'Nog geen taken. Typ hierboven en tik op +.') + '</div>';
   } else {
-    active.forEach(td=>renderTodoRow(td, list));
+    active.forEach(t=>taskRow(t, 'mine', list, false));
   }
   const doneWrap = document.getElementById('todoDoneWrap');
   const doneListEl = document.getElementById('todoDoneList');
@@ -2670,11 +3027,38 @@ function renderTodos(){
     doneWrap.style.display='none';
   } else {
     doneWrap.style.display='block';
-    clearBtn.style.display='inline-block';
     const isOpen = doneListEl.style.display !== 'none';
+    clearBtn.style.display = 'inline-block';
     document.getElementById('todoDoneToggle').textContent = (isOpen?'▾':'▸') + ' Voltooid (' + doneItems.length + ')';
     doneListEl.innerHTML='';
-    doneItems.forEach(td=>renderTodoRow(td, doneListEl));
+    doneItems.forEach(t=>taskRow(t, 'mine', doneListEl, false));
+  }
+  restoreSubFocus();
+  renderHomeTodo();
+}
+
+// ---------- Vandaag: één kaart 'Te doen' (Samen, vaste taken die aan de beurt zijn, eigen taken) ----------
+function renderHomeTodo(){
+  const el = document.getElementById('homeTodo'); if(!el) return;
+  el.innerHTML = '';
+  const head = (title, link)=>{
+    const h = document.createElement('div'); h.className='home-sub-head';
+    h.innerHTML = `<span>${title}</span>` + (link ? `<a href="#">${link}</a>` : '');
+    if(link) h.querySelector('a').addEventListener('click', e=>{ e.preventDefault(); showPanel('todo'); });
+    el.appendChild(h);
+  };
+  const shared = sortedShared();
+  head('🤝 Samen', shared.length ? `${shared.length} van ${SHARED_TODO_MAX} ›` : 'toevoegen ›');
+  if(shared.length) shared.forEach(t=>taskRow(t, 'samen', el, true));
+  else el.insertAdjacentHTML('beforeend', '<div class="today-empty">Geen gedeelde taken open.</div>');
+  const due = choresDenied ? [] : chores.filter(choreDue).sort((a,b)=>(a.volgende||'').localeCompare(b.volgende||''));
+  if(due.length){ head('🔁 Vaste taken · aan de beurt', ''); due.forEach(c=>el.appendChild(choreRow(c, false, true))); }
+  if(owner && todosRef){
+    const today = vandaagIso();
+    const act = sortedTodos().filter(t=>!t.done);
+    const urgent = act.filter(t=>t.scheduledDate && t.scheduledDate <= today);
+    const pick = [...urgent, ...act.filter(t=>!urgent.includes(t))].slice(0, Math.max(3, urgent.length));
+    if(pick.length){ head('👤 Mijn taken', act.length > pick.length ? `alle ${act.length} ›` : 'Taken ›'); pick.forEach(t=>taskRow(t, 'mine', el, true)); }
   }
 }
 
@@ -2740,12 +3124,65 @@ document.querySelectorAll('.tip-row-head, .tip-toggle').forEach(h=>{
     h.textContent = (open?'▸':'▾') + h.textContent.slice(1);
   });
 });
+// ---------- contracten ↔ bankgegevens ----------
+// Een contract herkent zijn betalingen aan een woord in de omschrijving: het veld 'zoek', anders het eerste
+// duidelijke woord van de naam (Proximus, Netflix, Woningkrediet...). Zo staat bij elk contract wat er echt betaald
+// werd, en valt een prijsverandering meteen op. Vaste betalingen zonder contract worden voorgesteld.
+const CON_STOP = ['abonnement','contract','verzekering','verzekeringen','laadpas','elektriciteit','internet','lening','maandelijks','jaarlijks'];
+function contractKey(c){
+  if(c.zoek) return String(c.zoek).toLowerCase().trim();
+  return String(c.naam||'').toLowerCase().split(/[^a-zà-ÿ0-9]+/).filter(x=>x.length>=4 && !CON_STOP.includes(x))[0] || '';
+}
+function contractPayments(c){
+  const k = contractKey(c); if(!k) return [];
+  return budgetData.entries.filter(e=>e.type==='expense' && e.date && (e.note||'').toLowerCase().includes(k));
+}
+function perDay(list){ const m = {}; list.forEach(e=>{ m[e.date] = (m[e.date]||0) + e.amount; }); return Object.entries(m).sort((a,b)=>b[0].localeCompare(a[0])); }
+function perMonth(list){ const m = {}; list.forEach(e=>{ const k = e.date.slice(0,7); m[k] = (m[k]||0) + e.amount; }); return Object.entries(m).sort((a,b)=>b[0].localeCompare(a[0])); }
+function monthsAgoKey(n){ const d = new Date(); d.setDate(1); d.setMonth(d.getMonth()-n); return ymKey(d.getFullYear(), d.getMonth()); }
+const SUG_CATS = {'Energie & water':'Energie','Telecom & media':'Telecom & internet','Streaming':'Streaming','Verzekering':'Verzekering','Bankkosten':'Bankkosten','Kinderen':'Kinderen','Wonen':'Hypotheek & lening','Overig':'Abonnement'};
+function sugKey(note){ return String(note).toLowerCase().replace(/[.#$\[\]\/]/g,'_').slice(0,60); }
+function contractSuggestions(){
+  const ignore = (meta && meta.negeerAbo) || {};
+  const since = monthsAgoKey(6) + '-01', recent = monthsAgoKey(2) + '-01';
+  const groups = {};
+  budgetData.entries.filter(e=>e.type==='expense' && SUG_CATS[e.category] && e.date >= since && e.note)
+    .forEach(e=>{ const k = e.note.trim(); (groups[k] = groups[k] || []).push(e); });
+  const covered = (note)=>contracts.some(c=>{ const k = contractKey(c); return k && note.toLowerCase().includes(k); });
+  return Object.entries(groups).map(([note, list])=>{
+    const pm = perMonth(list), amts = pm.map(x=>x[1]);
+    const last = list.reduce((a,b)=>a.date>b.date?a:b);
+    return {note, months: pm.length, avg: amts.reduce((t,x)=>t+x,0)/amts.length, last, cat: list[0].category, variabel: Math.max(...amts) > Math.min(...amts)*1.15};
+  }).filter(x=>x.months>=3 && x.last.date >= recent && !covered(x.note) && !ignore[sugKey(x.note)])
+    .sort((a,b)=>b.avg-a.avg).slice(0,6);
+}
+function renderConSug(){
+  const card = document.getElementById('conSugCard'), list = document.getElementById('conSugList'); if(!card) return;
+  const sug = contractSuggestions();
+  card.style.display = sug.length ? 'block' : 'none';
+  list.innerHTML = '';
+  sug.forEach(x=>{
+    const row = document.createElement('div'); row.className='sug-row';
+    row.innerHTML = `<div class="n"><strong>${escapeHtml(x.note)}</strong><small>${x.variabel?'±':''}${fmtMoney(x.avg)}/maand · ${x.months} van de laatste 6 maanden · laatst ${fmtShort(x.last.date)}</small></div>
+      <button type="button" data-a="add">+ Contract</button><button type="button" class="x" data-a="x" title="Niet meer voorstellen">✕</button>`;
+    row.querySelector('[data-a="add"]').addEventListener('click', ()=>{
+      push(contractsRef, { naam: x.note, categorie: /threeforce|laad/i.test(x.note) ? 'EV laden' : SUG_CATS[x.cat], prijs: Math.round(x.avg*100)/100,
+        variabel: x.variabel, dagVanMaand: +x.last.date.slice(8,10), laatstGecheckt: vandaagIso(), intervalMaanden: 12,
+        notitie: 'Toegevoegd vanuit de bankgegevens', zoek: x.note.toLowerCase() });
+      toast(x.note + ' staat nu bij de contracten');
+    });
+    row.querySelector('[data-a="x"]').addEventListener('click', ()=>{ set(ref(db, hhPath+'/meta/negeerAbo/'+sugKey(x.note)), true); });
+    list.appendChild(row);
+  });
+}
 function renderContracts(){
+  renderConSug();
   const expectedTotalEl = document.getElementById('conExpectedTotal');
   if(expectedTotalEl){
-    const monthlyOnly = contracts.filter(c=>!c.variabel && c.prijs && !c.jaarlijks);
-    const total = monthlyOnly.reduce((s,c)=>s+c.prijs,0);
-    expectedTotalEl.textContent = total>0 ? `Verwachte vaste kosten deze maand: ${fmtMoney(total)} (${monthlyOnly.length} contracten met vast maandelijks bedrag, jaarlijkse kosten niet meegeteld)` : '';
+    const monthlyOnly = contracts.filter(c=>!c.infoOnly && c.prijs && !c.jaarlijks);
+    const total = monthlyOnly.reduce((t,c)=>t+c.prijs,0);
+    const yearly = contracts.filter(c=>!c.infoOnly && c.prijs && c.jaarlijks).reduce((t,c)=>t+c.prijs*12,0);
+    expectedTotalEl.textContent = total>0 ? `Vaste kosten: ±${fmtMoney(total)} per maand${yearly?` en ${fmtMoney(yearly)} per jaar aan jaarlijkse premies`:''}. Samen ±${fmtMoney(total + yearly/12)} per maand.` : '';
   }
   const list = document.getElementById('contractsList');
   if(contracts.length===0){
@@ -2778,10 +3215,25 @@ function renderContracts(){
       : c._status.level==='soon'
         ? 'Over ' + c._status.diffDays + ' dagen checken'
         : 'Volgende check: ' + fmtDateNL(c._status.next);
+    const pays = contractPayments(c);
+    let payHtml = c.laatsteAfschrijving ? `<div class="c-lastdate">Laatst betaald: ${fmtDateNL(c.laatsteAfschrijving)}</div>` : '', priceAlert = null;
+    if(pays.length){
+      const pm = perDay(pays), last = pays.reduce((a,b)=>a.date>b.date?a:b);   // facturen van dezelfde dag samen
+      payHtml = c.jaarlijks
+        ? `<div class="c-pay">Laatst betaald: <strong>${fmtDateNL(last.date)} · ${fmtMoney(last.amount)}</strong></div>`
+        : `<div class="c-pay">Laatst betaald: <strong>${fmtShort(last.date)} · ${fmtMoney(pm[0][1])}</strong>${pm.length>1?`<br>Ervoor: ${pm.slice(1,4).map(x=>`${fmtShort(x[0])} ${fmtEur0(x[1])}`).join(' · ')}`:''}</div>`;
+      if(!c.variabel && !c.jaarlijks && !c.infoOnly && c.prijs && pm[0][0] >= monthsAgoKey(1) && Math.abs(pm[0][1] - c.prijs) > Math.max(1, c.prijs*0.03)) priceAlert = pm[0][1];
+    }
     row.innerHTML = `<div class="c-top">
-        <div class="c-left"><div class="c-name">${escapeHtml(c.naam)}</div><div class="c-cat">${escapeHtml(c.categorie)}${c.notitie?' · '+escapeHtml(c.notitie):''}</div>${c.laatsteAfschrijving?`<div class="c-lastdate">Laatst betaald: ${fmtDateNL(c.laatsteAfschrijving)}</div>`:''}</div>
+        <div class="c-left"><div class="c-name">${escapeHtml(c.naam)}</div><div class="c-cat">${escapeHtml(c.categorie)}${c.notitie?' · '+escapeHtml(c.notitie):''}</div>${payHtml}</div>
         <div class="c-right">${c.prijs ? (c.jaarlijks ? `<div class="c-price c-price-yearly">🗓️ ${fmtMoney(c.prijs*12)}/jaar</div>` : `<div class="c-price">${fmtMoney(c.prijs)}/mnd</div>`) : ''}<div class="status-pill ${c._status.level}">${pillText}</div></div>
       </div>`;
+    if(priceAlert!==null){
+      const al = document.createElement('div'); al.className='c-alert';
+      al.innerHTML = `<span>${priceAlert>c.prijs?'⬆️':'⬇️'} Laatste factuur ${fmtMoney(priceAlert)}, in de lijst ${fmtMoney(c.prijs)}.</span><button type="button">Bedrag bijwerken</button>`;
+      al.querySelector('button').addEventListener('click', ()=>{ update(ref(db, hhPath+'/contracts/'+c.id), {prijs: Math.round(priceAlert*100)/100}); toast('Bedrag bijgewerkt'); });
+      row.appendChild(al);
+    }
     const actions = document.createElement('div'); actions.className='c-actions';
     if(!c.infoOnly){
       const compareUrl = CONTRACT_COMPARE_LINKS[c.categorie];
@@ -2812,6 +3264,7 @@ function renderContracts(){
       </div>
       <div style="flex:1;margin-bottom:8px;"><label style="font-size:11px;color:var(--muted);">Laatst gecheckt</label><input type="date" data-f="laatstGecheckt" value="${c.laatstGecheckt||fmtDate(new Date())}"></div>
       <input type="text" data-f="notitie" value="${escapeHtml(c.notitie||'')}" placeholder="Notitie (optioneel)">
+      <div><label style="font-size:11px;color:var(--muted);">Herkennen in de bankgegevens aan</label><input type="text" data-f="zoek" value="${escapeHtml(c.zoek||'')}" placeholder="${escapeHtml(contractKey({naam:c.naam})||'woord uit de omschrijving')}"></div>
       <div class="c-edit-flags">
         <label><input type="checkbox" data-f="variabel" ${c.variabel?'checked':''}> Variabel bedrag</label>
         <label><input type="checkbox" data-f="infoOnly" ${c.infoOnly?'checked':''}> Louter info (niet meer herzien)</label>
@@ -2845,6 +3298,7 @@ function renderContracts(){
       const variabel = editPanel.querySelector('[data-f="variabel"]').checked;
       const infoOnly = editPanel.querySelector('[data-f="infoOnly"]').checked;
       const vervaldagRaw = editPanel.querySelector('[data-f="vervaldag"]').value.trim();
+      const zoek = editPanel.querySelector('[data-f="zoek"]').value.trim().toLowerCase() || null;
       let jaarlijks = false, vervalDag = null, vervalMaand = null;
       if(vervaldagRaw){
         const m = vervaldagRaw.match(/^(\d{1,2})\/(\d{1,2})$/);
@@ -2865,7 +3319,7 @@ function renderContracts(){
         if(!dag || dag<1 || dag>31){ alert('Dag v/d maand moet tussen 1 en 31 liggen.'); return; }
         dagVanMaand = dag;
       }
-      update(ref(db, hhPath+'/contracts/'+c.id), { naam, categorie, prijs, dagVanMaand, laatstGecheckt, notitie, variabel, infoOnly, jaarlijks, vervalDag, vervalMaand });
+      update(ref(db, hhPath+'/contracts/'+c.id), { naam, categorie, prijs, dagVanMaand, laatstGecheckt, notitie, variabel, infoOnly, jaarlijks, vervalDag, vervalMaand, zoek });
       editPanel.style.display='none';
     });
     if(!categoryContainers.has(c.categorie)){
@@ -2910,35 +3364,24 @@ document.getElementById('clearCheckedBtn').addEventListener('click', ()=>{
 const SHARED_TODO_MAX = 4;
 wireAddBar('sharedTodoAddRow', 'sharedTodoInput', 'sharedTodoAddBtn', (val)=>{
   if(sharedTodoItems.length >= SHARED_TODO_MAX) return false;
-  pushMine(sharedTodoRef, { tekst: val });
+  // oudere taken zonder volgorde krijgen er eerst een, zodat een nieuwe taak echt achteraan komt
+  const cur = sortedShared();
+  if(cur.some(x=>typeof x.order!=='number')) saveOrder(cur.map(x=>taskRef('samen', x.id)));
+  const order = cur.length ? Math.max(...cur.map((x,i)=>typeof x.order==='number' ? x.order : i*1000), (cur.length-1)*1000) + 1000 : 0;
+  pushMine(sharedTodoRef, { tekst: val, order });
 });
-// afvinken = klaar = weg (zoals voorheen); kort zichtbaar als afgevinkt
-function sharedTodoRow(i){
-  const row = document.createElement('div'); row.className='shop-item';
-  const cb = document.createElement('input'); cb.type='checkbox';
-  const done = ()=>{ cb.checked = true; row.classList.add('done'); setTimeout(()=>remove(ref(db, hhPath+'/sharedTodo/'+i.id)), 450); };
-  cb.addEventListener('change', ()=>{ if(cb.checked) done(); });
-  const txt = document.createElement('div'); txt.className='txt'; txt.textContent = i.tekst; txt.style.cursor='pointer';
-  txt.addEventListener('click', done);
-  row.appendChild(cb); row.appendChild(txt);
-  return row;
-}
 function renderSharedTodo(){
   const list = document.getElementById('sharedTodoList');
+  if(dragBusy(renderSharedTodo)) return;
   const addRow = document.getElementById('sharedTodoAddRow');
   const fullMsg = document.getElementById('sharedTodoFullMsg');
   const full = sharedTodoItems.length >= SHARED_TODO_MAX;
   addRow.style.display = full ? 'none' : 'flex';
   fullMsg.style.display = full ? 'block' : 'none';
-  if(sharedTodoItems.length===0){ list.innerHTML = '<div class="empty-state">Nog geen gedeelde taken.</div>'; return; }
-  list.innerHTML='';
-  sharedTodoItems.forEach(i=>{
-    const row = sharedTodoRow(i);
-    const del = document.createElement('button'); del.className='del-btn'; del.textContent='✕'; del.title='Verwijderen';
-    del.addEventListener('click', ()=>{ remove(ref(db, hhPath+'/sharedTodo/'+i.id)); });
-    row.appendChild(del);
-    list.appendChild(row);
-  });
+  if(sharedTodoItems.length===0) list.innerHTML = '<div class="empty-state">Nog geen gedeelde taken.</div>';
+  else { list.innerHTML=''; sortedShared().forEach(t=>taskRow(t, 'samen', list, false)); }
+  restoreSubFocus();
+  renderHomeTodo();
 }
 // afdelingen: een woord van het item dat begint met een van deze stammen bepaalt de groep (eerste treffer wint)
 const AFDELINGEN = [
