@@ -525,6 +525,43 @@
   .home-menu{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--accent-light);border-radius:12px;margin:0 0 7px;font-size:13.5px;cursor:pointer;}
   .home-menu .ag-chev{margin-left:auto;}
 
+  /* v12: boek van het kind (herinneringen, uitspraken, mijlpalen, brieven voor later) */
+  .kid-boek{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);}
+  .kid-ask{background:var(--accent-light);border-radius:12px;padding:10px 12px;margin-bottom:8px;}
+  .kid-ask .q{font-size:13.5px;font-weight:600;line-height:1.4;margin:2px 0 8px;}
+  .kid-ask .l{font-size:11px;font-weight:700;color:var(--warn-ink);text-transform:uppercase;letter-spacing:.3px;}
+  .kid-ask .btn{padding:8px 14px;font-size:13px;}
+  .kid-ago{font-size:13px;line-height:1.45;margin-bottom:8px;cursor:pointer;}
+  .kid-ago b{color:var(--p-remon);}
+  .kid-boek-link{display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;color:var(--primary);cursor:pointer;}
+  .boek-top{display:flex;align-items:center;gap:12px;margin:2px 2px 14px;}
+  .boek-top .d{font-family:'Space Grotesk',system-ui,sans-serif;font-size:22px;font-weight:700;}
+  .boek-top .s{font-size:12.5px;color:var(--muted);margin-top:2px;}
+  .boek-intro{font-size:13px;line-height:1.5;}
+  .boek-intro .q{font-weight:700;font-size:14.5px;margin:4px 0 2px;}
+  .boek-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px;}
+  .boek-chips button{border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:20px;padding:7px 12px;font:600 12.5px 'Inter',sans-serif;cursor:pointer;}
+  .boek-chips button.on{background:var(--p-remon);border-color:var(--p-remon);color:#fff;}
+  #boekForm textarea{min-height:96px;resize:vertical;font-size:15px;line-height:1.45;}
+  #boekForm label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:10px 0 4px;}
+  #boekForm .rij{display:flex;gap:8px;margin-top:12px;}
+  #boekForm .rij .btn{flex:1;}
+  .boek-foto-kies{display:flex;align-items:center;gap:10px;}
+  .boek-foto-kies img{width:64px;height:64px;object-fit:cover;border-radius:10px;}
+  .boek-maand{font-family:'Space Grotesk',system-ui,sans-serif;font-weight:700;font-size:15px;margin:18px 4px 8px;display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+  .boek-maand span{font-family:'Inter',sans-serif;font-size:11.5px;font-weight:600;color:var(--muted);}
+  .boek-item{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:8px;box-shadow:var(--shadow);cursor:pointer;}
+  .boek-item .meta{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);font-weight:600;}
+  .boek-item .meta .pd{width:7px;height:7px;border-radius:50%;display:inline-block;}
+  .boek-item .t{font-size:14.5px;line-height:1.5;margin-top:5px;white-space:pre-wrap;}
+  .boek-item.woord .t{font-family:'Space Grotesk',system-ui,sans-serif;font-size:17px;font-weight:600;color:var(--p-remon);}
+  .boek-item.mijlpaal{border-left:4px solid var(--accent);}
+  .boek-item.brief{background:var(--accent-light);border-style:dashed;}
+  .boek-item img{display:block;width:100%;max-height:340px;object-fit:cover;border-radius:10px;margin-top:9px;background:var(--bg);min-height:60px;}
+  #boekViewer{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;padding:16px;}
+  #boekViewer.show{display:flex;}
+  #boekViewer img{max-width:100%;max-height:100%;border-radius:8px;}
+
   /* v11: donkere modus, volgt de instelling van de iPhone */
   @media (prefers-color-scheme: dark){
     :root{ --bg:#121816; --surface:#1B2320; --ink:#E6ECE9; --muted:#97A39D; --primary:#3A9184; --primary-light:#1F3833;
@@ -612,7 +649,7 @@
         <button class="btn outline" id="resetOwnerBtn" type="button" style="width:100%;">Andere persoon kiezen</button>
       </div>
       <div class="card">
-        <h3>💾 Back-up<span class="sub">Bewaart alles uit de app (kalender, taken, lijst, contracten, registraties en analyse) in één bestand. Bewaar het in Bestanden of Dropbox. Eén keer per maand volstaat.</span></h3>
+        <h3>💾 Back-up<span class="sub">Bewaart alles uit de app (kalender, taken, lijst, contracten, registraties, analyse en het boek met foto's) in één bestand. Bewaar het in Bestanden of Dropbox. Eén keer per maand volstaat.</span></h3>
         <button class="btn" id="backupBtn" type="button" style="width:100%;">💾 Back-up maken</button>
         <div id="backupStatus" style="font-size:12px;color:var(--muted);margin-top:8px;"></div>
       </div>
@@ -621,6 +658,25 @@
         <button class="btn outline" id="logoutLink" type="button" style="width:100%;">Uitloggen</button>
         <div id="appVersie" style="font-size:11.5px;color:var(--muted);margin-top:10px;text-align:center;"></div>
       </div>
+    </section>
+    <section id="panel-boek" class="panel">
+      <div class="boek-top"><button type="button" class="icon-btn" id="boekBack" aria-label="Terug">‹</button><div><div class="d" id="boekTitel">Boek</div><div class="s" id="boekSub"></div></div></div>
+      <div class="card boek-intro" id="boekIntro"></div>
+      <button type="button" class="btn" id="boekNewBtn" style="width:100%;margin-bottom:12px;">+ Iets opschrijven</button>
+      <form class="card" id="boekForm" hidden>
+        <div class="boek-chips" id="boekSoort"></div>
+        <label for="boekTekst" id="boekTekstLbl">Wat gebeurde er?</label>
+        <textarea id="boekTekst" required></textarea>
+        <label for="boekDatum">Datum</label>
+        <input type="date" id="boekDatum" required>
+        <div id="boekOpenRij" hidden><label for="boekOpen">Mag open op</label><input type="date" id="boekOpen"></div>
+        <label>Foto (mag ook zonder)</label>
+        <div class="boek-foto-kies"><img id="boekFotoPrev" alt="" hidden><input type="file" id="boekFoto" accept="image/*" style="flex:1;"><button type="button" class="btn outline" id="boekFotoWeg" hidden>Weg</button></div>
+        <div class="rij"><button type="submit" class="btn" id="boekBewaar">Bewaren</button><button type="button" class="btn outline" id="boekAnnuleer">Annuleren</button></div>
+        <button type="button" class="ba-more" id="boekWis" hidden style="margin-top:8px;color:var(--danger);">Verwijderen</button>
+      </form>
+      <div class="boek-chips" id="boekFilter"></div>
+      <div id="boekList"></div>
     </section>
     <section id="panel-cal" class="panel">
       <div class="card">
@@ -927,7 +983,7 @@ function vandaagIso(){ return fmtDate(new Date()); }
 
 // ---------- versie en meldingen ----------
 // De versie staat onder Instellingen: zo is op de iPhone meteen te zien of de nieuwste versie geladen is.
-const APP_VERSIE = 'v11 · 14 november 2026';
+const APP_VERSIE = 'v12 · 14 november 2026';
 document.getElementById('appVersie').textContent = 'Gezinshub ' + APP_VERSIE;
 let toastTimer = null;
 function toast(msg, isErr, undo){
@@ -1040,6 +1096,10 @@ function attachListeners(){
   });
   onValue(weekmenuRef, snap=>{ weekmenu = snap.val() || {}; menuDenied = false; renderMenu(); renderHome(); }, ()=>{ menuDenied = true; renderMenu(); renderHome(); });
   onValue(shopFavRef, snap=>{ shopFavs = snapToArray(snap.val()); shopFavDenied = false; renderShoppingList(); }, ()=>{ shopFavDenied = true; renderShoppingList(); });
+  // v12: boek. Enkel de teksten worden live gevolgd; foto's pas bij het bekijken.
+  onValue(boekRef, snap=>{ boek = snapToArray(snap.val()); boekDenied = false; renderKid(); renderNew();
+    if(document.getElementById('panel-boek').classList.contains('active') && document.getElementById('boekForm').hidden) renderBoek(); },
+    ()=>{ boekDenied = true; boek = []; renderKid(); });
   onValue(metaRef, snap=>{ meta = snap.val() || {}; renderTodayOverview(); renderConSug(); }, ()=>{});
   renderTodoOwnerGate();
   loadDeals(); lastDealsLoad = Date.now();
@@ -1057,7 +1117,7 @@ document.addEventListener('visibilitychange', ()=>{
 function showPanel(name){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
-  const navName = name==='con' ? 'bud' : name;
+  const navName = name==='con' ? 'bud' : name==='boek' ? 'home' : name;
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===navName));
   if(name==='cal'){ document.getElementById('photoWeekStart').value = mondayOf(fmtDate(new Date())); if(editingEv) setNewEvOpen(false); }
   if(name==='settings'){ renderSettings(); }
@@ -1216,6 +1276,7 @@ function renderNew(){
   const shop = shoppingItems.filter(i=>fresh(i) && !i.done);
   if(shop.length) lines.push(`<div class="new-line"><span class="k">🛒</span>Op de lijst: ${shop.slice(0,4).map(i=>escapeHtml(i.tekst)).join(', ')}${shop.length>4?` (+${shop.length-4})`:''}</div>`);
   sharedTodoItems.filter(fresh).forEach(i=>lines.push(`<div class="new-line"><span class="k">🤝</span>Samen: ${escapeHtml(i.tekst)}</div>`));
+  boek.filter(fresh).forEach(b=>lines.push(`<div class="new-line"><span class="k">📖</span>${escapeHtml(b.wie||'')} schreef in het boek${b.soort==='brief' ? ' een brief voor later' : ': ' + escapeHtml(b.tekst.length>50 ? b.tekst.slice(0,48)+'…' : b.tekst)}</div>`));
   const a = claudeAnalyse;
   if(a && a.ingeladen && a.ingeladen > prevSeen && String(a.ingeladen)!==lsGet('gezinshub-ownImport'))
     lines.push(`<div class="new-line"><span class="k">💬</span>Nieuwe analyse van Claude (gegevens t.e.m. ${fmtDayMonth(a.gegevensTot||a.datum)})</div>`);
@@ -1384,8 +1445,9 @@ function renderKid(){
   document.getElementById('homeKid').innerHTML = `<div class="kid-head"><span>🧒 ${escapeHtml(k.naam||'')} · ${leeftijdTekst(m)}</span><span style="text-transform:none;font-weight:600;">weetje van de dag</span></div>
     <div class="kid-t">${escapeHtml(w.k)}</div><div class="kid-x">${escapeHtml(w.x)}</div>
     <div class="kid-tip">💡 ${escapeHtml(w.tip)}</div>
-    <div class="kid-foot"><span>Bron: ${escapeHtml(w.b)}</span><button type="button" class="ba-more" id="kidNext">Nog een ›</button></div>`;
+    <div class="kid-foot"><span>Bron: ${escapeHtml(w.b)}</span><button type="button" class="ba-more" id="kidNext">Nog een ›</button></div>` + boekKaart();
   document.getElementById('kidNext').addEventListener('click', ()=>{ kidOffset++; renderKid(); });
+  wireBoekKaart(document.getElementById('homeKid'));
 }
 
 // ---------- afvalophaling: morgen buitenzetten ----------
@@ -1536,7 +1598,7 @@ wireAddBar('printAddForm', 'printInput', 'printAddBtn', (val)=>{
 });
 
 // ---------- back-up ----------
-const BACKUP_PATHS = ['calendarEvents','budgetEntries','budgetGoals','contracts','shoppingList','sharedTodo','claudeAnalyse','todos','vasteTaken','lijstVast','meta','weekmenu'];
+const BACKUP_PATHS = ['calendarEvents','budgetEntries','budgetGoals','contracts','shoppingList','sharedTodo','claudeAnalyse','todos','vasteTaken','lijstVast','meta','weekmenu','boek','boekFoto'];
 async function makeBackup(){
   const st = document.getElementById('backupStatus');
   st.textContent = 'Gegevens worden opgehaald...';
@@ -1545,7 +1607,7 @@ async function makeBackup(){
     try{ const snap = await get(ref(db, hhPath+'/'+pth)); if(snap.exists()) data[pth] = snap.val(); }
     catch(err){
       if(pth==='todos' && owner){ try{ const s2 = await get(ref(db, hhPath+'/todos/'+owner)); if(s2.exists()) data.todos = {[owner]: s2.val()}; continue; }catch(e){} }
-      if(!['vasteTaken','lijstVast','meta','budgetGoals','weekmenu'].includes(pth)) missed.push(pth);
+      if(!['vasteTaken','lijstVast','meta','budgetGoals','weekmenu','boek','boekFoto'].includes(pth)) missed.push(pth);
     }
   }
   const todayIso = fmtDate(new Date());
@@ -3489,6 +3551,207 @@ function wxTick(){
     if(j && j.daily){ wxData = {t: Date.now(), daily: j.daily}; lsSet('gezinshub-wx', JSON.stringify(wxData)); renderWx(); }
   }).catch(()=>{}).finally(()=>{ wxBusy = false; });
 }
+
+// ---------- boek (v12): samen herinneringen bijhouden aan het kind ----------
+// Wat hij nu meemaakt, vergeet hij later grotendeels (zie het weetje van Bauer & Larkina). Het boek onthoudt het voor hem.
+// boek/<id> {datum, wie, soort: moment|woord|mijlpaal|brief, tekst, foto?: true, open?: 'JJJJ-MM-DD' (enkel brief)}
+// boekFoto/<id> = verkleinde jpeg als data-URL. Apart pad: foto's worden pas opgehaald als je het boek bekijkt.
+// Naam en geboortedatum komen uit analyse.kind (niet in deze openbare code). Weigeren de regels het pad, dan verdwijnt alles netjes.
+const boekRef = ref(db, hhPath + '/boek');
+let boek = [], boekDenied = false, boekFilter = 'alles', boekEdit = null, boekSoort = 'moment', boekNieuweFoto = null, boekFotoWeg = false, boekToon = 30;
+const boekFotos = {};
+const BOEK_SOORT = {
+  moment:   {ic:'✨', l:'Moment',     lbl:'Wat gebeurde er?',               ph:'Bv. Hij gaf de hond zijn koek en keek dan heel trots naar ons.'},
+  woord:    {ic:'💬', l:'Uitspraak',  lbl:'Wat zei hij, letterlijk?',       ph:'Bv. "Papa, de maan is kapot."'},
+  mijlpaal: {ic:'⭐', l:'Mijlpaal',   lbl:'Wat deed hij voor het eerst?',   ph:'Bv. Voor het eerst alleen de trap op.'},
+  brief:    {ic:'✉️', l:'Brief voor later', lbl:'Je brief (blijft dicht tot de datum hieronder)', ph:'Lieve …, vandaag …'}
+};
+const BOEK_MV = {moment:'Momenten', woord:'Uitspraken', mijlpaal:'Mijlpalen', brief:'Brieven'};
+// één vraag per week, zodat het weekmoment nooit begint met een leeg blad (wisselt elke maandag)
+const WEEKVRAGEN = [
+  'Wat deed hem deze week het hardst lachen?', 'Welk nieuw woord of welke zin zei hij?', 'Waar was hij deze week trots op?',
+  'Wat wou hij steeds opnieuw doen of horen?', 'Waar was hij bang of verdrietig om, en wat hielp?', 'Wat deed hij deze week voor het eerst?',
+  'Met wie of wat speelde hij het liefst?', 'Welke vraag stelde hij jullie?', 'Wat at hij graag, of absoluut niet?',
+  'Welk moment van deze week wil je nooit vergeten?', 'Hoe liet hij zien dat hij jullie graag ziet?', 'Wat leerde hij jou deze week?'
+];
+function weekVraag(){ const w = Math.floor((new Date(mondayOf(vandaagIso())+'T00:00:00') - new Date('2026-01-05T00:00:00')) / (7*86400000)); return WEEKVRAGEN[((w % WEEKVRAGEN.length) + WEEKVRAGEN.length) % WEEKVRAGEN.length]; }
+function kindInfo(){ const k = claudeAnalyse && claudeAnalyse.kind; return (k && k.geboren && /^\d{4}-\d{2}-\d{2}$/.test(k.geboren)) ? k : null; }
+function kindNaam(){ const k = kindInfo(); return (k && k.naam) || 'ons kind'; }
+function briefDicht(b){ return b.soort === 'brief' && b.open && b.open > vandaagIso(); }
+function standaardOpen(){ const k = kindInfo(); if(k){ const [y,m,d] = k.geboren.split('-'); return (+y+18) + '-' + m + '-' + d; } return addDays(vandaagIso(), 365*18); }
+function fmtLang(iso){ return new Date(iso+'T00:00:00').toLocaleDateString('nl-BE',{day:'numeric', month:'long', year:'numeric'}); }
+// iets geschreven sinds maandag (over welke dag ook) = weekmoment gedaan
+function boekVanDezeWeek(wie){ const ma = new Date(mondayOf(vandaagIso())+'T00:00:00').getTime(); return boek.some(b=>b.wie===wie && pushTime(b.id) >= ma); }
+// "een jaar geleden": een herinnering van rond deze dag (±3 dagen), 1 of meer jaren terug
+function boekJarenGeleden(){
+  const nu = new Date(vandaagIso()+'T00:00:00');
+  const kand = boek.filter(b=>b.soort!=='brief' && b.datum && b.tekst).map(b=>{
+    const d = new Date(b.datum+'T00:00:00'); const jaren = nu.getFullYear() - d.getFullYear();
+    if(jaren < 1) return null;
+    const zelfde = new Date(d); zelfde.setFullYear(nu.getFullYear());
+    return Math.abs(zelfde - nu) <= 3*86400000 ? {b, jaren} : null;
+  }).filter(Boolean);
+  return kand.sort((x,y)=>x.jaren-y.jaren)[0] || null;
+}
+function boekKaart(){
+  if(boekDenied) return '';
+  const delen = [];
+  const dag = new Date().getDay(); // 5 vr, 6 za, 0 zo: het weekmoment
+  if(owner && [5,6,0].includes(dag) && !boekVanDezeWeek(owner))
+    delen.push(`<div class="kid-ask"><div class="l">Weekmoment · 5 minuten</div><div class="q">${escapeHtml(weekVraag())}</div><button type="button" class="btn" data-boek-nieuw="1">Opschrijven</button></div>`);
+  const jg = boekJarenGeleden();
+  if(jg) delen.push(`<div class="kid-ago" data-boek-open="1">📅 <b>${jg.jaren===1?'Een jaar':jg.jaren+' jaar'} geleden:</b> ${escapeHtml(jg.b.tekst.length>70 ? jg.b.tekst.slice(0,68)+'…' : jg.b.tekst)}</div>`);
+  const n = boek.length;
+  delen.push(`<div class="kid-boek-link" data-boek-open="1"><span>📖 Boek van ${escapeHtml(kindNaam())}${n?` · ${n} ${n===1?'herinnering':'herinneringen'}`:''}</span><span>›</span></div>`);
+  return `<div class="kid-boek">${delen.join('')}</div>`;
+}
+function wireBoekKaart(root){
+  root.querySelectorAll('[data-boek-open]').forEach(el=>el.addEventListener('click', ()=>openBoek()));
+  root.querySelectorAll('[data-boek-nieuw]').forEach(el=>el.addEventListener('click', (e)=>{ e.stopPropagation(); openBoek(); boekFormOpen(null); }));
+}
+function openBoek(){ showPanel('boek'); renderBoek(); }
+document.getElementById('boekBack').addEventListener('click', ()=>showPanel('home'));
+
+function renderBoekSoortChips(){
+  const el = document.getElementById('boekSoort');
+  el.innerHTML = Object.entries(BOEK_SOORT).map(([k,s])=>`<button type="button" data-s="${k}" class="${k===boekSoort?'on':''}">${s.ic} ${s.l}</button>`).join('');
+  el.querySelectorAll('button').forEach(b=>b.addEventListener('click', ()=>{ boekSoort = b.dataset.s; renderBoekSoortChips(); }));
+  const s = BOEK_SOORT[boekSoort];
+  document.getElementById('boekTekstLbl').textContent = s.lbl;
+  document.getElementById('boekTekst').placeholder = s.ph.replace('…', kindNaam());
+  document.getElementById('boekOpenRij').hidden = boekSoort !== 'brief';
+  if(boekSoort === 'brief' && !document.getElementById('boekOpen').value) document.getElementById('boekOpen').value = standaardOpen();
+}
+function boekFormOpen(b){
+  boekEdit = b; boekNieuweFoto = null; boekFotoWeg = false;
+  const f = document.getElementById('boekForm');
+  boekSoort = b ? (b.soort||'moment') : 'moment';
+  document.getElementById('boekTekst').value = b ? (b.tekst||'') : '';
+  document.getElementById('boekDatum').value = b ? b.datum : vandaagIso();
+  document.getElementById('boekOpen').value = b && b.open ? b.open : '';
+  document.getElementById('boekFoto').value = '';
+  const prev = document.getElementById('boekFotoPrev');
+  prev.hidden = !(b && b.foto); prev.src = (b && boekFotos[b.id]) || '';
+  document.getElementById('boekFotoWeg').hidden = !(b && b.foto);
+  document.getElementById('boekWis').hidden = !b;
+  document.getElementById('boekBewaar').textContent = b ? 'Wijziging bewaren' : 'Bewaren';
+  renderBoekSoortChips();
+  f.hidden = false; document.getElementById('boekNewBtn').hidden = true;
+  f.scrollIntoView({block:'start'});
+  if(!b) setTimeout(()=>document.getElementById('boekTekst').focus(), 50);
+}
+function boekFormDicht(){ document.getElementById('boekForm').hidden = true; document.getElementById('boekNewBtn').hidden = false; boekEdit = null; boekNieuweFoto = null; }
+document.getElementById('boekNewBtn').addEventListener('click', ()=>boekFormOpen(null));
+document.getElementById('boekAnnuleer').addEventListener('click', boekFormDicht);
+// foto verkleinen tot max 1280 px (jpeg): een foto van de iPhone wordt zo ±150-250 kB
+function verkleinFoto(file){
+  return new Promise((ok, nok)=>{
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = ()=>{
+      const max = 1280, sc = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth*sc); c.height = Math.round(img.naturalHeight*sc);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      ok(c.toDataURL('image/jpeg', 0.75));
+    };
+    img.onerror = ()=>{ URL.revokeObjectURL(url); nok(new Error('Deze foto kon niet gelezen worden')); };
+    img.src = url;
+  });
+}
+document.getElementById('boekFoto').addEventListener('change', async (e)=>{
+  const file = e.target.files && e.target.files[0]; if(!file) return;
+  try{
+    boekNieuweFoto = await verkleinFoto(file); boekFotoWeg = false;
+    const prev = document.getElementById('boekFotoPrev'); prev.src = boekNieuweFoto; prev.hidden = false;
+    document.getElementById('boekFotoWeg').hidden = false;
+  }catch(err){ toast(err.message, true); }
+});
+document.getElementById('boekFotoWeg').addEventListener('click', ()=>{
+  boekNieuweFoto = null; boekFotoWeg = true; document.getElementById('boekFoto').value = '';
+  document.getElementById('boekFotoPrev').hidden = true; document.getElementById('boekFotoWeg').hidden = true;
+});
+document.getElementById('boekForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const tekst = document.getElementById('boekTekst').value.trim(); if(!tekst) return;
+  const obj = { datum: document.getElementById('boekDatum').value || vandaagIso(), soort: boekSoort, tekst };
+  if(boekSoort === 'brief') obj.open = document.getElementById('boekOpen').value || standaardOpen();
+  try{
+    let id;
+    if(boekEdit){
+      id = boekEdit.id;
+      const upd = {...obj, open: obj.open || null};
+      if(boekNieuweFoto) upd.foto = true; else if(boekFotoWeg) upd.foto = null;
+      await update(ref(db, hhPath+'/boek/'+id), upd);
+    } else {
+      obj.wie = owner || 'Wij';
+      if(boekNieuweFoto) obj.foto = true;
+      id = pushMine(boekRef, obj).key;
+    }
+    if(boekNieuweFoto){ boekFotos[id] = boekNieuweFoto; await set(ref(db, hhPath+'/boekFoto/'+id), boekNieuweFoto); }
+    else if(boekFotoWeg && boekEdit){ delete boekFotos[id]; await remove(ref(db, hhPath+'/boekFoto/'+id)); }
+    toast(boekEdit ? 'Aangepast' : (boekSoort==='brief' ? 'Brief verzegeld ✉️' : 'Bewaard in het boek 📖'));
+    boekFormDicht(); renderBoek();
+  }catch(err){ toast('Bewaren lukte niet: ' + ((err && (err.code||err.message)) || err), true); }
+});
+document.getElementById('boekWis').addEventListener('click', ()=>{
+  const b = boekEdit; if(!b) return;
+  const items = [{p:'boek/'+b.id, v: cleanCopy(b)}];
+  if(b.foto) items.push({p:'boekFoto/'+b.id, v: boekFotos[b.id]});
+  boekFormDicht();
+  removeWithUndo(items, 'Herinnering');
+});
+function laadBoekFoto(id, img){
+  if(boekFotos[id]){ img.src = boekFotos[id]; return; }
+  get(ref(db, hhPath+'/boekFoto/'+id)).then(s=>{ const v = s.val(); if(v){ boekFotos[id] = v; img.src = v; } else img.remove(); }).catch(()=>img.remove());
+}
+function renderBoek(){
+  const k = kindInfo(), naam = kindNaam();
+  document.getElementById('boekTitel').textContent = 'Boek van ' + naam;
+  const nB = boek.filter(b=>b.soort!=='brief').length, nBr = boek.filter(b=>b.soort==='brief').length;
+  document.getElementById('boekSub').textContent = (k ? leeftijdTekst(leeftijdMaanden(k.geboren, new Date())) + ' · ' : '') +
+    (nB ? `${nB} ${nB===1?'herinnering':'herinneringen'}` : 'nog leeg') + (nBr ? ` · ${nBr} ${nBr===1?'brief':'brieven'} voor later` : '');
+  const intro = document.getElementById('boekIntro');
+  intro.innerHTML = boek.length < 3
+    ? `<div>Wat ${escapeHtml(naam)} nu meemaakt, zal hij later grotendeels vergeten. Dit boek onthoudt het voor hem: kleine momenten, letterlijke uitspraken, eerste keren, en brieven die pas open mogen als hij groot is.</div><div style="margin-top:8px;">Jullie schrijven allebei mee. Vrijdag tot zondag staat er op Vandaag één vraag; vijf minuten volstaan.</div><div class="q">Deze week: ${escapeHtml(weekVraag())}</div>`
+    : `<div class="q" style="margin-top:0;">Deze week: ${escapeHtml(weekVraag())}</div>`;
+  const fl = document.getElementById('boekFilter');
+  const filters = [['alles','Alles'], ...Object.entries(BOEK_SOORT).map(([k2,s])=>[k2, s.ic+' '+BOEK_MV[k2]])].filter(([f])=>f==='alles' || boek.some(b=>b.soort===f));
+  fl.innerHTML = boek.length ? filters.map(([f,l])=>`<button type="button" data-f="${f}" class="${f===boekFilter?'on':''}">${l}</button>`).join('') : '';
+  fl.querySelectorAll('button').forEach(b=>b.addEventListener('click', ()=>{ boekFilter = b.dataset.f; boekToon = 30; renderBoek(); }));
+  const lijstEl = document.getElementById('boekList');
+  if(boekDenied){ lijstEl.innerHTML = `<div class="today-empty">Het boek kan nog niet bewaren: de databaseregels laten het pad 'boek' (nog) niet toe.</div>`; return; }
+  const items = boek.filter(b=>boekFilter==='alles' || b.soort===boekFilter)
+    .sort((a,b)=>(b.datum||'').localeCompare(a.datum||'') || pushTime(b.id)-pushTime(a.id));
+  if(!items.length){ lijstEl.innerHTML = `<div class="today-empty">Nog niets opgeschreven. Begin met iets kleins van vandaag.</div>`; return; }
+  lijstEl.innerHTML = '';
+  let maand = null;
+  items.slice(0, boekToon).forEach(b=>{
+    const mk = (b.datum||'').slice(0,7);
+    if(mk !== maand){
+      maand = mk;
+      const [y,m] = mk.split('-').map(Number);
+      const h = document.createElement('div'); h.className = 'boek-maand';
+      h.innerHTML = `${MONTHS[m-1].replace(/^./,c=>c.toUpperCase())} ${y}${k ? `<span>${leeftijdTekst(Math.max(0, leeftijdMaanden(k.geboren, new Date(b.datum+'T00:00:00'))))}</span>` : ''}`;
+      lijstEl.appendChild(h);
+    }
+    const s = BOEK_SOORT[b.soort] || BOEK_SOORT.moment, dicht = briefDicht(b);
+    const el = document.createElement('div'); el.className = 'boek-item ' + (b.soort||'moment'); el.dataset.id = b.id;
+    const wanneer = new Date(b.datum+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'short', day:'numeric', month:'short'});
+    el.innerHTML = `<div class="meta"><span>${s.ic}</span><span class="pd" style="background:${personColor(b.wie)}"></span><span>${escapeHtml(b.wie||'')} · ${wanneer}</span></div>` +
+      (dicht ? `<div class="t">Verzegeld tot ${fmtLang(b.open)}.</div>` : `<div class="t">${escapeHtml(b.tekst)}</div>`);
+    if(b.foto && !dicht){ const img = document.createElement('img'); img.alt = ''; img.loading = 'lazy'; el.appendChild(img); laadBoekFoto(b.id, img);
+      img.addEventListener('click', (ev)=>{ ev.stopPropagation(); if(img.src){ document.querySelector('#boekViewer img').src = img.src; document.getElementById('boekViewer').classList.add('show'); } }); }
+    el.addEventListener('click', ()=>{
+      if(dicht && b.wie !== owner){ toast('Deze brief blijft dicht tot ' + fmtLang(b.open) + ' ✉️'); return; }
+      boekFormOpen(b);
+    });
+    lijstEl.appendChild(el);
+  });
+  if(items.length > boekToon){
+    const m = document.createElement('button'); m.type = 'button'; m.className = 'ba-more'; m.textContent = `Toon oudere (${items.length - boekToon}) ›`;
+    m.addEventListener('click', ()=>{ boekToon += 30; renderBoek(); }); lijstEl.appendChild(m);
+  }
+}
+(()=>{ const v = document.createElement('div'); v.id = 'boekViewer'; v.innerHTML = '<img alt="">'; v.addEventListener('click', ()=>v.classList.remove('show')); document.body.appendChild(v); })();
 
 // ---------- weekmenu (v11) ----------
 // Bewust klein: een dichtgeklapte kaart boven de boodschappenlijst en één regel 'Vanavond' op Vandaag.
