@@ -677,7 +677,7 @@
         </div>
         <div class="card" id="printCard" style="display:none;">
           <h3>🖨️ 3D-printwachtrij<span class="sub">Enkel voor Tom. Bovenaan = volgende print. Sleep aan ⋮⋮ of tik ⤒ om te verschuiven, vink af als hij geprint is.</span></h3>
-          <form class="add-bar" id="printAddForm" autocomplete="off"><input type="text" id="printInput" placeholder="Wat wil je printen? Een link mag ook." enterkeyhint="done"><button id="printAddBtn" class="plus" type="submit" aria-label="Aan de wachtrij toevoegen" disabled>+</button></form>
+          <form class="add-bar" id="printAddForm" autocomplete="off"><input type="text" id="printInput" placeholder="Wat printen? (link mag)" enterkeyhint="done"><button id="printAddBtn" class="plus" type="submit" aria-label="Aan de wachtrij toevoegen" disabled>+</button></form>
           <div id="printList"></div>
           <div id="printDoneWrap" style="display:none;margin-top:10px;">
             <div style="cursor:pointer;font-size:12.5px;color:var(--muted);font-weight:600;" id="printDoneToggle">▸ Geprint (0)</div>
@@ -688,7 +688,7 @@
       </div>
       <div class="card">
         <h3>🔁 Vaste taken<span class="sub">Terugkerend huishoudwerk voor jullie allebei. Het verschijnt op Vandaag wanneer het aan de beurt is. Tik op een taak om ze aan te passen.</span></h3>
-        <form class="add-bar" id="choreAddForm" autocomplete="off"><input type="text" id="choreInput" placeholder="Nieuwe vaste taak" enterkeyhint="done"><select id="choreEvery" class="every" aria-label="Hoe vaak"><option value="7">elke week</option><option value="14">om de 2 weken</option><option value="30">elke maand</option><option value="1">elke dag</option><option value="91">elk kwartaal</option></select><button id="choreAddBtn" class="plus" type="submit" aria-label="Vaste taak toevoegen" disabled>+</button></form>
+        <form class="add-bar" id="choreAddForm" autocomplete="off"><input type="text" id="choreInput" placeholder="Bv. ramen" enterkeyhint="done"><select id="choreEvery" class="every" aria-label="Hoe vaak"><option value="7">elke week</option><option value="14">om de 2 weken</option><option value="30">elke maand</option><option value="1">elke dag</option><option value="91">elk kwartaal</option></select><button id="choreAddBtn" class="plus" type="submit" aria-label="Vaste taak toevoegen" disabled>+</button></form>
         <div id="choreList"></div>
       </div>
     </section>
@@ -862,7 +862,7 @@ function vandaagIso(){ return fmtDate(new Date()); }
 
 // ---------- versie en meldingen ----------
 // De versie staat onder Instellingen: zo is op de iPhone meteen te zien of de nieuwste versie geladen is.
-const APP_VERSIE = 'v10 · 14 november 2026';
+const APP_VERSIE = 'v10.1 · 14 november 2026';
 document.getElementById('appVersie').textContent = 'Gezinshub ' + APP_VERSIE;
 let toastTimer = null;
 function toast(msg, isErr){
@@ -3144,7 +3144,7 @@ const SUG_CATS = {'Energie & water':'Energie','Telecom & media':'Telecom & inter
 function sugKey(note){ return String(note).toLowerCase().replace(/[.#$\[\]\/]/g,'_').slice(0,60); }
 function contractSuggestions(){
   const ignore = (meta && meta.negeerAbo) || {};
-  const since = monthsAgoKey(6) + '-01', recent = monthsAgoKey(2) + '-01';
+  const since = monthsAgoKey(5) + '-01', recent = monthsAgoKey(2) + '-01';
   const groups = {};
   budgetData.entries.filter(e=>e.type==='expense' && SUG_CATS[e.category] && e.date >= since && e.note)
     .forEach(e=>{ const k = e.note.trim(); (groups[k] = groups[k] || []).push(e); });
