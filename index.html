@@ -14,10 +14,15 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F3F1EA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121816" media="(prefers-color-scheme: dark)">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Gezinshub">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-180.png">
 <title>Gezinshub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -29,6 +34,7 @@
     --danger:#C1523A; --danger-light:#F7E7E2; --border:#E4E0D6; --radius:14px;
     --shadow:0 2px 10px rgba(31,92,86,0.08);
     --p-tom:#1F5C56; --p-kimberly:#B8556B; --p-remon:#4C6FA6; --p-wij:#E8A23D;
+    --warn-ink:#7A5A1E; --nav-bg:rgba(255,255,255,.96); --we:#EFECE5; --vac:#DCE7F6; --vac-we:#D0DDF0; --vac-line:#E6EEF8; --open-border:#CFE0DB; --alert-border:#F0D6A8; --sheet-border:#EAD6A8;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -41,7 +47,7 @@
   .dot{width:6px;height:6px;border-radius:50%;background:#C1523A;display:inline-block;transition:background .3s;}
   .dot.live{background:#2E9E5B;}
   /* navigatie onderaan: met de duim bereikbaar, vaste plaats */
-  nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;justify-content:center;gap:2px;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);border-top:1px solid var(--border);box-shadow:0 -4px 16px rgba(31,92,86,.06);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
+  nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;justify-content:center;gap:2px;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:var(--nav-bg);border-top:1px solid var(--border);box-shadow:0 -4px 16px rgba(31,92,86,.06);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
   nav.tabs button{flex:1;max-width:104px;position:relative;padding:7px 2px 6px;border:none;border-radius:12px;background:transparent;color:var(--muted);font-weight:600;font-size:11.5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'Inter',sans-serif;}
   nav.tabs button.active{background:var(--primary-light);color:var(--primary);}
   nav.tabs .ic{font-size:20px;line-height:1;}
@@ -93,7 +99,7 @@
   .deal:last-child{margin-bottom:0;}
   .deal .t{font-weight:700;font-size:14px;color:var(--ink);}
   .deal .d{font-size:12.5px;color:var(--ink);opacity:.85;margin-top:3px;line-height:1.45;}
-  .deal .m{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:7px;font-size:11.5px;color:#7A5A1E;font-weight:600;}
+  .deal .m{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:7px;font-size:11.5px;color:var(--warn-ink);font-weight:600;}
   .deal .m a{color:var(--primary);text-decoration:none;margin-left:auto;}
   .rc-row{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:7px 2px;border-bottom:1px solid var(--border);}
   .rc-row:last-child{border-bottom:none;}
@@ -114,19 +120,19 @@
   .grid .dow{font-size:11px;color:var(--muted);font-weight:700;padding-bottom:4px;text-transform:uppercase;}
   .grid .dow.we{color:#A3ABA6;}
   .grid .day{aspect-ratio:1;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:22%;font-size:14px;font-weight:600;cursor:pointer;background:var(--bg);position:relative;color:var(--ink);border:2px solid transparent;}
-  .grid .day.we{background:#EFECE5;}
+  .grid .day.we{background:var(--we);}
   .grid .day.past{color:#A3ABA6;font-weight:500;}
   .grid .day.empty{visibility:hidden;cursor:default;}
   .grid .day.today{border-color:var(--primary);color:var(--primary);font-weight:800;}
-  .grid .day.vac{background:#DCE7F6;}
-  .grid .day.vac.we{background:#D0DDF0;}
+  .grid .day.vac{background:var(--vac);}
+  .grid .day.vac.we{background:var(--vac-we);}
   .grid .day.selected{background:var(--primary);color:#fff;border-color:var(--primary);}
   .grid .dots{position:absolute;bottom:18%;display:flex;gap:3px;}
   .grid .dots span{width:6px;height:6px;border-radius:50%;}
   .grid .day.selected .dots span{box-shadow:0 0 0 1.5px #fff;}
   .legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
   .legend .chip{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
-  .vac-line{font-size:13px;padding:8px 10px;border-radius:10px;background:#E6EEF8;margin-bottom:8px;}
+  .vac-line{font-size:13px;padding:8px 10px;border-radius:10px;background:var(--vac-line);margin-bottom:8px;}
   .legend .sw{width:9px;height:9px;border-radius:50%;display:inline-block;}
   .day-events{margin-top:0;}
   .day-events h4{font-size:15px;color:var(--primary);margin:0 0 10px;font-weight:700;font-family:'Space Grotesk',system-ui,sans-serif;}
@@ -162,8 +168,8 @@
   .photo-upload{border:1.5px dashed var(--border);border-radius:12px;padding:14px;text-align:center;margin-top:14px;}
   .photo-upload p{font-size:12px;color:var(--muted);margin:6px 0 10px;}
   .photo-upload input[type=file]{display:none;}
-  .review-sheet{background:var(--accent-light);border-radius:var(--radius);padding:14px;margin-bottom:14px;border:1px solid #EAD6A8;}
-  .review-sheet h3{color:#7A5A1E;}
+  .review-sheet{background:var(--accent-light);border-radius:var(--radius);padding:14px;margin-bottom:14px;border:1px solid var(--sheet-border);}
+  .review-sheet h3{color:var(--warn-ink);}
   .review-row{background:var(--surface);border-radius:10px;padding:10px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px;}
   .review-type-btn{flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--muted);font-weight:600;font-size:12.5px;cursor:pointer;}
   .review-type-btn.active-expense{background:var(--danger-light);color:var(--danger);border-color:transparent;}
@@ -194,7 +200,7 @@
   .bar-fill.ok-exact{background:var(--primary);}
   .g-pct{font-size:10.5px;color:var(--muted);font-weight:600;margin-top:3px;display:block;}
   .g-pct.over{color:var(--danger);}
-  .g-pct.warn{color:#7A5A1E;}
+  .g-pct.warn{color:var(--warn-ink);}
   .budget-total-card{background:var(--surface);border-radius:var(--radius);padding:18px;box-shadow:0 4px 14px rgba(0,0,0,0.10);border:2px solid var(--primary);margin-bottom:14px;}
   .budget-total-card .bt-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
   .budget-total-card .bt-label{font-size:15px;font-weight:800;color:var(--ink);}
@@ -207,7 +213,7 @@
   .goal-input{display:flex;align-items:center;gap:6px;margin-top:4px;}
   .goal-input input{width:80px;padding:5px 8px;font-size:12px;}
   .goal-input span{font-size:11px;color:var(--muted);}
-  .tip{background:var(--accent-light);border-radius:10px;padding:10px 12px;font-size:12.5px;color:#7A5A1E;margin-bottom:10px;}
+  .tip{background:var(--accent-light);border-radius:10px;padding:10px 12px;font-size:12.5px;color:var(--warn-ink);margin-bottom:10px;}
   .tip.danger{background:var(--danger-light);color:var(--danger);}
   .owner-pick{display:flex;flex-direction:column;gap:8px;}
   .owner-pick button{padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);font-weight:600;cursor:pointer;font-size:14px;}
@@ -235,10 +241,10 @@
   .contract-item .c-cat{font-size:11px;color:var(--muted);margin-top:2px;}
   .contract-item .c-lastdate{font-size:12px;color:var(--ink);font-weight:600;margin-top:4px;}
   .contract-item .c-price{font-weight:700;font-size:13px;color:var(--ink);white-space:nowrap;}
-  .contract-item .c-price-yearly{color:#7A5A1E;background:var(--accent-light);padding:2px 7px;border-radius:6px;font-size:12px;}
+  .contract-item .c-price-yearly{color:var(--warn-ink);background:var(--accent-light);padding:2px 7px;border-radius:6px;font-size:12px;}
   .status-pill{display:inline-flex;align-items:center;justify-content:center;text-align:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;line-height:1.3;}
   .status-pill.ok{background:var(--primary-light);color:var(--primary);}
-  .status-pill.soon{background:var(--accent-light);color:#7A5A1E;}
+  .status-pill.soon{background:var(--accent-light);color:var(--warn-ink);}
   .status-pill.over{background:var(--danger-light);color:var(--danger);}
   .status-pill.info{background:var(--bg);color:var(--muted);border:1px solid var(--border);}
   .contract-item.over{border-left-color:var(--danger);}
@@ -295,7 +301,7 @@
   .yc-item .yc-name{font-weight:700;font-size:13.5px;}
   .yc-item .yc-when{font-size:11.5px;color:var(--muted);margin-top:2px;}
   .yc-item .yc-amounts{text-align:right;flex-shrink:0;}
-  .yc-item .yc-total-big{font-weight:800;font-size:16px;color:#7A5A1E;}
+  .yc-item .yc-total-big{font-weight:800;font-size:16px;color:var(--warn-ink);}
   .tip-row-list{display:flex;flex-direction:column;}
   .tip-row-head{padding:10px 2px;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;border-bottom:1px solid var(--border);}
   .tip-row-list .tip-row-head:last-of-type{border-bottom:none;}
@@ -306,12 +312,12 @@
 
   /* ---- budget-analyse ---- */
   .ba-strip{display:flex;align-items:center;gap:10px;width:100%;padding:11px 14px;border-radius:12px;background:var(--primary-light);color:var(--primary);font-size:12.5px;font-weight:600;margin-bottom:12px;cursor:pointer;border:none;text-align:left;font-family:'Inter',sans-serif;}
-  .ba-strip.stale{background:var(--accent-light);color:#7A5A1E;}
+  .ba-strip.stale{background:var(--accent-light);color:var(--warn-ink);}
   .ba-strip .go{margin-left:auto;font-weight:700;white-space:nowrap;}
   .ba-hero{border-radius:var(--radius);padding:18px;margin-bottom:14px;border:1px solid var(--border);border-left:6px solid var(--muted);background:var(--surface);box-shadow:var(--shadow);}
-  .ba-hero.good{border-left-color:var(--primary);background:linear-gradient(135deg,#fff 55%,var(--primary-light));}
-  .ba-hero.warn{border-left-color:var(--accent);background:linear-gradient(135deg,#fff 55%,var(--accent-light));}
-  .ba-hero.bad{border-left-color:var(--danger);background:linear-gradient(135deg,#fff 55%,var(--danger-light));}
+  .ba-hero.good{border-left-color:var(--primary);background:linear-gradient(135deg,var(--surface) 55%,var(--primary-light));}
+  .ba-hero.warn{border-left-color:var(--accent);background:linear-gradient(135deg,var(--surface) 55%,var(--accent-light));}
+  .ba-hero.bad{border-left-color:var(--danger);background:linear-gradient(135deg,var(--surface) 55%,var(--danger-light));}
   .ba-hero .top{display:flex;gap:12px;align-items:flex-start;}
   .ba-hero .emoji{font-size:28px;line-height:1.1;}
   .ba-hero .title{font-family:'Space Grotesk',system-ui,sans-serif;font-size:20px;font-weight:700;color:var(--ink);}
@@ -353,7 +359,7 @@
   .kid-card .kid-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px;font-size:11.5px;color:var(--muted);}
   .pq-link{color:var(--primary);font-weight:600;font-size:12px;text-decoration:none;white-space:nowrap;}
   .pq-nr{flex-shrink:0;min-width:20px;font-weight:700;color:var(--muted);font-size:12.5px;text-align:right;}
-  .home-alert{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:12px;background:var(--accent-light);border:1px solid #F0D6A8;font-size:14px;font-weight:600;margin-bottom:14px;}
+  .home-alert{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:12px;background:var(--accent-light);border:1px solid var(--alert-border);font-size:14px;font-weight:600;margin-bottom:14px;}
   .new-line{font-size:13px;padding:3px 0;}
   .new-line .k{color:var(--muted);font-weight:600;margin-right:4px;}
   .add-bar select.every{width:118px;flex:0 0 118px;padding:12px 6px;font-size:13px;border-radius:12px;background:var(--surface);}
@@ -376,7 +382,7 @@
   .ba-cat .dl{font-weight:700;font-size:11px;padding:2px 8px;border-radius:10px;}
   .ba-cat .dl.neutral{background:var(--bg);color:var(--muted);}
   .ba-cat .dl.good{background:var(--primary-light);color:var(--primary);}
-  .ba-cat .dl.warn{background:var(--accent-light);color:#7A5A1E;}
+  .ba-cat .dl.warn{background:var(--accent-light);color:var(--warn-ink);}
   .ba-cat .dl.bad{background:var(--danger-light);color:var(--danger);}
   .ba-legend{display:flex;gap:14px;font-size:11px;color:var(--muted);margin-bottom:6px;}
   .ba-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px;}
@@ -435,7 +441,7 @@
   /* ---------- v10: taken met deelpunten, bewerken, koppelingen ---------- */
   .drag-handle{width:30px;font-size:18px;margin:-8px 0 -8px -8px;}
   .todo-item .txt{cursor:pointer;min-width:0;overflow-wrap:anywhere;}
-  .todo-item.open{border-color:#CFE0DB;box-shadow:0 0 0 3px var(--primary-light);}
+  .todo-item.open{border-color:var(--open-border);box-shadow:0 0 0 3px var(--primary-light);}
   .task-badges{display:flex;gap:4px;align-items:center;flex-shrink:0;}
   .mini-chip{font-size:11px;font-weight:600;color:var(--muted);background:var(--bg);border-radius:10px;padding:2px 7px;white-space:nowrap;}
   .mini-chip.ok{background:var(--primary-light);color:var(--primary);}
@@ -481,8 +487,8 @@
   /* contracten: koppeling met de bankgegevens */
   .c-pay{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45;}
   .c-pay strong{color:var(--ink);}
-  .c-alert{margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--accent-light);color:#7A5A1E;font-size:12.5px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
-  .c-alert button{border:none;background:#fff;color:#7A5A1E;border-radius:8px;padding:7px 10px;font:600 12px 'Inter',sans-serif;cursor:pointer;}
+  .c-alert{margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--accent-light);color:var(--warn-ink);font-size:12.5px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
+  .c-alert button{border:none;background:var(--surface);color:var(--warn-ink);border-radius:8px;padding:7px 10px;font:600 12px 'Inter',sans-serif;cursor:pointer;}
   .sug-row{display:flex;align-items:center;gap:8px;padding:9px 10px;background:var(--bg);border-radius:12px;margin-bottom:6px;font-size:13px;}
   .sug-row .n{flex:1;min-width:0;} .sug-row .n small{display:block;color:var(--muted);font-size:11.5px;}
   .sug-row button{border:none;border-radius:9px;padding:8px 10px;font:600 12px 'Inter',sans-serif;cursor:pointer;background:var(--primary);color:#fff;}
@@ -491,6 +497,53 @@
   #toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;z-index:60;max-width:min(92vw,480px);background:var(--ink);color:#fff;font-size:13px;line-height:1.4;padding:10px 14px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.2);transition:opacity .2s ease, transform .2s ease;}
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   #toast.err{background:var(--danger);}
+
+  /* v11: ongedaan maken in de melding, weekmenu */
+  #toast.act{pointer-events:auto;display:flex;align-items:center;gap:14px;}
+  #toast .undo{background:none;border:none;color:#F3C77A;font:700 13px 'Inter',sans-serif;padding:2px 0;cursor:pointer;white-space:nowrap;}
+  .menu-head{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;}
+  .menu-head h3{margin:0;}
+  .menu-sum{font-size:12.5px;color:var(--muted);margin-top:3px;}
+  .menu-chev{color:var(--muted);font-size:14px;}
+  .menu-nav{display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px;font-size:12.5px;font-weight:600;color:var(--muted);}
+  .menu-nav button{border:none;background:var(--primary-light);color:var(--primary);width:32px;height:32px;border-radius:9px;font-size:16px;cursor:pointer;}
+  .menu-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .menu-row .md{width:34px;flex-shrink:0;font-size:11px;font-weight:600;color:var(--muted);line-height:1.1;text-align:center;}
+  .menu-row .md b{display:block;font-size:15px;color:var(--ink);font-family:'Space Grotesk',system-ui,sans-serif;}
+  .menu-row.today .md, .menu-row.today .md b{color:var(--primary);}
+  .menu-row.past{opacity:.55;}
+  .menu-row input{flex:1;min-width:0;padding:9px 11px;border-radius:10px;font-size:15px;background:var(--bg);border:1px solid transparent;}
+  .menu-row.today input{border-color:var(--primary);background:var(--surface);}
+  .menu-row .cart{flex-shrink:0;width:38px;height:38px;border-radius:10px;border:none;background:var(--primary-light);color:var(--primary);font-size:16px;cursor:pointer;}
+  .menu-row .cart.empty{opacity:.3;}
+  .menu-row .cart.on{background:var(--primary);color:#fff;font-size:15px;font-weight:700;}
+  .menu-ing{margin:0 0 10px 42px;}
+  .menu-ing .row{display:flex;gap:6px;}
+  .menu-ing input{flex:1;min-width:0;padding:9px 11px;border-radius:10px;font-size:15px;}
+  .menu-ing .btn{flex-shrink:0;padding:9px 12px;}
+  .menu-ing small{display:block;font-size:11.5px;color:var(--muted);margin-top:4px;}
+  .home-menu{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--accent-light);border-radius:12px;margin:0 0 7px;font-size:13.5px;cursor:pointer;}
+  .home-menu .ag-chev{margin-left:auto;}
+
+  /* v11: donkere modus, volgt de instelling van de iPhone */
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#121816; --surface:#1B2320; --ink:#E6ECE9; --muted:#97A39D; --primary:#3A9184; --primary-light:#1F3833;
+      --accent:#E8A23D; --accent-light:#352A18; --danger:#E0775E; --danger-light:#3A221D; --border:#2A3430;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 22px rgba(0,0,0,.25); --p-tom:#2F8579;
+      --warn-ink:#E9C27A; --nav-bg:rgba(22,29,27,.96); --we:#1A211F; --vac:#1D2A3A; --vac-we:#1A2635; --vac-line:#1D2A3A;
+      --open-border:#2F5550; --alert-border:#4A3A1E; --sheet-border:#4A3A1E; }
+    nav.tabs{box-shadow:0 -1px 0 var(--border), 0 -8px 24px rgba(0,0,0,.3);}
+    .home-hero{background:linear-gradient(140deg,#17463F 0%,#1F5C56 60%,#2B6F66 100%);box-shadow:0 10px 26px rgba(0,0,0,.35);}
+    .week-strip button.today{background:#E6ECE9;color:#17463F;}
+    .drag-handle{color:#55625C;}
+    .grid .day.selected .dots span{box-shadow:0 0 0 1.5px var(--surface);}
+    #toast{background:#2D3A35;}
+    a{color:var(--primary);}
+    #loginOverlay{background:var(--bg) !important;}
+    #loginForm{background:var(--surface) !important;border-color:var(--border) !important;}
+    #loginForm div:first-child{color:var(--ink) !important;}
+  }
+  .wx{font-size:12.5px;opacity:.92;margin-top:5px;}
 </style>
 </head>
 <body>
@@ -523,6 +576,7 @@
         <div class="hi" id="homeHi"></div>
         <div class="d" id="homeDate"></div>
         <div class="s" id="homeSub"></div>
+        <div class="wx" id="homeWx"></div>
         <div class="week-strip" id="homeWeek"></div>
       </div>
       <div id="homeAlert"></div>
@@ -591,6 +645,7 @@
               <option value="weekly">Elke week</option>
               <option value="biweekly">Om de 2 weken</option>
               <option value="monthly">Elke maand</option>
+              <option value="yearly">Elk jaar</option>
             </select>
             <input type="number" id="evRepeatCount" min="1" max="52" value="8" style="display:none;">
           </div>
@@ -754,6 +809,15 @@
       </div>
     </section>
     <section id="panel-lijst" class="panel">
+      <div class="card" id="menuCard" style="display:none;">
+        <div class="menu-head" id="menuHead" role="button" aria-expanded="false"><div><h3>🍽️ Weekmenu</h3><div class="menu-sum" id="menuSum"></div></div><span class="menu-chev" id="menuChev">▸</span></div>
+        <div id="menuBody" style="display:none;">
+          <div class="menu-nav"><button type="button" id="menuPrev" aria-label="Vorige week">‹</button><span id="menuWeekLbl"></span><button type="button" id="menuNext" aria-label="Volgende week">›</button></div>
+          <div id="menuList"></div>
+          <datalist id="menuDishes"></datalist>
+          <div class="menu-sum" style="margin-top:4px;">Tik op 🛒 om wat je voor een gerecht nodig hebt op de lijst te zetten. De app onthoudt het per gerecht.</div>
+        </div>
+      </div>
       <div class="card">
         <h3>🛒 Boodschappenlijst<span class="sub">Gedeeld tussen jullie beiden, live bijgewerkt.</span></h3>
         <form class="add-bar" id="shopAddForm" autocomplete="off"><input type="text" id="shopInput" placeholder="Bv. melk, brood, wc-papier" enterkeyhint="done"><button id="shopAddBtn" class="plus" type="submit" aria-label="Toevoegen aan lijst" disabled>+</button></form>
@@ -808,6 +872,7 @@ const shopFavRef = ref(db, hhPath + '/lijstVast');      // vaste items voor de b
 // 3D-printwachtrij: persoonlijk, enkel voor Tom (todos/Tom/print) {tekst, order, done, geprint}
 const PRINT_OWNER = 'Tom';
 let printRef = null, printUnsub = null;
+const weekmenuRef = ref(db, hhPath + '/weekmenu');  // {<maandag>: {ma..zo: {gerecht, opLijst}}, _gerechten: {<sleutel>: {naam, ing}}}
 const metaRef = ref(db, hhPath + '/meta');              // {laatsteBackup}   // analyse + tips die Claude meestuurt in het gegevensbestand
 
 const CATEGORIES = ['Wonen','Energie & water','Telecom & media','Boodschappen','Eten & drinken buitenshuis','Auto & vervoer','Kinderen','Verzekering','Gezondheid','Huis & tuin','Huisdieren','Vrije tijd & vakantie','Juridisch & administratie','Online shopping','Streaming','Bankkosten','Sparen','Overig'];
@@ -862,13 +927,34 @@ function vandaagIso(){ return fmtDate(new Date()); }
 
 // ---------- versie en meldingen ----------
 // De versie staat onder Instellingen: zo is op de iPhone meteen te zien of de nieuwste versie geladen is.
-const APP_VERSIE = 'v10.1 · 14 november 2026';
+const APP_VERSIE = 'v11 · 14 november 2026';
 document.getElementById('appVersie').textContent = 'Gezinshub ' + APP_VERSIE;
 let toastTimer = null;
-function toast(msg, isErr){
+function toast(msg, isErr, undo){
   const el = document.getElementById('toast'); if(!el) return;
-  el.textContent = msg; el.classList.toggle('err', !!isErr); el.classList.add('show');
-  clearTimeout(toastTimer); toastTimer = setTimeout(()=>el.classList.remove('show'), isErr ? 6000 : 2500);
+  el.textContent = msg; el.classList.toggle('err', !!isErr); el.classList.toggle('act', !!undo);
+  if(undo){
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'undo'; b.textContent = 'Ongedaan maken';
+    b.addEventListener('click', ()=>{ clearTimeout(toastTimer); el.classList.remove('show','act'); undo(); });
+    el.appendChild(b);
+  }
+  el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>el.classList.remove('show','act'), (isErr || undo) ? 6000 : 2500);
+}
+// wissen zonder 'Ben je zeker?': het verdwijnt meteen, en 6 seconden lang kan het met één tik terug.
+// items = [{p: pad onder het huishouden, v: de bewaarde waarde (of leeg: dan eerst ophalen)}]
+function cleanCopy(o){ const c = {...o}; delete c.id; return c; }
+function shortTxt(t){ t = String(t||''); return t.length > 34 ? t.slice(0,32) + '…' : t; }
+async function removeWithUndo(items, label, onUndo){
+  try{
+    const saved = await Promise.all(items.map(async it=>[it.p, it.v !== undefined ? it.v : (await get(ref(db, hhPath+'/'+it.p))).val()]));
+    await Promise.all(items.map(it=>remove(ref(db, hhPath+'/'+it.p))));
+    toast(label + ' verwijderd', false, ()=>{
+      Promise.all(saved.filter(([,v])=>v!=null).map(([p,v])=>set(ref(db, hhPath+'/'+p), v)))
+        .then(()=>{ if(onUndo) onUndo(); toast('Teruggezet'); })
+        .catch(err=>toast('Terugzetten lukte niet: ' + ((err && (err.code||err.message)) || err), true));
+    });
+  }catch(err){ toast('Verwijderen lukte niet: ' + ((err && (err.code||err.message)) || err), true); }
 }
 // niets mag stil mislukken: een fout of een geweigerde schrijfactie wordt kort onderaan gemeld
 window.addEventListener('error', (e)=>{ if(e && e.message) toast('Er liep iets mis: ' + e.message, true); });
@@ -876,7 +962,9 @@ window.addEventListener('unhandledrejection', (e)=>{
   const m = (e.reason && (e.reason.message || e.reason.code)) || String(e.reason||'');
   toast(/PERMISSION|permission/.test(m) ? 'Bewaren lukte niet: geen toestemming in de database.' : 'Bewaren of laden lukte niet: ' + m, true);
 });
+let isOnline = true, wasOnline = false;
 function markLive(){
+  if(!isOnline) return;
   document.getElementById('connDot').classList.add('live');
   document.getElementById('syncLabel').textContent = 'Live · ' + new Date().toLocaleTimeString('nl-BE',{hour:'2-digit',minute:'2-digit'});
   if(connTimeoutId){ clearTimeout(connTimeoutId); connTimeoutId = null; }
@@ -941,6 +1029,16 @@ function attachListeners(){
   onValue(claudeAnalyseRef, snap=>{ claudeAnalyse = snap.val() || null; renderClaudeAnalyse(); renderHomeMoney(); renderKid(); renderNew(); markLive(); }, ()=>{ /* nog geen leesrecht op dit pad: kaart blijft verborgen */ });
   // nieuwe paden (v7): als de databaseregels ze (nog) niet toelaten, blijft de app gewoon werken zonder die functie
   onValue(choresRef, snap=>{ chores = snapToArray(snap.val()); choresDenied = false; renderChores(); }, ()=>{ choresDenied = true; renderChores(); });
+  // geen netwerk: de app werkt verder, Firebase bewaart de wijzigingen zodra er weer verbinding is
+  onValue(ref(db, '.info/connected'), snap=>{
+    if(snap.val() === true){ isOnline = true; wasOnline = true; markLive(); }
+    else if(wasOnline){
+      isOnline = false;
+      document.getElementById('connDot').classList.remove('live');
+      document.getElementById('syncLabel').textContent = 'Offline · wordt later bewaard';
+    }
+  });
+  onValue(weekmenuRef, snap=>{ weekmenu = snap.val() || {}; menuDenied = false; renderMenu(); renderHome(); }, ()=>{ menuDenied = true; renderMenu(); renderHome(); });
   onValue(shopFavRef, snap=>{ shopFavs = snapToArray(snap.val()); shopFavDenied = false; renderShoppingList(); }, ()=>{ shopFavDenied = true; renderShoppingList(); });
   onValue(metaRef, snap=>{ meta = snap.val() || {}; renderTodayOverview(); renderConSug(); }, ()=>{});
   renderTodoOwnerGate();
@@ -1345,7 +1443,7 @@ function choreDetails(c){
   elke.addEventListener('change', ()=>update(choreRef(c), {elke: parseInt(elke.value,10)||7}));
   volg.addEventListener('change', ()=>{ if(/^\d{4}-\d{2}-\d{2}$/.test(volg.value)) update(choreRef(c), {volgende: volg.value}); });
   box.querySelector('[data-act="skip"]').addEventListener('click', ()=>{ update(choreRef(c), {volgende: addDays(vandaagIso(), c.elke||7)}); toast('Overgeslagen tot ' + fmtDayMonth(addDays(vandaagIso(), c.elke||7))); });
-  box.querySelector('[data-act="del"]').addEventListener('click', ()=>{ if(confirm(`"${c.tekst}" niet meer opvolgen?`)){ openChores.delete(c.id); remove(choreRef(c)); } });
+  box.querySelector('[data-act="del"]').addEventListener('click', ()=>{ openChores.delete(c.id); removeWithUndo([{p: 'vasteTaken/'+c.id, v: cleanCopy(c)}], '"' + shortTxt(c.tekst) + '"'); });
   return box;
 }
 function renderChores(){
@@ -1399,7 +1497,7 @@ function printRow(it, nr, list){
     main.appendChild(top);
   }
   const del = document.createElement('button'); del.className='del-btn'; del.textContent='✕'; del.title='Verwijderen';
-  del.addEventListener('click', ()=>{ if(it.done || confirm(`"${String(it.tekst).slice(0,60)}" uit de wachtrij halen?`)) remove(ref(db, hhPath+'/todos/'+PRINT_OWNER+'/print/'+it.id)); });
+  del.addEventListener('click', ()=>removeWithUndo([{p: 'todos/'+PRINT_OWNER+'/print/'+it.id, v: cleanCopy(it)}], '"' + shortTxt(it.tekst) + '"'));
   main.appendChild(del);
   row.appendChild(main); list.appendChild(row);
 }
@@ -1438,7 +1536,7 @@ wireAddBar('printAddForm', 'printInput', 'printAddBtn', (val)=>{
 });
 
 // ---------- back-up ----------
-const BACKUP_PATHS = ['calendarEvents','budgetEntries','budgetGoals','contracts','shoppingList','sharedTodo','claudeAnalyse','todos','vasteTaken','lijstVast','meta'];
+const BACKUP_PATHS = ['calendarEvents','budgetEntries','budgetGoals','contracts','shoppingList','sharedTodo','claudeAnalyse','todos','vasteTaken','lijstVast','meta','weekmenu'];
 async function makeBackup(){
   const st = document.getElementById('backupStatus');
   st.textContent = 'Gegevens worden opgehaald...';
@@ -1447,7 +1545,7 @@ async function makeBackup(){
     try{ const snap = await get(ref(db, hhPath+'/'+pth)); if(snap.exists()) data[pth] = snap.val(); }
     catch(err){
       if(pth==='todos' && owner){ try{ const s2 = await get(ref(db, hhPath+'/todos/'+owner)); if(s2.exists()) data.todos = {[owner]: s2.val()}; continue; }catch(e){} }
-      if(!['vasteTaken','lijstVast','meta','budgetGoals'].includes(pth)) missed.push(pth);
+      if(!['vasteTaken','lijstVast','meta','budgetGoals','weekmenu'].includes(pth)) missed.push(pth);
     }
   }
   const todayIso = fmtDate(new Date());
@@ -1618,7 +1716,10 @@ function openDay(d){
   selectedDate = d; viewYear = +d.slice(0,4); viewMonth = +d.slice(5,7)-1;
   showPanel('cal'); renderCalendar(); renderDayEvents();
 }
-document.getElementById('homeAgenda').addEventListener('click', (e)=>{ const t = e.target.closest('[data-d]'); if(t) openDay(t.dataset.d); });
+document.getElementById('homeAgenda').addEventListener('click', (e)=>{
+  if(e.target.closest('[data-menu]')){ openMenu(); return; }
+  const t = e.target.closest('[data-d]'); if(t) openDay(t.dataset.d);
+});
 function eventsOn(dateStr){ return calEvents.filter(e=>e.date===dateStr).sort((a,b)=>(a.time||'').localeCompare(b.time||'')); }
 function renderHome(){
   const dateEl = document.getElementById('homeDate'); if(!dateEl) return;
@@ -1648,7 +1749,12 @@ function renderHome(){
     wk.querySelectorAll('button').forEach(btn=>btn.addEventListener('click', ()=>openDay(btn.dataset.d)));
   }
   let html = vacHomeLine(todayIso) + `<div class="ag-day-head is-today">Vandaag</div>` + (tToday.length ? tToday.map(ev=>agendaItemHtml(ev, true)).join('') : `<div class="today-empty">Niets gepland.</div>`);
+  const avond = uur >= 20;
+  const vanavond = !menuDenied && !avond && menuEntry(todayIso).gerecht;
+  if(vanavond) html += `<div class="home-menu" data-menu="1">🍽️ <span>Vanavond: <b>${escapeHtml(vanavond)}</b></span><span class="ag-chev">›</span></div>`;
   html += `<div class="ag-day-head">Morgen · ${new Date(tomorrowIso+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'long', day:'numeric', month:'short'})}</div>` + (tTomorrow.length ? tTomorrow.map(ev=>agendaItemHtml(ev, true)).join('') : `<div class="today-empty">Niets gepland.</div>`);
+  const morgenEten = !menuDenied && avond && menuEntry(tomorrowIso).gerecht;
+  if(morgenEten) html += `<div class="home-menu" data-menu="1">🍽️ <span>Morgen eten we: <b>${escapeHtml(morgenEten)}</b></span><span class="ag-chev">›</span></div>`;
   // de rest van de week, compact
   const later = [];
   for(let k=2; k<=7; k++){ const d = addDays(todayIso, k); eventsOn(d).forEach(ev=>later.push({d, ev})); }
@@ -1656,7 +1762,7 @@ function renderHome(){
     html += `<div class="ag-day-head">Later deze week</div>` + later.slice(0,5).map(({d, ev})=>`<div class="today-line tap" data-d="${d}"><span style="color:var(--muted);font-weight:600;min-width:52px;display:inline-block;">${new Date(d+'T00:00:00').toLocaleDateString('nl-BE',{weekday:'short', day:'numeric'})}</span> ${isAfval(ev) ? `🗑️ ${afvalPill(afvalSoort(ev))}` : `<span class="p-pill" style="background:${personColor(ev.person||'Wij')};font-size:10px;padding:1px 6px;">${ev.person||'Wij'}</span> ${escapeHtml(ev.title)}${ev.time?` <span style="color:var(--muted);">${ev.time}</span>`:''}`}</div>`).join('') + (later.length>5?`<div class="today-empty tap" data-d="${later[5].d}" style="margin-top:4px;cursor:pointer;">+ ${later.length-5} meer in de kalender ›</div>`:'');
   }
   document.getElementById('homeAgenda').innerHTML = html;
-  renderHomeTodo(); renderHomeAlert(); renderNew();
+  renderHomeTodo(); renderHomeAlert(); renderNew(); wxTick();
 }
 function renderCalendar(){
   document.getElementById('monthLabel').textContent = MONTHS[viewMonth] + ' ' + viewYear;
@@ -1720,8 +1826,9 @@ function renderDayEvents(){
 // afspraak verwijderen; komt ze uit een taak, dan verdwijnt ook de planning bij die taak
 function deleteEvent(ev){
   if(!ev.seriesId || ev.seriesId==='afval'){
-    if(!confirm(`"${ev.title}" verwijderen?`)) return false;
-    remove(ref(db, hhPath+'/calendarEvents/'+ev.id));
+    const taakRef = ev.taak ? ref(db, hhPath+'/'+ev.taak) : null;
+    removeWithUndo([{p: 'calendarEvents/'+ev.id, v: cleanCopy(ev)}], '"' + shortTxt(ev.title) + '"',
+      taakRef ? ()=>get(taakRef).then(sn=>{ if(sn.exists()) update(taakRef, {scheduledDate: ev.date, eventId: ev.id}); }).catch(()=>{}) : null);
   } else {
     const deleteAll = confirm('Dit is onderdeel van een herhalende afspraak.\n\nOK = deze en alle volgende verwijderen\nAnnuleren = enkel deze ene datum verwijderen');
     if(deleteAll) calEvents.filter(x=>x.seriesId===ev.seriesId && x.date>=ev.date).forEach(x=>remove(ref(db, hhPath+'/calendarEvents/'+x.id)));
@@ -1732,6 +1839,7 @@ function deleteEvent(ev){
 }
 document.getElementById('evRepeat').addEventListener('change', (e)=>{
   document.getElementById('evRepeatCount').style.display = e.target.value==='none' ? 'none' : 'block';
+  if(e.target.value==='yearly') document.getElementById('evRepeatCount').value = 10;
 });
 let editingEv = null;
 document.getElementById('eventForm').addEventListener('submit', (e)=>{
@@ -1768,6 +1876,7 @@ document.getElementById('eventForm').addEventListener('submit', (e)=>{
       if(repeat==='weekly') d.setDate(d.getDate() + 7*i);
       else if(repeat==='biweekly') d.setDate(d.getDate() + 14*i);
       else if(repeat==='monthly') d.setMonth(d.getMonth() + i);
+      else if(repeat==='yearly') d.setFullYear(d.getFullYear() + i);
       pushMine(eventsRef, { ...base, date: fmtDate(d), seriesId });
     }
   }
@@ -2724,7 +2833,7 @@ function renderBudget(){
     row.innerHTML = `<div class="meta"><span class="t">${escapeHtml(en.category)}</span><span class="s">${en.date}${en.note?' · '+escapeHtml(en.note):''}${en.eenmalig?' · eenmalig':''}</span>${en.memo?`<span class="s" style="opacity:.75;">${escapeHtml(en.memo)}</span>`:''}</div>
       <div style="display:flex;align-items:center;gap:8px;"><span style="color:${color};font-weight:700;">${sign}${fmtMoney(en.amount)}</span></div>`;
     const btn = document.createElement('button'); btn.className='del-btn'; btn.textContent='✕';
-    btn.addEventListener('click', ()=>{ if(confirm(`Registratie "${en.note||en.category}" (${fmtMoney(en.amount)} op ${fmtDateNL(en.date)}) verwijderen?`)) remove(ref(db, hhPath+'/budgetEntries/'+en.id)); });
+    btn.addEventListener('click', ()=>removeWithUndo([{p: 'budgetEntries/'+en.id}], 'Registratie "' + shortTxt(en.note||en.category) + '"'));
     row.querySelector('div:last-child').appendChild(btn);
     entriesList.appendChild(row);
   });
@@ -2846,7 +2955,10 @@ function setTaskDone(t, kind, done, row){
   else if(t.scheduledDate && t.scheduledDate >= vandaagIso() && !eventOf(t)) planTask({...t, eventId:null, scheduledDate:null}, 'mine', t.scheduledDate, PERSONS.some(p=>p.key===owner) ? owner : 'Wij');
 }
 function deleteTask(t, kind){
-  openTasks.delete(t.id); dropFutureEvent(t); remove(taskRef(kind, t.id));
+  openTasks.delete(t.id);
+  const items = [{p: taskPath(kind, t.id), v: cleanCopy(t)}];
+  const ev = eventOf(t); if(ev && ev.date >= vandaagIso()) items.push({p: 'calendarEvents/'+ev.id, v: cleanCopy(ev)});
+  removeWithUndo(items, '"' + shortTxt(taskText(t)) + '"');
 }
 
 // ---- één rij ----
@@ -2918,7 +3030,7 @@ function taskDetails(t, kind){
   planBtn.textContent = t.scheduledDate ? `📅 ${fmtShort(t.scheduledDate)} · verplaatsen` : '📅 Op de kalender';
   planBtn.addEventListener('click', ()=>{ openSchedFor = openSchedFor===t.id ? null : t.id; rerenderKind(kind); });
   const delBtn = document.createElement('button'); delBtn.type='button'; delBtn.className='danger'; delBtn.textContent='Verwijderen';
-  delBtn.addEventListener('click', ()=>{ if(confirm(`"${taskText(t).slice(0,60)}" verwijderen?`)) deleteTask(t, kind); });
+  delBtn.addEventListener('click', ()=>deleteTask(t, kind));
   acts.append(planBtn, delBtn);
   box.appendChild(acts);
   if(openSchedFor===t.id){
@@ -3285,7 +3397,7 @@ function renderContracts(){
       editPanel.style.display='none'; editBtn.textContent='✎ Bewerken';
     });
     editPanel.querySelector('[data-act="delete"]').addEventListener('click', ()=>{
-      if(confirm('"'+c.naam+'" verwijderen?')) remove(ref(db, hhPath+'/contracts/'+c.id));
+      removeWithUndo([{p: 'contracts/'+c.id, v: cleanCopy(c)}], '"' + shortTxt(c.naam) + '"');
     });
     editPanel.querySelector('[data-act="save"]').addEventListener('click', ()=>{
       const naam = editPanel.querySelector('[data-f="naam"]').value.trim();
@@ -3353,12 +3465,149 @@ function renderContracts(){
   });
 }
 
+
+
+// ---------- weer (v11) ----------
+// Open-Meteo, gratis en zonder sleutel. Enkel de gemeente (Willebroek), geen adres. Eén keer per uur opgehaald.
+const WX_URL = 'https://api.open-meteo.com/v1/forecast?latitude=51.06&longitude=4.36&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Europe%2FBrussels&forecast_days=2';
+let wxData = null, wxBusy = false;
+try{ const c = JSON.parse(lsGet('gezinshub-wx')||'null'); if(c && Date.now() - c.t < 3600000) wxData = c; }catch(e){}
+function wxIcon(c){ return c===0 ? '☀️' : c<=2 ? '🌤️' : c===3 ? '☁️' : c<=48 ? '🌫️' : c<=57 ? '🌦️' : c<=67 ? '🌧️' : c<=77 ? '🌨️' : c<=82 ? '🌦️' : c<=86 ? '🌨️' : '⛈️'; }
+function renderWx(){
+  const el = document.getElementById('homeWx'); if(!el) return;
+  const d = wxData && wxData.daily; if(!d || !d.time){ el.textContent = ''; return; }
+  const avond = new Date().getHours() >= 18, i = avond ? 1 : 0;
+  if(d.time[i] === undefined){ el.textContent = ''; return; }
+  const regen = d.precipitation_probability_max[i];
+  el.textContent = `${avond ? 'Morgen' : 'Vandaag'} ${wxIcon(d.weather_code[i])} ${Math.round(d.temperature_2m_min[i])}° tot ${Math.round(d.temperature_2m_max[i])}°` + (regen >= 30 ? ` · ${regen}% kans op regen` : '');
+}
+function wxTick(){
+  renderWx();
+  if(wxBusy || (wxData && Date.now() - wxData.t < 3600000)) return;
+  wxBusy = true;
+  fetch(WX_URL).then(r=>r.ok ? r.json() : null).then(j=>{
+    if(j && j.daily){ wxData = {t: Date.now(), daily: j.daily}; lsSet('gezinshub-wx', JSON.stringify(wxData)); renderWx(); }
+  }).catch(()=>{}).finally(()=>{ wxBusy = false; });
+}
+
+// ---------- weekmenu (v11) ----------
+// Bewust klein: een dichtgeklapte kaart boven de boodschappenlijst en één regel 'Vanavond' op Vandaag.
+// Zelfde plaats in de database als het oude menu (weekmenu/<maandag>/<ma..zo>), dus oude weken komen gewoon terug.
+let weekmenu = {}, menuDenied = false, menuWeek = mondayOf(fmtDate(new Date())), menuIngOpen = null;
+let menuOpen = lsGet('gezinshub-menu-open') === '1';
+function dowIdx(d){ return (new Date(d+'T00:00:00').getDay() + 6) % 7; }
+function menuPath(d){ return 'weekmenu/' + mondayOf(d) + '/' + DOWS[dowIdx(d)]; }
+function menuEntry(d){ const w = weekmenu[mondayOf(d)]; return (w && w[DOWS[dowIdx(d)]]) || {}; }
+function dishKey(n){ return String(n||'').trim().toLowerCase().replace(/[.#$\[\]\/]/g,'_').slice(0,60); }
+function dishBook(){ return (weekmenu && weekmenu._gerechten) || {}; }
+function menuWeekLabel(){
+  const now = mondayOf(fmtDate(new Date()));
+  if(menuWeek === now) return 'Deze week';
+  if(menuWeek === addDays(now, 7)) return 'Volgende week';
+  if(menuWeek === addDays(now, -7)) return 'Vorige week';
+  return 'Week van ' + fmtShort(menuWeek);
+}
+function setMenuOpen(open){ menuOpen = open; lsSet('gezinshub-menu-open', open ? '1' : '0'); renderMenu(); }
+function openMenu(){
+  menuWeek = mondayOf(fmtDate(new Date()));
+  showPanel('lijst'); setMenuOpen(true);
+  const c = document.getElementById('menuCard'); if(c && c.scrollIntoView) c.scrollIntoView({block:'start'});
+}
+document.getElementById('menuHead').addEventListener('click', ()=>setMenuOpen(!menuOpen));
+document.getElementById('menuPrev').addEventListener('click', ()=>{ menuWeek = addDays(menuWeek, -7); menuIngOpen = null; renderMenu(); });
+document.getElementById('menuNext').addEventListener('click', ()=>{ menuWeek = addDays(menuWeek, 7); menuIngOpen = null; renderMenu(); });
+function saveDish(d, val){
+  const v = String(val||'').trim(), cur = menuEntry(d).gerecht || '';
+  if(v === cur) return;
+  const r = ref(db, hhPath+'/'+menuPath(d));
+  if(v) update(r, {gerecht: v, opLijst: null}); else remove(r);
+}
+function addIngredients(d, text){
+  const items = String(text||'').split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);
+  if(!items.length) return;
+  const g = menuEntry(d).gerecht;
+  const onList = new Set(shoppingItems.filter(i=>!i.done).map(i=>favKey(i.tekst)));
+  let n = 0;
+  items.forEach(t=>{ if(!onList.has(favKey(t))){ pushMine(shoppingListRef, {tekst: t, done:false}); onList.add(favKey(t)); n++; } });
+  if(g){
+    set(ref(db, hhPath+'/weekmenu/_gerechten/'+dishKey(g)), {naam: g, ing: items.join(', ')});
+    update(ref(db, hhPath+'/'+menuPath(d)), {opLijst: true});
+  }
+  menuIngOpen = null; renderMenu();
+  const al = items.length - n;
+  toast(n ? `${n} ${n>1?'items':'item'} op de lijst` + (al ? ` · ${al} stond${al>1?'en':''} er al` : '') : 'Alles stond al op de lijst');
+}
+function buildMenuRows(){
+  const list = document.getElementById('menuList');
+  list.innerHTML = ''; list.dataset.week = menuWeek;
+  const today = fmtDate(new Date());
+  for(let i=0;i<7;i++){
+    const d = addDays(menuWeek, i), dt = new Date(d+'T00:00:00');
+    const row = document.createElement('div');
+    row.className = 'menu-row' + (d===today ? ' today' : '') + (d<today ? ' past' : ''); row.dataset.d = d;
+    // in de lopende week tellen enkel vandaag en de komende dagen; vorige weken blijven volledig te bekijken
+    if(d < today && menuWeek === mondayOf(today)) row.style.display = 'none';
+    row.innerHTML = `<div class="md">${DOWS[i]}<b>${dt.getDate()}</b></div><input type="text" list="menuDishes" autocomplete="off" enterkeyhint="done" placeholder="${d<today?'':'Wat eten we?'}" aria-label="Gerecht ${DOW_FULL[i]}"><button type="button" class="cart" aria-label="Wat je nodig hebt op de lijst zetten">🛒</button>`;
+    const ing = document.createElement('div'); ing.className = 'menu-ing'; ing.dataset.d = d; ing.style.display = 'none';
+    ing.innerHTML = `<div class="row"><input type="text" autocomplete="off" enterkeyhint="done" placeholder="Wat moet je kopen? Met komma's"><button type="button" class="btn">Op de lijst</button></div><small></small>`;
+    const inp = row.querySelector('input'), cart = row.querySelector('.cart'), ingInp = ing.querySelector('input');
+    inp.addEventListener('change', ()=>saveDish(d, inp.value));
+    inp.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); inp.blur(); } });
+    cart.addEventListener('click', ()=>{
+      const g = inp.value.trim();
+      if(!g){ inp.focus(); return; }
+      saveDish(d, g);
+      menuIngOpen = menuIngOpen === d ? null : d; renderMenu();
+      if(menuIngOpen === d){ const known = dishBook()[dishKey(g)]; ingInp.value = known ? known.ing : ''; ingInp.focus(); }
+    });
+    ing.querySelector('.btn').addEventListener('click', ()=>addIngredients(d, ingInp.value));
+    ingInp.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addIngredients(d, ingInp.value); } });
+    list.append(row, ing);
+  }
+}
+function renderMenu(){
+  const card = document.getElementById('menuCard'); if(!card) return;
+  card.style.display = menuDenied ? 'none' : 'block';
+  if(menuDenied) return;
+  const today = fmtDate(new Date()), wkNow = mondayOf(today);
+  let n = 0; for(let i=0;i<7;i++) if(menuEntry(addDays(wkNow, i)).gerecht) n++;
+  const vand = menuEntry(today).gerecht;
+  document.getElementById('menuSum').textContent = (vand ? 'Vanavond: ' + vand + ' · ' : '') + (n ? `${n} van 7 dagen gepland` : 'Plan wat jullie eten, dan volstaat één grote boodschap.');
+  document.getElementById('menuChev').textContent = menuOpen ? '▾' : '▸';
+  document.getElementById('menuHead').setAttribute('aria-expanded', menuOpen ? 'true' : 'false');
+  document.getElementById('menuBody').style.display = menuOpen ? 'block' : 'none';
+  if(!menuOpen) return;
+  document.getElementById('menuWeekLbl').textContent = menuWeekLabel();
+  const list = document.getElementById('menuList');
+  if(list.dataset.week !== menuWeek) buildMenuRows();
+  // bestaande rijen bijwerken in plaats van opnieuw te tekenen: zo blijft een tik of het typen nooit hangen
+  list.querySelectorAll('.menu-row').forEach(row=>{
+    const d = row.dataset.d, e = menuEntry(d), inp = row.querySelector('input'), cart = row.querySelector('.cart');
+    if(document.activeElement !== inp) inp.value = e.gerecht || '';
+    cart.classList.toggle('empty', !e.gerecht);
+    cart.classList.toggle('on', !!e.opLijst);
+    cart.textContent = e.opLijst ? '✓' : '🛒';
+  });
+  list.querySelectorAll('.menu-ing').forEach(box=>{
+    const open = box.dataset.d === menuIngOpen;
+    box.style.display = open ? 'block' : 'none';
+    if(open){ const g = menuEntry(box.dataset.d).gerecht, known = g && dishBook()[dishKey(g)];
+      box.querySelector('small').textContent = known ? 'Zoals de vorige keer. Pas gerust aan.' : 'Wat er al op de lijst staat, komt er niet dubbel op.'; }
+  });
+  // eerder gekookte gerechten als suggestie, de meest gekozen eerst
+  const tel = {};
+  Object.entries(weekmenu).forEach(([k, w])=>{ if(k !== '_gerechten' && w && typeof w === 'object') Object.values(w).forEach(e=>{ if(e && e.gerecht) tel[e.gerecht] = (tel[e.gerecht]||0) + 1; }); });
+  Object.values(dishBook()).forEach(b=>{ if(b && b.naam) tel[b.naam] = (tel[b.naam]||0) + 1; });
+  document.getElementById('menuDishes').innerHTML = Object.keys(tel).sort((a,b)=>tel[b]-tel[a] || a.localeCompare(b,'nl')).slice(0,40).map(x=>`<option value="${escapeHtml(x)}">`).join('');
+}
+
 // ---------- boodschappenlijst ----------
 wireAddBar('shopAddForm', 'shopInput', 'shopAddBtn', (val)=>{
   pushMine(shoppingListRef, { tekst: val, done:false });
 });
 document.getElementById('clearCheckedBtn').addEventListener('click', ()=>{
-  shoppingItems.filter(i=>i.done).forEach(i=>{ remove(ref(db, hhPath+'/shoppingList/'+i.id)); });
+  const done = shoppingItems.filter(i=>i.done); if(!done.length) return;
+  removeWithUndo(done.map(i=>({p: 'shoppingList/'+i.id, v: cleanCopy(i)})), done.length + (done.length > 1 ? ' items' : ' item'));
 });
 // ---------- gedeelde to-do (Samen, max 4) ----------
 const SHARED_TODO_MAX = 4;
@@ -3436,7 +3685,7 @@ function shopRow(i){
     row.appendChild(star);
   }
   const del = document.createElement('button'); del.className='del-btn'; del.textContent='✕';
-  del.addEventListener('click', ()=>{ remove(ref(db, hhPath+'/shoppingList/'+i.id)); });
+  del.addEventListener('click', ()=>removeWithUndo([{p: 'shoppingList/'+i.id, v: cleanCopy(i)}], '"' + shortTxt(i.tekst) + '"'));
   row.appendChild(del);
   return row;
 }
