@@ -562,6 +562,15 @@
   #boekViewer.show{display:flex;}
   #boekViewer img{max-width:100%;max-height:100%;border-radius:8px;}
 
+
+  /* v12.1: rustiger, minder kaders en uitleg */
+  .shop-item{background:transparent;border:none;border-bottom:1px solid var(--border);border-radius:0;margin:0;box-shadow:none;padding:11px 2px;}
+  .shop-item:last-child{border-bottom:none;}
+  .shop-item.done{background:transparent;}
+  .todo-item{box-shadow:none;}
+  .deal .d{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+  .card h3 .sub{font-size:12px;}
+
   /* v11: donkere modus, volgt de instelling van de iPhone */
   @media (prefers-color-scheme: dark){
     :root{ --bg:#121816; --surface:#1B2320; --ink:#E6ECE9; --muted:#97A39D; --primary:#3A9184; --primary-light:#1F3833;
@@ -618,43 +627,43 @@
       </div>
       <div id="homeAlert"></div>
       <div class="card">
-        <h3>📅 Agenda</h3>
+        <h3>Agenda</h3>
         <div id="homeAgenda"></div>
       </div>
       <div class="card" id="homeNewCard" style="display:none;">
-        <h3>🆕 Nieuw sinds je vorige bezoek</h3>
+        <h3>Nieuw sinds je vorige bezoek</h3>
         <div id="homeNew"></div>
       </div>
       <div class="card kid-card" id="homeKidCard" style="display:none;"><div id="homeKid"></div></div>
       <div class="card" id="homeTodoCard">
-        <h3>✅ Te doen<span class="sub">Vink af wat klaar is. Tik op een taak om ze te openen in Taken.</span></h3>
+        <h3>Te doen</h3>
         <div id="homeTodo"></div>
       </div>
       <div class="home-section-label">Geld</div>
       <div class="card money-card" id="homeMoneyCard" style="display:none;"><div id="homeMoney"></div></div>
       <div class="card" id="homeGeldCard" style="display:none;">
-        <h3>💶 Binnenkort</h3>
+        <h3>Binnenkort</h3>
         <div id="todayOverview"></div>
       </div>
       <div class="card" id="dealCard" style="display:none;">
-        <h3>🏷️ Deal van de dag<span class="sub" id="dealSub"></span></h3>
+        <h3>Deal van de dag<span class="sub" id="dealSub"></span></h3>
         <div id="dealBody"></div>
       </div>
     </section>
     <section id="panel-settings" class="panel">
       <div class="page-head"><div class="d">Instellingen</div><div class="s">Enkel voor dit toestel.</div></div>
       <div class="card">
-        <h3>👤 Dit toestel</h3>
+        <h3>Dit toestel</h3>
         <div style="font-size:13px;margin-bottom:10px;">Persoonlijke takenlijst van: <strong id="settingsOwner">–</strong></div>
         <button class="btn outline" id="resetOwnerBtn" type="button" style="width:100%;">Andere persoon kiezen</button>
       </div>
       <div class="card">
-        <h3>💾 Back-up<span class="sub">Bewaart alles uit de app (kalender, taken, lijst, contracten, registraties, analyse en het boek met foto's) in één bestand. Bewaar het in Bestanden of Dropbox. Eén keer per maand volstaat.</span></h3>
+        <h3>Back-up<span class="sub">Bewaart alles uit de app (kalender, taken, lijst, contracten, registraties, analyse en het boek met foto's) in één bestand. Bewaar het in Bestanden of Dropbox. Eén keer per maand volstaat.</span></h3>
         <button class="btn" id="backupBtn" type="button" style="width:100%;">💾 Back-up maken</button>
         <div id="backupStatus" style="font-size:12px;color:var(--muted);margin-top:8px;"></div>
       </div>
       <div class="card">
-        <h3>🔒 Account</h3>
+        <h3>Account</h3>
         <button class="btn outline" id="logoutLink" type="button" style="width:100%;">Uitloggen</button>
         <div id="appVersie" style="font-size:11.5px;color:var(--muted);margin-top:10px;text-align:center;"></div>
       </div>
@@ -689,7 +698,7 @@
         <button class="btn" id="newEvToggle" type="button" style="width:100%;margin-top:6px;">＋ Afspraak toevoegen</button>
       </div>
       <div class="card" id="newEvCard" style="display:none;">
-        <h3 id="newEvHead">➕ Nieuwe afspraak<span class="sub" id="newEvDateLabel"></span></h3>
+        <h3 id="newEvHead">Nieuwe afspraak<span class="sub" id="newEvDateLabel"></span></h3>
         <form class="inline" id="eventForm">
           <input type="text" id="evTitle" placeholder="Titel (bv. Tandarts Remon)" required>
           <div class="row2"><input type="date" id="evDate" required aria-label="Datum"><input type="time" id="evTime" aria-label="Uur (leeg = hele dag)"></div>
@@ -721,7 +730,7 @@
       <div class="seg"><button type="button" class="active" data-seg="bud">💶 Budget</button><button type="button" data-seg="con">📄 Contracten<span class="cnt" id="segConCnt" style="display:none;"></span></button></div>
       <button type="button" class="ba-strip" id="uploadStrip"><span id="uploadStripTxt"></span><span class="go" id="uploadStripGo">⬆️ Uploaden</span></button>
       <div class="card" id="uploadCard" style="display:none;">
-        <h3>💳 Gegevens bijwerken<span class="sub">De vaste werkwijze: bezorg Claude de CSV-export van KBC. Claude categoriseert alles, schrijft de analyse en stuurt een gegevensbestand (.json) terug — dat laad je hier in. Bestaande registraties worden nooit dubbel aangemaakt.</span></h3>
+        <h3>Gegevens bijwerken<span class="sub">Laad hier het gegevensbestand van Claude in.</span></h3>
         <div id="oldCatFix" style="display:none;margin-bottom:10px;padding:10px 12px;background:var(--accent-light);border-radius:10px;">
           <div style="font-size:12.5px;margin-bottom:8px;"><span id="oldCatFixCount">0</span> oude registratie(s) staan nog onder de vervallen categorie "Gezondheid & verzekering".</div>
           <button class="btn ghost" id="oldCatFixBtn" type="button" style="font-size:12px;padding:8px 12px;">Herverdeel naar Verzekering / Gezondheid</button>
@@ -733,22 +742,22 @@
         <div id="importStatus" style="font-size:12px;color:var(--muted);margin:0 0 8px;display:none;white-space:pre-line;"></div>
       </div>
       <div class="card" id="claudeCard" style="display:none;">
-        <h3>💬 Analyse van Claude<span class="sub" id="claudeSub"></span></h3>
+        <h3>Analyse van Claude<span class="sub" id="claudeSub"></span></h3>
         <div id="claudeBody"></div>
       </div>
       <div class="card" id="searchCard">
-        <h3>🔎 Zoeken in de uitgaven<span class="sub">Bv. frituur, Okay, Proximus. Telt alles op wat in de bankgegevens staat.</span></h3>
+        <h3>Zoeken in de uitgaven<span class="sub">Bv. frituur, Okay, Proximus.</span></h3>
         <input type="search" id="searchInput" placeholder="Winkel, omschrijving of categorie" autocomplete="off" enterkeyhint="search">
         <div id="searchResult"></div>
       </div>
       <div class="card" id="budDetailsCard">
-        <h3 class="details-head" id="budDetailsToggle"><span id="budDetailsArrow">▸</span> 📊 Details per maand<span class="sub">De automatische cijfers: per categorie, vaste betalingen, gewoontes, trends. Handmatig iets registreren kan hier ook.</span></h3>
+        <h3 class="details-head" id="budDetailsToggle"><span id="budDetailsArrow">▸</span> Details per maand</h3>
       </div>
       <div id="budDetails" style="display:none;">
       <div class="cal-head"><button id="prevBudMonth">‹</button><div class="label" id="budMonthLabel"></div><button id="nextBudMonth">›</button></div>
       <div id="budAnalysis"></div>
       <div class="card" id="yearlyCostsCard" style="display:none;">
-        <h3>⏰ Jaarlijkse kost op komst<span class="sub">Verschijnt enkel wanneer een jaarlijkse betaling binnen 1-2 maanden verwacht wordt.</span></h3>
+        <h3>Jaarlijkse kost op komst</h3>
         <div id="yearlyCostsList"></div>
       </div>
       <div class="card">
@@ -769,7 +778,7 @@
     </section>
     <section id="panel-todo" class="panel">
       <div class="card">
-        <h3>🤝 Samen<span class="sub">Max 4 tegelijk, bewust beperkt. Tik op een taak voor deelpunten, plannen of bewerken. Sleep aan ⋮⋮ voor de volgorde.</span></h3>
+        <h3>Samen<span class="sub">Max 4 tegelijk.</span></h3>
         <form class="add-bar" id="sharedTodoAddRow" autocomplete="off"><input type="text" id="sharedTodoInput" placeholder="Nieuwe gedeelde taak" enterkeyhint="done"><button id="sharedTodoAddBtn" class="plus" type="submit" aria-label="Gedeelde taak toevoegen" disabled>+</button></form>
         <div id="sharedTodoFullMsg" style="display:none;font-size:12px;color:var(--muted);margin-bottom:8px;">Vol (4/4) — rond er eerst één af.</div>
         <div id="sharedTodoList"></div>
@@ -777,7 +786,7 @@
       <div class="card" id="ownerCard" style="display:none;"><h3>Voor wie is dit toestel?</h3><div class="owner-pick" id="ownerPick"></div></div>
       <div id="todoMain" style="display:none;">
         <div class="card">
-          <h3>✅ Mijn taken<span class="sub" id="ownerLabel"></span></h3>
+          <h3>Mijn taken<span class="sub" id="ownerLabel"></span></h3>
           <form class="add-bar" id="todoAddForm" autocomplete="off"><input type="text" id="todoInput" placeholder="Wat moet er gebeuren?" enterkeyhint="done"><button id="todoAddBtn" class="plus" type="submit" aria-label="Taak toevoegen" disabled>+</button></form>
           <div id="todoList"></div>
           <div id="todoDoneWrap" style="display:none;margin-top:10px;">
@@ -787,7 +796,7 @@
           </div>
         </div>
         <div class="card" id="printCard" style="display:none;">
-          <h3>🖨️ 3D-printwachtrij<span class="sub">Enkel voor Tom. Bovenaan = volgende print. Sleep aan ⋮⋮ of tik ⤒ om te verschuiven, vink af als hij geprint is.</span></h3>
+          <h3>3D-printwachtrij<span class="sub">Bovenaan = volgende print.</span></h3>
           <form class="add-bar" id="printAddForm" autocomplete="off"><input type="text" id="printInput" placeholder="Wat printen? (link mag)" enterkeyhint="done"><button id="printAddBtn" class="plus" type="submit" aria-label="Aan de wachtrij toevoegen" disabled>+</button></form>
           <div id="printList"></div>
           <div id="printDoneWrap" style="display:none;margin-top:10px;">
@@ -798,7 +807,7 @@
         </div>
       </div>
       <div class="card">
-        <h3>🔁 Vaste taken<span class="sub">Terugkerend huishoudwerk voor jullie allebei. Het verschijnt op Vandaag wanneer het aan de beurt is. Tik op een taak om ze aan te passen.</span></h3>
+        <h3>Vaste taken<span class="sub">Komt op Vandaag als het aan de beurt is.</span></h3>
         <form class="add-bar" id="choreAddForm" autocomplete="off"><input type="text" id="choreInput" placeholder="Bv. ramen" enterkeyhint="done"><select id="choreEvery" class="every" aria-label="Hoe vaak"><option value="7">elke week</option><option value="14">om de 2 weken</option><option value="30">elke maand</option><option value="1">elke dag</option><option value="91">elk kwartaal</option></select><button id="choreAddBtn" class="plus" type="submit" aria-label="Vaste taak toevoegen" disabled>+</button></form>
         <div id="choreList"></div>
       </div>
@@ -810,7 +819,7 @@
         <div class="stat"><div class="label">Binnenkort</div><div class="value" id="conDueSoon">0</div></div>
       </div>
       <div class="card">
-        <h3 style="cursor:pointer;" id="tipsMasterToggle">▸ 💡 Tips per categorie</h3>
+        <h3 style="cursor:pointer;" id="tipsMasterToggle">▸ Tips per categorie</h3>
         <div class="tip-row-list" id="tipsMasterBody" style="display:none;">
           <div class="tip-row-head" data-target="tipEV">▸ Laadpassen</div>
           <div id="tipEV" class="tip-row-body" style="display:none;">1. Tarief per kWh (apart AC/normaal vs. DC/snelladen — snelladen is duurder)<br>2. Abonnement loont pas bij vaak publiek laden; anders is gratis pas vaak goedkoper<br>3. Let op blokkeer-/parkeertarief na volladen bij snelladers<br>4. Nationale vs. Europese dekking — enkel relevant bij veel grensverkeer<br>5. Thuis laden blijft het goedkoopst — check eerst je Engie-thuistarief<br>6. Vraag eerst bij je huidige energieleverancier naar een klantenkorting op hun eigen laadpas</div>
@@ -831,11 +840,11 @@
         </div>
       </div>
       <div class="card" id="conSugCard" style="display:none;">
-        <h3>🔁 Vaste betalingen zonder contract<span class="sub">Gevonden in de bankgegevens: komt elke maand terug, maar staat nog niet in de lijst. Eén tik zet het erbij.</span></h3>
+        <h3>Vaste betalingen zonder contract<span class="sub">Komt elke maand terug, maar staat nog niet in de lijst.</span></h3>
         <div id="conSugList"></div>
       </div>
       <div class="card">
-        <h3>Overzicht<span class="sub">Rood = tijd om te vergelijken. Oranje = binnen 30 dagen. 'Vergelijk nu' opent de officiële, onafhankelijke vergelijker (CREG voor energie, BIPT/bestetarief.be voor telecom, Wikifin voor verzekeringen en hypotheek) — geen commerciële site.</span></h3>
+        <h3>Overzicht<span class="sub">Rood = tijd om te vergelijken. Oranje = binnen 30 dagen.</span></h3>
         <div id="conExpectedTotal" style="font-size:12.5px;color:var(--muted);margin-bottom:10px;"></div>
         <div id="contractsList"></div>
         <button class="btn outline" id="copyContractsBtn" type="button" style="margin-top:10px;">📋 Kopieer contracten-overzicht</button>
@@ -866,7 +875,7 @@
     </section>
     <section id="panel-lijst" class="panel">
       <div class="card" id="menuCard" style="display:none;">
-        <div class="menu-head" id="menuHead" role="button" aria-expanded="false"><div><h3>🍽️ Weekmenu</h3><div class="menu-sum" id="menuSum"></div></div><span class="menu-chev" id="menuChev">▸</span></div>
+        <div class="menu-head" id="menuHead" role="button" aria-expanded="false"><div><h3>Weekmenu</h3><div class="menu-sum" id="menuSum"></div></div><span class="menu-chev" id="menuChev">▸</span></div>
         <div id="menuBody" style="display:none;">
           <div class="menu-nav"><button type="button" id="menuPrev" aria-label="Vorige week">‹</button><span id="menuWeekLbl"></span><button type="button" id="menuNext" aria-label="Volgende week">›</button></div>
           <div id="menuList"></div>
@@ -875,7 +884,7 @@
         </div>
       </div>
       <div class="card">
-        <h3>🛒 Boodschappenlijst<span class="sub">Gedeeld tussen jullie beiden, live bijgewerkt.</span></h3>
+        <h3>Boodschappenlijst</h3>
         <form class="add-bar" id="shopAddForm" autocomplete="off"><input type="text" id="shopInput" placeholder="Bv. melk, brood, wc-papier" enterkeyhint="done"><button id="shopAddBtn" class="plus" type="submit" aria-label="Toevoegen aan lijst" disabled>+</button></form>
         <div id="shopFavs"></div>
         <div id="shopList"></div>
@@ -983,7 +992,7 @@ function vandaagIso(){ return fmtDate(new Date()); }
 
 // ---------- versie en meldingen ----------
 // De versie staat onder Instellingen: zo is op de iPhone meteen te zien of de nieuwste versie geladen is.
-const APP_VERSIE = 'v12 · 14 november 2026';
+const APP_VERSIE = 'v12.1 · 14 november 2026';
 document.getElementById('appVersie').textContent = 'Gezinshub ' + APP_VERSIE;
 let toastTimer = null;
 function toast(msg, isErr, undo){
@@ -1210,7 +1219,7 @@ function renderClaudeAnalyse(){
   const head = `<div class="ba-ins ${a.niveau||'info'}" style="margin-bottom:10px;"><span class="ic">${a.niveau==='bad'?'🔴':a.niveau==='warn'?'🟠':'🟢'}</span><div><div class="t" style="font-size:15px;">${escapeHtml(a.kop)}</div>${a.samenvatting?`<div class="d">${escapeHtml(a.samenvatting)}</div>`:''}</div></div>`;
   card.style.display='block';
   document.getElementById('claudeSub').textContent = meta;
-  const first = punten.slice(0,4), rest = punten.slice(4);
+  const first = punten.slice(0,2), rest = punten.slice(2);
   const st = planStand();
   const plan = st ? `<div class="ba-ins info" style="display:block;background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--primary);margin-bottom:10px;">
       <div class="t" style="margin-bottom:8px;">🧭 Plan voor ${st.naam}<span style="display:block;font-weight:500;font-size:11.5px;color:var(--muted);margin-top:2px;">${st.lastData ? `Uitgaven t.e.m. ${fmtDayMonth(st.lastData)}. Het streepje toont waar je volgens het plan nu zou zitten.` : 'Nog geen uitgaven in die maand.'}</span></div>${planHtml(st)}</div>` : '';
@@ -1230,7 +1239,7 @@ async function loadDeals(){
     if(!res.ok){ card.style.display='none'; return; }
     const j = await res.json();
     const todayIso = fmtDate(new Date());
-    const deals = (j.deals||[]).filter(d=>d && d.titel && (!d.geldigTot || d.geldigTot >= todayIso)).slice(0,2);
+    const deals = (j.deals||[]).filter(d=>d && d.titel && (!d.geldigTot || d.geldigTot >= todayIso)).slice(0,1);
     if(!j.datum || addDays(j.datum, 2) < todayIso || !deals.length){ card.style.display='none'; return; }
     document.getElementById('dealSub').textContent = j.datum===todayIso ? 'Vandaag gekozen door Claude' : 'Gekozen door Claude op ' + fmtDayMonth(j.datum);
     document.getElementById('dealBody').innerHTML = deals.map(d=>`<div class="deal"><div class="t">${escapeHtml(d.titel)}</div>${d.tekst?`<div class="d">${escapeHtml(d.tekst)}</div>`:''}
@@ -2712,7 +2721,7 @@ function renderAnalysisHtml(a){
   if(a.insights.length){
     const LIMIT = 5;
     const first = a.insights.slice(0, LIMIT), rest = a.insights.slice(LIMIT);
-    html += `<div class="card"><h3>👀 Aandachtspunten<span class="sub">${a.isCurrent?'Voor deze maand, op basis van je laatste upload.':'Voor deze maand.'}</span></h3>
+    html += `<div class="card"><h3>Aandachtspunten<span class="sub">${a.isCurrent?'Voor deze maand, op basis van je laatste upload.':'Voor deze maand.'}</span></h3>
       ${first.map(insightHtml).join('')}
       ${rest.length ? `<div id="insMore" style="display:none;">${rest.map(insightHtml).join('')}</div><button type="button" class="ba-more" data-tg="insMore" data-more="Toon nog ${rest.length} punt${rest.length>1?'en':''}" data-less="Minder tonen">Toon nog ${rest.length} punt${rest.length>1?'en':''}</button>` : ''}
     </div>`;
@@ -2722,7 +2731,7 @@ function renderAnalysisHtml(a){
   if(a.practical && a.practical.length){
     const order = {bad:0, warn:1, info:2, good:3};
     const pr = [...a.practical].sort((p,q)=>order[p.level]-order[q.level]);
-    html += `<div class="card"><h3>💡 Concreet<span class="sub">Automatisch uit je betalingen van de laatste maanden: wat veranderde, wat stopte, waar je vaak komt.</span></h3>
+    html += `<div class="card"><h3>Concreet<span class="sub">Automatisch uit je betalingen van de laatste maanden: wat veranderde, wat stopte, waar je vaak komt.</span></h3>
       ${pr.map(p=>`<div class="ba-ins ${p.level}"><span class="ic">${p.icon}</span><div><div class="t">${p.title}</div><div class="d">${p.text}</div>${p.tip?`<div class="act">👉 ${escapeHtml(p.tip)}</div>`:''}</div></div>`).join('')}
     </div>`;
   }
@@ -2732,7 +2741,7 @@ function renderAnalysisHtml(a){
     const tot = a.recurring.reduce((s,r)=>s+r.monthly,0);
     const row = r=>`<div class="rc-row"><span class="n">${CAT_ICON[r.cat]||'📎'} ${escapeHtml(r.note)}<small>${escapeHtml(r.cat)}</small></span><span class="v">${fmtMoney(r.monthly)}<small>${fmtEur0(r.monthly*12)}/jaar</small></span></div>`;
     const top = a.recurring.slice(0,7), rest = a.recurring.slice(7);
-    html += `<div class="card"><h3>🔁 Vaste betalingen<span class="sub">Wat er elke maand van de rekening gaat (gewoonlijk bedrag): samen ±${fmtEur0(tot)}/maand of ±${fmtEur0(tot*12)}/jaar. Iets dat je niet meer gebruikt? Opzeggen is de makkelijkste besparing.</span></h3>
+    html += `<div class="card"><h3>Vaste betalingen<span class="sub">Wat er elke maand van de rekening gaat (gewoonlijk bedrag): samen ±${fmtEur0(tot)}/maand of ±${fmtEur0(tot*12)}/jaar. Iets dat je niet meer gebruikt? Opzeggen is de makkelijkste besparing.</span></h3>
       ${top.map(row).join('')}
       ${rest.length ? `<div id="rcMore" style="display:none;">${rest.map(row).join('')}</div><button type="button" class="ba-more" data-tg="rcMore" data-more="Toon nog ${rest.length}" data-less="Minder tonen">Toon nog ${rest.length}</button>` : ''}
     </div>`;
@@ -2764,7 +2773,7 @@ function renderAnalysisHtml(a){
         <div class="ba-track"><div class="ba-fill ${cls}" style="width:${Math.min(100,r.cur/scale*100)}%"></div>${hasB?`<div class="ba-mark" style="left:${Math.min(100,r.base/scale*100)}%"></div>`:''}</div></div>`;
     };
     const top = rows.slice(0,6), rest = rows.slice(6);
-    html += `<div class="card"><h3>🧭 Waar gaat het geld heen<span class="sub">${base?'Het streepje = wat je in die categorie gewoonlijk uitgeeft tot dezelfde dag.':'Vergelijking met eerdere maanden volgt zodra die data er is.'}</span></h3>
+    html += `<div class="card"><h3>Waar gaat het geld heen<span class="sub">${base?'Het streepje = wat je in die categorie gewoonlijk uitgeeft tot dezelfde dag.':'Vergelijking met eerdere maanden volgt zodra die data er is.'}</span></h3>
       ${top.map(rowHtml).join('')}
       ${rest.length ? `<div id="catMore" style="display:none;">${rest.map(rowHtml).join('')}</div><button type="button" class="ba-more" data-tg="catMore" data-more="Toon nog ${rest.length} categorie${rest.length>1?'ën':''}" data-less="Minder tonen">Toon nog ${rest.length} categorie${rest.length>1?'ën':''}</button>` : ''}
     </div>`;
@@ -2781,7 +2790,7 @@ function renderAnalysisHtml(a){
       const nt = x.s.income - x.s.expense;
       return `<div class="tcol${x.hasData?'':' empty'}${partial?' partial':''}"><div class="tbars"><i class="tinc" style="height:${Math.max(hi,x.hasData?2:0)}px"></i><i class="texp" style="height:${Math.max(he,x.hasData?2:0)}px"></i></div><span class="tlbl">${x.label}${partial?'*':''}</span>${x.hasData&&!partial?`<span class="tnet ${nt>=0?'pos':'neg'}">${nt>=0?'+':'−'}${fmtEur0(Math.abs(nt))}</span>`:'<span class="tnet">&nbsp;</span>'}</div>`;
     }).join('');
-    html += `<div class="card"><h3>📈 Op lange termijn<span class="sub">Laatste 6 maanden. * = maand nog niet volledig gedekt door je uploads.</span></h3>
+    html += `<div class="card"><h3>Op lange termijn<span class="sub">Laatste 6 maanden. * = maand nog niet volledig gedekt door je uploads.</span></h3>
       <div class="ba-legend"><span><i class="tinc"></i> Inkomen</span><span><i class="texp"></i> Uitgaven</span></div>
       <div class="ba-trend">${cols}</div>
       ${a.trend.lines.map(l=>insightHtml({level:l.level, icon:l.icon, title:'', text:l.text})).join('')}
@@ -2801,7 +2810,7 @@ function renderAnalysisHtml(a){
   }
   a.outlook.forEach(o=>outlook.push(o));
   if(outlook.length){
-    html += `<div class="card"><h3>🔭 Vooruitblik</h3>${outlook.map(o=>insightHtml({level:o.level, icon:o.icon, title:'', text:o.text})).join('')}</div>`;
+    html += `<div class="card"><h3>Vooruitblik</h3>${outlook.map(o=>insightHtml({level:o.level, icon:o.icon, title:'', text:o.text})).join('')}</div>`;
   }
   return html;
 }
@@ -2921,7 +2930,7 @@ function renderTodoOwnerGate(){
     });
   } else {
     ownerCard.style.display='none'; main.style.display='block';
-    document.getElementById('ownerLabel').textContent = 'Enkel zichtbaar voor ' + owner + '. Tik op een taak voor deelpunten, plannen of bewerken. Sleep aan ⋮⋮ voor de volgorde.';
+    document.getElementById('ownerLabel').textContent = 'Enkel zichtbaar voor ' + owner + '.';
     setupTodoRefs();
   }
 }
@@ -3222,17 +3231,17 @@ function renderHomeTodo(){
     el.appendChild(h);
   };
   const shared = sortedShared();
-  head('🤝 Samen', shared.length ? `${shared.length} van ${SHARED_TODO_MAX} ›` : 'toevoegen ›');
+  head('Samen', shared.length ? `${shared.length} van ${SHARED_TODO_MAX} ›` : 'toevoegen ›');
   if(shared.length) shared.forEach(t=>taskRow(t, 'samen', el, true));
   else el.insertAdjacentHTML('beforeend', '<div class="today-empty">Geen gedeelde taken open.</div>');
   const due = choresDenied ? [] : chores.filter(choreDue).sort((a,b)=>(a.volgende||'').localeCompare(b.volgende||''));
-  if(due.length){ head('🔁 Vaste taken · aan de beurt', ''); due.forEach(c=>el.appendChild(choreRow(c, false, true))); }
+  if(due.length){ head('Vaste taken · aan de beurt', ''); due.forEach(c=>el.appendChild(choreRow(c, false, true))); }
   if(owner && todosRef){
     const today = vandaagIso();
     const act = sortedTodos().filter(t=>!t.done);
     const urgent = act.filter(t=>t.scheduledDate && t.scheduledDate <= today);
     const pick = [...urgent, ...act.filter(t=>!urgent.includes(t))].slice(0, Math.max(3, urgent.length));
-    if(pick.length){ head('👤 Mijn taken', act.length > pick.length ? `alle ${act.length} ›` : 'Taken ›'); pick.forEach(t=>taskRow(t, 'mine', el, true)); }
+    if(pick.length){ head('Mijn taken', act.length > pick.length ? `alle ${act.length} ›` : 'Taken ›'); pick.forEach(t=>taskRow(t, 'mine', el, true)); }
   }
 }
 
@@ -3916,7 +3925,7 @@ function afdelingOf(tekst){
 const favKey = (t)=>String(t||'').trim().toLowerCase();
 function renderShopFavs(){
   const wrap = document.getElementById('shopFavs'); if(!wrap) return;
-  if(shopFavDenied || !shopFavs.length){ wrap.innerHTML = shopFavDenied ? '' : '<div class="fav-wrap"><span class="lbl">Tip: tik op ☆ naast een item om het als vast item te bewaren.</span></div>'; return; }
+  if(shopFavDenied || !shopFavs.length){ wrap.innerHTML = shopFavDenied ? '' : '<div class="fav-wrap"><span class="lbl">☆ = vast item, met één tik terug op de lijst.</span></div>'; return; }
   const onList = new Set(shoppingItems.filter(i=>!i.done).map(i=>favKey(i.tekst)));
   const avail = shopFavs.filter(f=>!onList.has(favKey(f.tekst))).sort((a,b)=>a.tekst.localeCompare(b.tekst,'nl'));
   if(!avail.length){ wrap.innerHTML = '<div class="fav-wrap"><span class="lbl">⭐ Alle vaste items staan op de lijst.</span></div>'; return; }
