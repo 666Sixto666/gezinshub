@@ -626,6 +626,11 @@
         <div class="week-strip" id="homeWeek"></div>
       </div>
       <div id="homeAlert"></div>
+      <div class="card" id="spikCard" style="display:none;">
+        <h3>Spik<span class="sub" id="spikSub"></span></h3>
+        <div id="spikBody" style="font-size:14px;margin-bottom:10px;"></div>
+        <button type="button" class="btn outline" id="spikSeenBtn" style="width:100%;">Gezien</button>
+      </div>
       <div class="card">
         <h3>Agenda</h3>
         <div id="homeAgenda"></div>
@@ -992,7 +997,7 @@ function vandaagIso(){ return fmtDate(new Date()); }
 
 // ---------- versie en meldingen ----------
 // De versie staat onder Instellingen: zo is op de iPhone meteen te zien of de nieuwste versie geladen is.
-const APP_VERSIE = 'v12.1 · 14 november 2026';
+const APP_VERSIE = 'v13 · 25 november 2026';
 document.getElementById('appVersie').textContent = 'Gezinshub ' + APP_VERSIE;
 let toastTimer = null;
 function toast(msg, isErr, undo){
@@ -1111,14 +1116,14 @@ function attachListeners(){
     ()=>{ boekDenied = true; boek = []; renderKid(); });
   onValue(metaRef, snap=>{ meta = snap.val() || {}; renderTodayOverview(); renderConSug(); }, ()=>{});
   renderTodoOwnerGate();
-  loadDeals(); lastDealsLoad = Date.now();
+  loadDeals(); loadSpik(); lastDealsLoad = Date.now();
 }
 // app terug naar voor (iPhone houdt ze vaak dagen open): Vandaag opnieuw opbouwen
 document.addEventListener('visibilitychange', ()=>{
   if(document.visibilityState==='hidden'){ writeSeen(Date.now()); return; }
   if(document.visibilityState!=='visible' || !auth.currentUser) return;
   prevSeen = readSeen(); renderHome(); renderTodayOverview(); renderHomeMoney(); renderKid(); renderNew(); renderChores();
-  if(Date.now()-lastDealsLoad > 60*60*1000){ lastDealsLoad = Date.now(); loadDeals(); }
+  if(Date.now()-lastDealsLoad > 60*60*1000){ lastDealsLoad = Date.now(); loadDeals(); loadSpik(); }
 });
 
 // ---------- tabs ----------
@@ -1248,6 +1253,27 @@ async function loadDeals(){
   }catch(err){ card.style.display='none'; }
 }
 let lastDealsLoad = 0;
+
+// ---------- Spik: wekelijkse seintje, enkel op het toestel van Tom ----------
+// spik.json staat naast de app in de repo (openbaar), daarom enkel een datum en twee aantallen, nooit tekst.
+let spik = null;
+async function loadSpik(){
+  try{
+    const res = await fetch('spik.json?_=' + Date.now(), {cache:'no-store'});
+    spik = res.ok ? await res.json() : null;
+  }catch(err){ spik = null; }
+  renderSpik();
+}
+function renderSpik(){
+  const card = document.getElementById('spikCard'); if(!card) return;
+  const n = spik ? Number(spik.punten) : 0, dr = spik ? Number(spik.dringend) || 0 : 0;
+  const toon = owner === 'Tom' && n > 0 && spik.datum && addDays(spik.datum, 6) >= fmtDate(new Date()) && lsGet('gezinshub-spik-gezien') !== spik.datum;
+  card.style.display = toon ? 'block' : 'none';
+  if(!toon) return;
+  document.getElementById('spikSub').textContent = 'Losse eindjes van ' + fmtDayMonth(spik.datum);
+  document.getElementById('spikBody').textContent = `${n} ${n>1?'punten':'punt'} deze week` + (dr ? `, waarvan ${dr} dringend` : '') + '. Open Spik in Claude.';
+}
+document.getElementById('spikSeenBtn').addEventListener('click', ()=>{ if(spik) lsSet('gezinshub-spik-gezien', spik.datum); renderSpik(); });
 
 // ---------- eigen toevoegingen herkennen + "nieuw sinds je vorige bezoek" ----------
 // Firebase-sleutels van push() bevatten het tijdstip van aanmaken: zo is er geen extra veld nodig.
@@ -2913,6 +2939,7 @@ function renderBudget(){
 
 // ---------- todo ----------
 function renderTodoOwnerGate(){
+  renderSpik();
   const ownerCard = document.getElementById('ownerCard');
   const main = document.getElementById('todoMain');
   if(!owner){
